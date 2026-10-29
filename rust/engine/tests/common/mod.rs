@@ -6,8 +6,8 @@
 #![allow(dead_code)]
 
 use engine::{
-    Atom, Budget, Const, Dark, Fact, Facts, Instance, Literal, Nat, NormalProgram, NormalRule, PositiveProgram,
-    PositiveRule, Predicate, RuleId, Sym, Term, Var,
+    Atom, Budget, Const, Dark, Fact, Facts, Instance, Literal, Nat, NormalProgram, NormalRule,
+    PositiveProgram, PositiveRule, Predicate, RuleId, Sym, Term, Var,
 };
 
 pub fn sym(s: &str) -> Const {
@@ -81,10 +81,16 @@ fn term(s: &str) -> Term {
 pub fn atom(s: &str) -> Atom {
     let s = s.trim();
     match s.find('(') {
-        None => Atom { pred: pred(s), args: vec![] },
+        None => Atom {
+            pred: pred(s),
+            args: vec![],
+        },
         Some(open) => {
             let inner = &s[open + 1..s.rfind(')').expect("closing paren")];
-            Atom { pred: pred(s[..open].trim()), args: split_top(inner).iter().map(|a| term(a)).collect() }
+            Atom {
+                pred: pred(s[..open].trim()),
+                args: split_top(inner).iter().map(|a| term(a)).collect(),
+            }
         }
     }
 }
@@ -118,7 +124,11 @@ pub fn normal_rule(id: &str, s: &str) -> NormalRule {
             None => Literal::Pos(atom(l)),
         })
         .collect();
-    NormalRule { id: rule_id(id), head: atom(head), body }
+    NormalRule {
+        id: rule_id(id),
+        head: atom(head),
+        body,
+    }
 }
 
 /// A positive rule; panics on `not` (the type can't hold it).
@@ -147,7 +157,10 @@ pub fn program(rules: &[(&str, &str)]) -> PositiveProgram {
 }
 
 pub fn try_normal(rules: &[(&str, &str)]) -> Result<NormalProgram, Dark> {
-    NormalProgram::new(rules.iter().map(|(id, s)| normal_rule(id, s)).collect(), vec![])
+    NormalProgram::new(
+        rules.iter().map(|(id, s)| normal_rule(id, s)).collect(),
+        vec![],
+    )
 }
 
 pub fn normal(rules: &[(&str, &str)]) -> NormalProgram {
@@ -162,7 +175,10 @@ pub fn reprogram(p: &PositiveProgram, rules: Vec<PositiveRule>) -> PositiveProgr
 pub const TEST_ALTITUDE: &str = "@datalog/fact";
 
 pub fn facts(atoms: &[&str]) -> Facts {
-    Facts { altitude: alt(TEST_ALTITUDE), atoms: atoms.iter().map(|s| fact(s)).collect() }
+    Facts {
+        altitude: alt(TEST_ALTITUDE),
+        atoms: atoms.iter().map(|s| fact(s)).collect(),
+    }
 }
 
 /// `run_to_fixpoint` on `(p, f)`; the instance must build.
@@ -172,7 +188,10 @@ pub fn fixpoint(p: &PositiveProgram, f: &Facts) -> engine::Run<engine::Fixed> {
 
 /// `run_bounded` on `(p, f)` with budget `k ≥ 1`.
 pub fn bounded(p: &PositiveProgram, f: &Facts, k: u64) -> engine::Run<engine::Bounded> {
-    engine::run_bounded(&Instance::new(p, f.clone()).expect("instance"), Budget::new(k).unwrap())
+    engine::run_bounded(
+        &Instance::new(p, f.clone()).expect("instance"),
+        Budget::new(k).unwrap(),
+    )
 }
 
 /// `W` on `(p, f)`.
@@ -185,7 +204,10 @@ pub struct Lcg(pub u64);
 
 impl Lcg {
     pub fn next(&mut self) -> u64 {
-        self.0 = self.0.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+        self.0 = self
+            .0
+            .wrapping_mul(6364136223846793005)
+            .wrapping_add(1442695040888963407);
         self.0 >> 33
     }
     /// Uniform-ish in `0..n`.
@@ -209,9 +231,15 @@ pub fn shuffled<T: Clone>(v: &[T], rng: &mut Lcg) -> Vec<T> {
 
 /// `fact → tick` for a run, joining the model with the deposits by address.
 pub fn ticks<S>(run: &engine::Run<S>) -> std::collections::BTreeMap<Fact, u64> {
-    let by_addr: std::collections::BTreeMap<_, _> = run.deposits.iter().map(|d| (d.addr, d.tick.0)).collect();
+    let by_addr: std::collections::BTreeMap<_, _> =
+        run.deposits.iter().map(|d| (d.addr, d.tick.0)).collect();
     run.model
         .iter()
-        .map(|(a, f)| (f.clone(), *by_addr.get(a).expect("every atom of M is deposited")))
+        .map(|(a, f)| {
+            (
+                f.clone(),
+                *by_addr.get(a).expect("every atom of M is deposited"),
+            )
+        })
         .collect()
 }

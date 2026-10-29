@@ -10,7 +10,10 @@
 
 mod common;
 
-use common::{alt, fact, facts, fixpoint, nat, pred, program, reprogram, shuffled, sym, ticks, Lcg, TEST_ALTITUDE};
+use common::{
+    alt, fact, facts, fixpoint, nat, pred, program, reprogram, shuffled, sym, ticks, Lcg,
+    TEST_ALTITUDE,
+};
 use engine::{Addr, Const, Fact, Facts, Fixed, PositiveProgram, Tick};
 use std::collections::BTreeSet;
 
@@ -57,25 +60,61 @@ fn e3_rederivation_deposits_nothing_new() {
 fn e3_addr_is_injective_on_distinct_atoms() {
     let ones = Addr::from_hex(&"01".repeat(32)).unwrap();
     let atoms = vec![
-        Fact { pred: pred("p"), args: vec![sym("ab")] },
-        Fact { pred: pred("p"), args: vec![sym("a"), sym("b")] },
-        Fact { pred: pred("pa"), args: vec![sym("b")] },
-        Fact { pred: pred("p"), args: vec![sym("1")] },
-        Fact { pred: pred("p"), args: vec![nat(1)] },
-        Fact { pred: pred("p"), args: vec![Const::Addr(ones)] },
-        Fact { pred: pred("p"), args: vec![sym("")] },
-        Fact { pred: pred("p"), args: vec![] },
-        Fact { pred: pred("p"), args: vec![nat(0)] },
-        Fact { pred: pred("p"), args: vec![nat(0), nat(0)] },
+        Fact {
+            pred: pred("p"),
+            args: vec![sym("ab")],
+        },
+        Fact {
+            pred: pred("p"),
+            args: vec![sym("a"), sym("b")],
+        },
+        Fact {
+            pred: pred("pa"),
+            args: vec![sym("b")],
+        },
+        Fact {
+            pred: pred("p"),
+            args: vec![sym("1")],
+        },
+        Fact {
+            pred: pred("p"),
+            args: vec![nat(1)],
+        },
+        Fact {
+            pred: pred("p"),
+            args: vec![Const::Addr(ones)],
+        },
+        Fact {
+            pred: pred("p"),
+            args: vec![sym("")],
+        },
+        Fact {
+            pred: pred("p"),
+            args: vec![],
+        },
+        Fact {
+            pred: pred("p"),
+            args: vec![nat(0)],
+        },
+        Fact {
+            pred: pred("p"),
+            args: vec![nat(0), nat(0)],
+        },
     ];
     let mut seen = BTreeSet::new();
     for tau in ["@datalog/fact", "@pact/fact", "@parse/item"] {
         for a in &atoms {
-            assert!(seen.insert(engine::addr(&alt(tau), a)), "collision at {tau}: {a:?}");
+            assert!(
+                seen.insert(engine::addr(&alt(tau), a)),
+                "collision at {tau}: {a:?}"
+            );
         }
     }
     // Equality under re-derivation: the function is a function.
-    assert_eq!(engine::addr(&alt("@pact/fact"), &atoms[0]), engine::addr(&alt("@pact/fact"), &atoms[0]));
+    assert_eq!(
+        engine::addr(&alt("@pact/fact"), &atoms[0]),
+        engine::addr(&alt("@pact/fact"), &atoms[0])
+    );
 }
 
 /// Fixtures with recursion, mutual recursion and repeated variables.
@@ -96,7 +135,15 @@ fn fixtures() -> Vec<(PositiveProgram, Facts)> {
                 ("self", "loop(?x) :- edge(?x, ?x)"),
                 ("sym", "sym(?x, ?y) :- edge(?x, ?y), edge(?y, ?x)"),
             ]),
-            facts(&["next(0, 1)", "next(1, 2)", "next(2, 3)", "next(3, 4)", "edge(c, c)", "edge(a, b)", "edge(b, a)"]),
+            facts(&[
+                "next(0, 1)",
+                "next(1, 2)",
+                "next(2, 3)",
+                "next(3, 4)",
+                "edge(c, c)",
+                "edge(a, b)",
+                "edge(b, a)",
+            ]),
         ),
     ]
 }
@@ -123,11 +170,18 @@ fn e3_e6_permutations_of_rules_and_facts_change_nothing() {
         let base = fixpoint(&p, &f);
         for k in 0..64 {
             let p2 = reprogram(&p, shuffled(p.rules(), &mut rng));
-            let f2 = Facts { altitude: f.altitude.clone(), atoms: shuffled(&f.atoms, &mut rng) };
+            let f2 = Facts {
+                altitude: f.altitude.clone(),
+                atoms: shuffled(&f.atoms, &mut rng),
+            };
             let r = fixpoint(&p2, &f2);
             assert_eq!(r.model_addr, base.model_addr, "fixture {i} permutation {k}");
             assert_eq!(ticks(&r), ticks(&base), "fixture {i} permutation {k}");
-            assert_eq!(record(&r), record(&base), "fixture {i} permutation {k}: E6 bytes");
+            assert_eq!(
+                record(&r),
+                record(&base),
+                "fixture {i} permutation {k}: E6 bytes"
+            );
         }
     }
 }
@@ -145,7 +199,11 @@ fn e3_model_address_ignores_ticks() {
     let f = facts(&["e(a, b)"]);
     let a = fixpoint(&program(&[("p", "p(?x, ?y) :- e(?x, ?y)")]), &f);
     let b = fixpoint(
-        &program(&[("q", "q(?x, ?y) :- e(?x, ?y)"), ("p", "p(?x, ?y) :- q(?x, ?y)"), ("q2", "q(?x, ?y) :- p(?x, ?y)")]),
+        &program(&[
+            ("q", "q(?x, ?y) :- e(?x, ?y)"),
+            ("p", "p(?x, ?y) :- q(?x, ?y)"),
+            ("q2", "q(?x, ?y) :- p(?x, ?y)"),
+        ]),
         &facts(&["e(a, b)", "q(a, b)"]),
     );
     // a: {e, p}; b: {e, q, p}. Different models, different addresses...

@@ -24,13 +24,22 @@ use std::collections::BTreeSet;
 const PACT: &str = "@pact/fact";
 
 fn pact_facts(atoms: &[&str]) -> Facts {
-    Facts { altitude: alt(PACT), atoms: atoms.iter().map(|s| fact(s)).collect() }
+    Facts {
+        altitude: alt(PACT),
+        atoms: atoms.iter().map(|s| fact(s)).collect(),
+    }
 }
 
 /// The derived atoms of a status set: the set minus the input facts.
-fn derived(set: &std::collections::BTreeMap<engine::Addr, engine::Fact>, f: &Facts) -> BTreeSet<engine::Fact> {
+fn derived(
+    set: &std::collections::BTreeMap<engine::Addr, engine::Fact>,
+    f: &Facts,
+) -> BTreeSet<engine::Fact> {
     let given: BTreeSet<_> = f.atoms.iter().cloned().collect();
-    set.values().filter(|a| !given.contains(a)).cloned().collect()
+    set.values()
+        .filter(|a| !given.contains(a))
+        .cloned()
+        .collect()
 }
 
 fn set(atoms: &[&str]) -> BTreeSet<engine::Fact> {
@@ -61,9 +70,15 @@ fn e5_vector_01_nine_paths_true_clear() {
     assert_eq!(
         derived(&r.true_atoms, &f),
         set(&[
-            "path(a, b)", "path(a, c)", "path(a, d)",
-            "path(b, b)", "path(b, c)", "path(b, d)",
-            "path(c, b)", "path(c, c)", "path(c, d)",
+            "path(a, b)",
+            "path(a, c)",
+            "path(a, d)",
+            "path(b, b)",
+            "path(b, c)",
+            "path(b, d)",
+            "path(c, b)",
+            "path(c, c)",
+            "path(c, d)",
         ])
     );
     assert!(r.undefined.is_empty());
@@ -75,8 +90,14 @@ fn e5_vector_01_nine_paths_true_clear() {
 #[test]
 fn e5_vector_03_send_false_clear() {
     let p = normal(&[
-        ("ready", "ready(?a) :- application(?a), answered(?a, alex, yes)"),
-        ("send", "send(?a) :- ready(?a), pdf_stands_alone(?a), dates_only(?a), not reader_tracking(?a)"),
+        (
+            "ready",
+            "ready(?a) :- application(?a), answered(?a, alex, yes)",
+        ),
+        (
+            "send",
+            "send(?a) :- ready(?a), pdf_stands_alone(?a), dates_only(?a), not reader_tracking(?a)",
+        ),
     ]);
     let f = pact_facts(&["application(a1)", "pdf_stands_alone(a1)", "dates_only(a1)"]);
     let r = w(&p, &f);
@@ -95,7 +116,12 @@ fn e5_vector_03_send_false_clear() {
 
 fn v04() -> (NormalProgram, Facts) {
     (
-        normal(&[("p", "p :- not q"), ("q", "q :- not p"), ("r", "r :- not s"), ("t", "t :- p")]),
+        normal(&[
+            ("p", "p :- not q"),
+            ("q", "q :- not p"),
+            ("r", "r :- not s"),
+            ("t", "t :- p"),
+        ]),
         pact_facts(&[]),
     )
 }
@@ -122,8 +148,12 @@ fn e6_vectors_01_and_04_identical_under_permutation() {
     for (name, (p, f)) in [("01", v01()), ("04", v04())] {
         let base = w(&p, &f);
         for k in 0..64 {
-            let p2 = NormalProgram::new(shuffled(p.rules(), &mut rng), p.functional().to_vec()).unwrap();
-            let f2 = Facts { altitude: f.altitude.clone(), atoms: shuffled(&f.atoms, &mut rng) };
+            let p2 =
+                NormalProgram::new(shuffled(p.rules(), &mut rng), p.functional().to_vec()).unwrap();
+            let f2 = Facts {
+                altitude: f.altitude.clone(),
+                atoms: shuffled(&f.atoms, &mut rng),
+            };
             assert_eq!(w(&p2, &f2), base, "vector {name} permutation {k}");
         }
     }
@@ -135,7 +165,11 @@ fn e6_vectors_01_and_04_identical_under_permutation() {
 fn prop_5_5_d_is_retracted_at_round_1_and_nothing_is_deleted() {
     // b :- not a.  c :- not b.  d :- not c.   fact a.
     // over₀ = {a, c, d}; under₁ = {a, c}; over₁ = {a, c}: d retracted.
-    let p = normal(&[("b", "b :- not a"), ("c", "c :- not b"), ("d", "d :- not c")]);
+    let p = normal(&[
+        ("b", "b :- not a"),
+        ("c", "c :- not b"),
+        ("d", "d :- not c"),
+    ]);
     let f = pact_facts(&["a"]);
     let r = w(&p, &f);
     assert_eq!(r.retractions.len(), 1, "{:?}", r.retractions);
@@ -162,8 +196,15 @@ fn a_longer_alternating_chain_settles_with_one_retraction_per_round() {
     let r = w(&p, &f);
     assert_eq!(derived(&r.true_atoms, &f), set(&["c", "e"]));
     assert!(r.undefined.is_empty());
-    let retracted: Vec<_> = r.retractions.iter().map(|x| (x.fact.clone(), x.round)).collect();
-    assert_eq!(retracted, vec![(fact("d"), Round(1)), (fact("g"), Round(2))]);
+    let retracted: Vec<_> = r
+        .retractions
+        .iter()
+        .map(|x| (x.fact.clone(), x.round))
+        .collect();
+    assert_eq!(
+        retracted,
+        vec![(fact("d"), Round(1)), (fact("g"), Round(2))]
+    );
 }
 
 // ── Safety in W ──────────────────────────────────────────────────────────
@@ -173,7 +214,10 @@ fn an_unsafe_negative_literal_is_dark_naming_the_variable() {
     // Now found when the program is built (§4.2), not when W runs.
     assert_eq!(
         try_normal(&[("bad", "p(?x) :- e(?x), not q(?y)")]),
-        Err(Dark::Unsafe { rule: rule_id("bad"), var: var("y") })
+        Err(Dark::Unsafe {
+            rule: rule_id("bad"),
+            var: var("y")
+        })
     );
 }
 

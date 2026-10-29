@@ -8,7 +8,10 @@ const MANIFEST: &str = include_str!("../Cargo.toml");
 fn e7_manifest_names_no_serde() {
     for line in MANIFEST.lines() {
         let code = line.split('#').next().unwrap();
-        assert!(!code.contains("serde"), "serde in engine/Cargo.toml: {line}");
+        assert!(
+            !code.contains("serde"),
+            "serde in engine/Cargo.toml: {line}"
+        );
     }
 }
 

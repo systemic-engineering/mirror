@@ -14,7 +14,10 @@ fn chain(n: u64) -> engine::Facts {
 }
 
 fn closure() -> engine::PositiveProgram {
-    program(&[("p-base", "p(?x, ?y) :- e(?x, ?y)"), ("p-step", "p(?x, ?z) :- p(?x, ?y), e(?y, ?z)")])
+    program(&[
+        ("p-base", "p(?x, ?y) :- e(?x, ?y)"),
+        ("p-step", "p(?x, ?z) :- p(?x, ?y), e(?y, ?z)"),
+    ])
 }
 
 #[test]
@@ -22,7 +25,11 @@ fn e2_chain_stops_fixed_at_n_plus_1() {
     for n in 1..=12u64 {
         let run = fixpoint(&closure(), &chain(n));
         assert_eq!(run.stop, Fixed(Tick(n + 1)), "n = {n}");
-        assert_eq!(run.deposits.iter().map(|d| d.tick.0).max(), Some(n), "n = {n}: last deposit tick");
+        assert_eq!(
+            run.deposits.iter().map(|d| d.tick.0).max(),
+            Some(n),
+            "n = {n}: last deposit tick"
+        );
         assert_eq!(run.model.len() as u64, n + n * (n + 1) / 2, "n = {n}: |M|");
     }
 }

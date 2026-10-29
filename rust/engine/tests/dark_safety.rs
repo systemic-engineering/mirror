@@ -18,13 +18,22 @@ use engine::{Arity, Dark, Instance};
 fn unsafe_head_variable_is_dark_naming_it() {
     assert_eq!(
         try_program(&[("bad", "p(?x, ?y) :- e(?x)")]),
-        Err(Dark::Unsafe { rule: rule_id("bad"), var: var("y") })
+        Err(Dark::Unsafe {
+            rule: rule_id("bad"),
+            var: var("y")
+        })
     );
 }
 
 #[test]
 fn unsafe_empty_body_with_variable_is_dark() {
-    assert_eq!(try_program(&[("bad", "p(?x)")]), Err(Dark::Unsafe { rule: rule_id("bad"), var: var("x") }));
+    assert_eq!(
+        try_program(&[("bad", "p(?x)")]),
+        Err(Dark::Unsafe {
+            rule: rule_id("bad"),
+            var: var("x")
+        })
+    );
 }
 
 #[test]
@@ -35,7 +44,11 @@ fn arity_mismatch_is_dark() {
     let p = program(&[("r", "p(?x) :- e(?x, ?y)")]);
     assert_eq!(
         Instance::new(&p, facts(&["e(a)"])).err(),
-        Some(Dark::Arity { pred: pred("e"), expected: Arity(2), found: Arity(1) })
+        Some(Dark::Arity {
+            pred: pred("e"),
+            expected: Arity(2),
+            found: Arity(1)
+        })
     );
 }
 
@@ -43,14 +56,26 @@ fn arity_mismatch_is_dark() {
 fn arity_mismatch_inside_the_rules_is_dark_at_construction() {
     assert_eq!(
         try_program(&[("r", "p(?x) :- e(?x), e(?x, ?y)")]),
-        Err(Dark::Arity { pred: pred("e"), expected: Arity(1), found: Arity(2) })
+        Err(Dark::Arity {
+            pred: pred("e"),
+            expected: Arity(1),
+            found: Arity(2)
+        })
     );
 }
 
 #[test]
 fn dark_verdict_does_not_depend_on_rule_order() {
-    let a = try_program(&[("ok", "p(?x) :- e(?x)"), ("bad1", "q(?y) :- e(?x)"), ("bad2", "s(?z) :- e(?x)")]);
-    let b = try_program(&[("bad2", "s(?z) :- e(?x)"), ("ok", "p(?x) :- e(?x)"), ("bad1", "q(?y) :- e(?x)")]);
+    let a = try_program(&[
+        ("ok", "p(?x) :- e(?x)"),
+        ("bad1", "q(?y) :- e(?x)"),
+        ("bad2", "s(?z) :- e(?x)"),
+    ]);
+    let b = try_program(&[
+        ("bad2", "s(?z) :- e(?x)"),
+        ("ok", "p(?x) :- e(?x)"),
+        ("bad1", "q(?y) :- e(?x)"),
+    ]);
     assert_eq!(a, b);
     assert!(a.is_err());
 }

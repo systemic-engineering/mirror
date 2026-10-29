@@ -13,7 +13,8 @@ mod common;
 
 use common::{bounded, fact, facts, nat, pred, rule, shuffled, sym, ticks, Lcg};
 use engine::{
-    Bounded, Const, Dark, Facts, Functional, FunctionalViolation, Instance, Position, PositiveProgram, PositiveRule,
+    Bounded, Const, Dark, Facts, Functional, FunctionalViolation, Instance, Position,
+    PositiveProgram, PositiveRule,
 };
 use std::collections::BTreeSet;
 
@@ -22,7 +23,11 @@ fn pos(p: u32) -> Position {
 }
 
 fn m_functional() -> Functional {
-    Functional { pred: pred("m"), key: vec![pos(1), pos(2)], value: pos(3) }
+    Functional {
+        pred: pred("m"),
+        key: vec![pos(1), pos(2)],
+        value: pos(3),
+    }
 }
 
 type Run = engine::Run<Bounded>;
@@ -32,7 +37,10 @@ type Run = engine::Run<Bounded>;
 /// `"c"`: m("c",i,i+1) :- input(i,"c").  f("c",i) :- ¬input(i,"c").
 fn terminal(e: &str, c: &str) -> Vec<PositiveRule> {
     vec![
-        rule(&format!("m-{e}"), &format!("m({e}, ?i, ?j) :- lit({c}, ?i, ?j)")),
+        rule(
+            &format!("m-{e}"),
+            &format!("m({e}, ?i, ?j) :- lit({c}, ?i, ?j)"),
+        ),
         rule(&format!("f-{e}"), &format!("f({e}, ?i) :- nolit({c}, ?i)")),
     ]
 }
@@ -40,7 +48,10 @@ fn terminal(e: &str, c: &str) -> Vec<PositiveRule> {
 /// `A`: m(A,i,j) :- m(R(A),i,j).  f(A,i) :- f(R(A),i).
 fn nonterminal(a: &str, body: &str) -> Vec<PositiveRule> {
     vec![
-        rule(&format!("m-{a}"), &format!("m({a}, ?i, ?j) :- m({body}, ?i, ?j)")),
+        rule(
+            &format!("m-{a}"),
+            &format!("m({a}, ?i, ?j) :- m({body}, ?i, ?j)"),
+        ),
         rule(&format!("f-{a}"), &format!("f({a}, ?i) :- f({body}, ?i)")),
     ]
 }
@@ -48,18 +59,33 @@ fn nonterminal(a: &str, body: &str) -> Vec<PositiveRule> {
 /// `e₁ e₂`.
 fn seq(e: &str, e1: &str, e2: &str) -> Vec<PositiveRule> {
     vec![
-        rule(&format!("m-{e}"), &format!("m({e}, ?i, ?k) :- m({e1}, ?i, ?j), m({e2}, ?j, ?k)")),
+        rule(
+            &format!("m-{e}"),
+            &format!("m({e}, ?i, ?k) :- m({e1}, ?i, ?j), m({e2}, ?j, ?k)"),
+        ),
         rule(&format!("f1-{e}"), &format!("f({e}, ?i) :- f({e1}, ?i)")),
-        rule(&format!("f2-{e}"), &format!("f({e}, ?i) :- m({e1}, ?i, ?j), f({e2}, ?j)")),
+        rule(
+            &format!("f2-{e}"),
+            &format!("f({e}, ?i) :- m({e1}, ?i, ?j), f({e2}, ?j)"),
+        ),
     ]
 }
 
 /// `e₁ / e₂`.
 fn choice(e: &str, e1: &str, e2: &str) -> Vec<PositiveRule> {
     vec![
-        rule(&format!("m1-{e}"), &format!("m({e}, ?i, ?j) :- m({e1}, ?i, ?j)")),
-        rule(&format!("m2-{e}"), &format!("m({e}, ?i, ?j) :- f({e1}, ?i), m({e2}, ?i, ?j)")),
-        rule(&format!("f-{e}"), &format!("f({e}, ?i) :- f({e1}, ?i), f({e2}, ?i)")),
+        rule(
+            &format!("m1-{e}"),
+            &format!("m({e}, ?i, ?j) :- m({e1}, ?i, ?j)"),
+        ),
+        rule(
+            &format!("m2-{e}"),
+            &format!("m({e}, ?i, ?j) :- f({e1}, ?i), m({e2}, ?i, ?j)"),
+        ),
+        rule(
+            &format!("f-{e}"),
+            &format!("f({e}, ?i) :- f({e1}, ?i), f({e2}, ?i)"),
+        ),
     ]
 }
 
@@ -96,7 +122,10 @@ fn has(run: &Run, s: &str) -> bool {
 fn undefined(run: &Run, e: &str, i: u64) -> bool {
     let e = sym(e);
     !run.model.values().any(|f| {
-        (f.pred.as_str() == "m" || f.pred.as_str() == "f") && f.args.len() >= 2 && f.args[0] == e && f.args[1] == nat(i)
+        (f.pred.as_str() == "m" || f.pred.as_str() == "f")
+            && f.args.len() >= 2
+            && f.args[0] == e
+            && f.args[1] == nat(i)
     })
 }
 
@@ -124,10 +153,18 @@ fn seams_example_s_choice_a_l_on_a_parses_and_l_is_undefined() {
 #[test]
 fn right_recursion_s_a_s_or_a_on_aaa() {
     // S <- 'a' S / 'a'   on "aaa"
-    let p = grammar(vec![terminal("ta", "a"), seq("aS", "ta", "S"), choice("Sbody", "aS", "ta"), nonterminal("S", "Sbody")]);
+    let p = grammar(vec![
+        terminal("ta", "a"),
+        seq("aS", "ta", "S"),
+        choice("Sbody", "aS", "ta"),
+        nonterminal("S", "Sbody"),
+    ]);
     let run = bounded(&p, &edb("aaa", &["a"]), 1 << 16);
     assert!(has(&run, "m(S, 0, 3)"));
-    assert!(!has(&run, "m(S, 0, 1)"), "ordered choice: the first alternative wins");
+    assert!(
+        !has(&run, "m(S, 0, 1)"),
+        "ordered choice: the first alternative wins"
+    );
     assert!(has(&run, "f(S, 3)"));
     assert_eq!(run.findings, vec![]);
 }
@@ -135,7 +172,12 @@ fn right_recursion_s_a_s_or_a_on_aaa() {
 #[test]
 fn left_recursion_a_a_a_or_a_on_aa_is_undefined_not_a_hang() {
     // A <- A 'a' / 'a'   on "aa"
-    let p = grammar(vec![terminal("ta", "a"), seq("Aa", "A", "ta"), choice("Abody", "Aa", "ta"), nonterminal("A", "Abody")]);
+    let p = grammar(vec![
+        terminal("ta", "a"),
+        seq("Aa", "A", "ta"),
+        choice("Abody", "Aa", "ta"),
+        nonterminal("A", "Abody"),
+    ]);
     let run = bounded(&p, &edb("aa", &["a"]), 1 << 16);
     assert!(matches!(run.stop, Bounded::Fixed(_)));
     assert!(undefined(&run, "A", 0));
@@ -149,7 +191,10 @@ fn non_functional_rules() -> Vec<PositiveRule> {
     vec![
         rule("one", "m(x, ?i, ?j) :- lit(a, ?i, ?j)"),
         rule("two", "m(x, ?i, ?k) :- lit(a, ?i, ?j), lit(a, ?j, ?k)"),
-        rule("three", "m(x, ?i, ?l) :- lit(a, ?i, ?j), lit(a, ?j, ?k), lit(a, ?k, ?l)"),
+        rule(
+            "three",
+            "m(x, ?i, ?l) :- lit(a, ?i, ?j), lit(a, ?j, ?k), lit(a, ?k, ?l)",
+        ),
     ]
 }
 
@@ -178,7 +223,14 @@ fn non_functional_clauses_are_reported_never_a_panic() {
         ]
     );
     // Not first-wins: every value stays in M.
-    for s in ["m(x, 0, 1)", "m(x, 0, 2)", "m(x, 0, 3)", "m(x, 1, 2)", "m(x, 1, 3)", "m(x, 2, 3)"] {
+    for s in [
+        "m(x, 0, 1)",
+        "m(x, 0, 2)",
+        "m(x, 0, 3)",
+        "m(x, 1, 2)",
+        "m(x, 1, 3)",
+        "m(x, 2, 3)",
+    ] {
         assert!(has(&run, s), "{s} missing: the finding must not drop atoms");
     }
 }
@@ -189,8 +241,12 @@ fn findings_do_not_depend_on_order() {
     let base = bounded(&p, &f, 1 << 16);
     let mut rng = Lcg(0x666f_7264);
     for _ in 0..32 {
-        let p2 = PositiveProgram::new(shuffled(p.rules(), &mut rng), p.functional().to_vec()).unwrap();
-        let f2 = Facts { altitude: f.altitude.clone(), atoms: shuffled(&f.atoms, &mut rng) };
+        let p2 =
+            PositiveProgram::new(shuffled(p.rules(), &mut rng), p.functional().to_vec()).unwrap();
+        let f2 = Facts {
+            altitude: f.altitude.clone(),
+            atoms: shuffled(&f.atoms, &mut rng),
+        };
         assert_eq!(bounded(&p2, &f2, 1 << 16).findings, base.findings);
     }
 }
@@ -204,7 +260,12 @@ fn a_declaration_never_changes_m_or_the_ticks() {
     assert_eq!(ticks(&with), ticks(&without));
     assert_eq!(without.findings, vec![]);
 
-    let g = grammar(vec![terminal("ta", "a"), seq("aS", "ta", "S"), choice("Sbody", "aS", "ta"), nonterminal("S", "Sbody")]);
+    let g = grammar(vec![
+        terminal("ta", "a"),
+        seq("aS", "ta", "S"),
+        choice("Sbody", "aS", "ta"),
+        nonterminal("S", "Sbody"),
+    ]);
     let input = edb("aaaa", &["a"]);
     let with = bounded(&g, &input, 1 << 16);
     let without = bounded(&without_decls(&g), &input, 1 << 16);
@@ -216,13 +277,37 @@ fn a_declaration_naming_missing_positions_is_dark() {
     // §4.2: the first offending position in declaration order, or the
     // value position when it sits inside the key. Was `Functional { pred }`.
     for (bad, position) in [
-        (Functional { pred: pred("m"), key: vec![pos(1), pos(2)], value: pos(4) }, 4),
-        (Functional { pred: pred("m"), key: vec![pos(5), pos(2)], value: pos(4) }, 5),
-        (Functional { pred: pred("m"), key: vec![pos(1), pos(3)], value: pos(3) }, 3),
+        (
+            Functional {
+                pred: pred("m"),
+                key: vec![pos(1), pos(2)],
+                value: pos(4),
+            },
+            4,
+        ),
+        (
+            Functional {
+                pred: pred("m"),
+                key: vec![pos(5), pos(2)],
+                value: pos(4),
+            },
+            5,
+        ),
+        (
+            Functional {
+                pred: pred("m"),
+                key: vec![pos(1), pos(3)],
+                value: pos(3),
+            },
+            3,
+        ),
     ] {
         assert_eq!(
             PositiveProgram::new(non_functional_rules(), vec![bad]),
-            Err(Dark::Functional { pred: pred("m"), position: pos(position) })
+            Err(Dark::Functional {
+                pred: pred("m"),
+                position: pos(position)
+            })
         );
     }
 }
@@ -244,10 +329,21 @@ fn a_violation_record_needs_least_below_other() {
 
 #[test]
 fn a_declaration_on_a_fact_only_predicate_is_checked_against_the_facts() {
-    let p = PositiveProgram::new(vec![], vec![Functional { pred: pred("m"), key: vec![pos(1)], value: pos(4) }]).unwrap();
+    let p = PositiveProgram::new(
+        vec![],
+        vec![Functional {
+            pred: pred("m"),
+            key: vec![pos(1)],
+            value: pos(4),
+        }],
+    )
+    .unwrap();
     assert_eq!(
         Instance::new(&p, facts(&["m(x, 0, 1)"])).err(),
-        Some(Dark::Functional { pred: pred("m"), position: pos(4) })
+        Some(Dark::Functional {
+            pred: pred("m"),
+            position: pos(4)
+        })
     );
 }
 

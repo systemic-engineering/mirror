@@ -16,8 +16,8 @@
 //! no record, exit 2.
 
 use engine::{
-    Atom, Const, Dark, Fact, Facts, Functional, Instance, Literal, NormalProgram, NormalRule, Outcome, Position,
-    Predicate, RuleId, Status, Sym, Term, Var,
+    Atom, Const, Dark, Fact, Facts, Functional, Instance, Literal, NormalProgram, NormalRule,
+    Outcome, Position, Predicate, RuleId, Status, Sym, Term, Var,
 };
 use std::collections::{BTreeMap, BTreeSet};
 use std::process::ExitCode;
@@ -143,7 +143,10 @@ fn evaluate(bytes: &[u8]) -> Record {
         Err(d) => return Record::Dark(engine_dark(&d, &read)),
     };
     let altitude = engine::Altitude::new(ALTITUDE).expect("a constant altitude");
-    let facts = Facts { altitude, atoms: read.facts.clone() };
+    let facts = Facts {
+        altitude,
+        atoms: read.facts.clone(),
+    };
     let instance = match Instance::new(&program, facts) {
         Ok(i) => i,
         Err(d) => return Record::Dark(engine_dark(&d, &read)),
@@ -152,15 +155,26 @@ fn evaluate(bytes: &[u8]) -> Record {
 
     // `true` and `undefined` list every intensional atom (a rule head's
     // predicate); `false` lists queried atoms only (oracles.md).
-    let intensional: BTreeSet<&str> = read.rules.iter().map(|(r, _)| r.head.pred.as_str()).collect();
+    let intensional: BTreeSet<&str> = read
+        .rules
+        .iter()
+        .map(|(r, _)| r.head.pred.as_str())
+        .collect();
     let listed = |set: &BTreeMap<engine::Addr, Fact>| -> Vec<String> {
-        let mut v: Vec<String> =
-            set.values().filter(|f| intensional.contains(f.pred.as_str())).map(render_fact).collect();
+        let mut v: Vec<String> = set
+            .values()
+            .filter(|f| intensional.contains(f.pred.as_str()))
+            .map(render_fact)
+            .collect();
         v.sort();
         v
     };
-    let mut false_lines: Vec<String> =
-        read.queries.iter().filter(|(q, _)| w.status(q) == Status::False).map(|(q, _)| render_fact(q)).collect();
+    let mut false_lines: Vec<String> = read
+        .queries
+        .iter()
+        .filter(|(q, _)| w.status(q) == Status::False)
+        .map(|(q, _)| render_fact(q))
+        .collect();
     false_lines.sort();
     false_lines.dedup();
     let findings = w
@@ -190,20 +204,44 @@ fn evaluate(bytes: &[u8]) -> Record {
 fn engine_dark(d: &Dark, read: &Read) -> String {
     match d {
         Dark::Unsafe { rule, var } => {
-            let at = read.rules.iter().find(|(r, _)| &r.id == rule).map(|(_, at)| *at);
-            let what =
-                format!("unsafe: ?{} in rule {} is not bound by a positive literal", var.as_str(), rule.as_str());
+            let at = read
+                .rules
+                .iter()
+                .find(|(r, _)| &r.id == rule)
+                .map(|(_, at)| *at);
+            let what = format!(
+                "unsafe: ?{} in rule {} is not bound by a positive literal",
+                var.as_str(),
+                rule.as_str()
+            );
             match at {
                 Some(at) => format!("{at} {what}"),
                 None => what,
             }
         }
-        Dark::Arity { pred, expected, found } => {
-            format!("arity: {} expected {} found {}", pred.as_str(), expected.0, found.0)
+        Dark::Arity {
+            pred,
+            expected,
+            found,
+        } => {
+            format!(
+                "arity: {} expected {} found {}",
+                pred.as_str(),
+                expected.0,
+                found.0
+            )
         }
         Dark::Functional { pred, position } => {
-            let at = read.decls.iter().find(|(f, _)| &f.pred == pred).map(|(_, at)| *at);
-            let what = format!("functional: {} has no position {} for this declaration", pred.as_str(), position.get());
+            let at = read
+                .decls
+                .iter()
+                .find(|(f, _)| &f.pred == pred)
+                .map(|(_, at)| *at);
+            let what = format!(
+                "functional: {} has no position {} for this declaration",
+                pred.as_str(),
+                position.get()
+            );
             match at {
                 Some(at) => format!("{at} {what}"),
                 None => what,
@@ -266,7 +304,12 @@ struct Read {
 }
 
 fn read(bytes: &[u8]) -> Result<Read, ReadError> {
-    let mut r = Read { rules: vec![], facts: vec![], queries: vec![], decls: vec![] };
+    let mut r = Read {
+        rules: vec![],
+        facts: vec![],
+        queries: vec![],
+        decls: vec![],
+    };
     let mut ids: BTreeMap<String, At> = BTreeMap::new();
     // Each predicate's arity, from the rules and facts, for the query check.
     let mut lines: Vec<&[u8]> = bytes.split(|&b| b == b'\n').collect();
@@ -274,7 +317,11 @@ fn read(bytes: &[u8]) -> Result<Read, ReadError> {
         lines.pop(); // the final LF
     }
     for (n, line) in lines.iter().enumerate() {
-        let mut c = Cur { s: line, i: 0, line: n + 1 };
+        let mut c = Cur {
+            s: line,
+            i: 0,
+            line: n + 1,
+        };
         if let Some(i) = line.iter().position(|&b| !(0x20..=0x7e).contains(&b)) {
             c.i = i;
             return Err(c.err(format!("byte 0x{:02x} is outside ASCII 0x20-0x7E", line[i])));
@@ -288,7 +335,10 @@ fn read(bytes: &[u8]) -> Result<Read, ReadError> {
         if line[0] == b' ' {
             return Err(c.err("a record starts at column 1".into()));
         }
-        let key_end = line.iter().position(|b| !b.is_ascii_lowercase()).unwrap_or(line.len());
+        let key_end = line
+            .iter()
+            .position(|b| !b.is_ascii_lowercase())
+            .unwrap_or(line.len());
         let key = &line[..key_end];
         match key {
             b"rule" | b"fact" | b"query" | b"functional" => {}
@@ -301,7 +351,10 @@ fn read(bytes: &[u8]) -> Result<Read, ReadError> {
                 let id_at = c.at();
                 let id = c.rule_id()?;
                 if ids.contains_key(&id) {
-                    return Err(ReadError { at: id_at, why: format!("duplicate rule id `{id}`") });
+                    return Err(ReadError {
+                        at: id_at,
+                        why: format!("duplicate rule id `{id}`"),
+                    });
                 }
                 ids.insert(id.clone(), id_at);
                 c.sp()?;
@@ -316,7 +369,10 @@ fn read(bytes: &[u8]) -> Result<Read, ReadError> {
                     body.push(c.literal()?);
                 }
                 c.end()?;
-                let id = RuleId::new(&id).ok_or_else(|| ReadError { at: id_at, why: "rule id".into() })?;
+                let id = RuleId::new(&id).ok_or_else(|| ReadError {
+                    at: id_at,
+                    why: "rule id".into(),
+                })?;
                 r.rules.push((NormalRule { id, head, body }, id_at));
             }
             b"fact" => {
@@ -370,7 +426,11 @@ fn read(bytes: &[u8]) -> Result<Read, ReadError> {
             if n != q.args.len() {
                 return Err(ReadError {
                     at: *at,
-                    why: format!("query arity {} but `{}` has arity {n}", q.args.len(), q.pred.as_str()),
+                    why: format!(
+                        "query arity {} but `{}` has arity {n}",
+                        q.args.len(),
+                        q.pred.as_str()
+                    ),
                 });
             }
         }
@@ -408,7 +468,10 @@ struct Cur<'a> {
 
 impl Cur<'_> {
     fn at(&self) -> At {
-        At { line: self.line, col: self.i + 1 }
+        At {
+            line: self.line,
+            col: self.i + 1,
+        }
     }
 
     fn err(&self, why: String) -> ReadError {
@@ -473,10 +536,18 @@ impl Cur<'_> {
             Some(b) if b.is_ascii_digit() => {
                 return Err(self.err("numeric constants are not in the grammar".into()));
             }
-            _ => return Err(self.err(format!("expected a name [a-z][a-z0-9_]*, found {}", self.found()))),
+            _ => {
+                return Err(self.err(format!(
+                    "expected a name [a-z][a-z0-9_]*, found {}",
+                    self.found()
+                )))
+            }
         }
         let start = self.i;
-        while self.peek().is_some_and(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'_') {
+        while self
+            .peek()
+            .is_some_and(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'_')
+        {
             self.i += 1;
         }
         Ok(String::from_utf8_lossy(&self.s[start..self.i]).into_owned())
@@ -487,7 +558,10 @@ impl Cur<'_> {
         let at = self.at();
         let n = self.name()?;
         if n == "not" || n == "requires" {
-            return Err(ReadError { at, why: format!("`{n}` is reserved, not a name") });
+            return Err(ReadError {
+                at,
+                why: format!("`{n}` is reserved, not a name"),
+            });
         }
         Ok(n)
     }
@@ -495,16 +569,25 @@ impl Cur<'_> {
     fn pred(&mut self) -> Result<Predicate, ReadError> {
         let at = self.at();
         let n = self.unreserved()?;
-        Predicate::new(&n).ok_or(ReadError { at, why: "predicate".into() })
+        Predicate::new(&n).ok_or(ReadError {
+            at,
+            why: "predicate".into(),
+        })
     }
 
     /// `rule-id = lower , { lower | digit | "_" | "-" }`.
     fn rule_id(&mut self) -> Result<String, ReadError> {
         if !self.peek().is_some_and(|b| b.is_ascii_lowercase()) {
-            return Err(self.err(format!("expected a rule id [a-z][a-z0-9_-]*, found {}", self.found())));
+            return Err(self.err(format!(
+                "expected a rule id [a-z][a-z0-9_-]*, found {}",
+                self.found()
+            )));
         }
         let start = self.i;
-        while self.peek().is_some_and(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'_' || b == b'-') {
+        while self
+            .peek()
+            .is_some_and(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'_' || b == b'-')
+        {
             self.i += 1;
         }
         Ok(String::from_utf8_lossy(&self.s[start..self.i]).into_owned())
@@ -519,11 +602,19 @@ impl Cur<'_> {
             let at = self.at();
             self.i += 1;
             let n = self.name()?;
-            return Var::new(&n).map(Term::Var).ok_or(ReadError { at, why: "variable".into() });
+            return Var::new(&n).map(Term::Var).ok_or(ReadError {
+                at,
+                why: "variable".into(),
+            });
         }
         let at = self.at();
         let n = self.unreserved()?;
-        Sym::new(&n).map(|s| Term::Const(Const::Sym(s))).ok_or(ReadError { at, why: "constant".into() })
+        Sym::new(&n)
+            .map(|s| Term::Const(Const::Sym(s)))
+            .ok_or(ReadError {
+                at,
+                why: "constant".into(),
+            })
     }
 
     /// `atom = pred | pred , "(" , term , { "," , sp0 , term } , ")"`.
@@ -551,7 +642,9 @@ impl Cur<'_> {
                         self.i += 1;
                         break;
                     }
-                    _ => return Err(self.err(format!("expected `,` or `)`, found {}", self.found()))),
+                    _ => {
+                        return Err(self.err(format!("expected `,` or `)`, found {}", self.found())))
+                    }
                 }
             }
         }
@@ -567,12 +660,21 @@ impl Cur<'_> {
                 self.sp0();
                 return Ok(Literal::Not(self.atom(Mode::Open)?));
             }
-            return Err(ReadError { at, why: "`not` is reserved: write `not <atom>`".into() });
+            return Err(ReadError {
+                at,
+                why: "`not` is reserved: write `not <atom>`".into(),
+            });
         }
         if n == "requires" {
-            return Err(ReadError { at, why: "`requires` is reserved, not a name".into() });
+            return Err(ReadError {
+                at,
+                why: "`requires` is reserved, not a name".into(),
+            });
         }
-        let pred = Predicate::new(&n).ok_or(ReadError { at, why: "predicate".into() })?;
+        let pred = Predicate::new(&n).ok_or(ReadError {
+            at,
+            why: "predicate".into(),
+        })?;
         Ok(Literal::Pos(self.atom_args(pred, Mode::Open)?))
     }
 
@@ -580,7 +682,10 @@ impl Cur<'_> {
     fn position(&mut self) -> Result<Position, ReadError> {
         let at = self.at();
         if !self.peek().is_some_and(|b| (b'1'..=b'9').contains(&b)) {
-            return Err(self.err(format!("expected a position [1-9][0-9]*, found {}", self.found())));
+            return Err(self.err(format!(
+                "expected a position [1-9][0-9]*, found {}",
+                self.found()
+            )));
         }
         let start = self.i;
         while self.peek().is_some_and(|b| b.is_ascii_digit()) {
@@ -590,6 +695,9 @@ impl Cur<'_> {
             .ok()
             .and_then(|d| d.parse::<u32>().ok())
             .and_then(Position::new)
-            .ok_or(ReadError { at, why: "position out of range".into() })
+            .ok_or(ReadError {
+                at,
+                why: "position out of range".into(),
+            })
     }
 }

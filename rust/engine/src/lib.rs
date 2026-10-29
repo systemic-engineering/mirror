@@ -240,7 +240,11 @@ pub enum Dark {
     /// A predicate at two arities. Inside a program: `expected` is the
     /// least, `found` the next. Facts against a program: `expected` is the
     /// program's arity, `found` the fact's.
-    Arity { pred: Predicate, expected: Arity, found: Arity },
+    Arity {
+        pred: Predicate,
+        expected: Arity,
+        found: Arity,
+    },
     /// A declaration whose `position` lies outside `1..=arity`, or whose
     /// value position sits inside its key (then `position` is the value).
     Functional { pred: Predicate, position: Position },
@@ -276,7 +280,12 @@ struct View<'a> {
 
 impl PositiveRule {
     fn view(&self) -> View<'_> {
-        View { id: &self.id, head: &self.head, pos: self.body.iter().collect(), neg: vec![] }
+        View {
+            id: &self.id,
+            head: &self.head,
+            pos: self.body.iter().collect(),
+            neg: vec![],
+        }
     }
 }
 
@@ -290,7 +299,12 @@ impl NormalRule {
                 Literal::Not(a) => neg.push(a),
             }
         }
-        View { id: &self.id, head: &self.head, pos, neg }
+        View {
+            id: &self.id,
+            head: &self.head,
+            pos,
+            neg,
+        }
     }
 }
 
@@ -298,7 +312,11 @@ fn least_two(pred: &str, set: &BTreeSet<u32>) -> Result<u32, Dark> {
     let mut it = set.iter();
     let first = *it.next().expect("non-empty");
     match it.next() {
-        Some(&found) => Err(Dark::Arity { pred: Predicate(pred.to_string()), expected: Arity(first), found: Arity(found) }),
+        Some(&found) => Err(Dark::Arity {
+            pred: Predicate(pred.to_string()),
+            expected: Arity(first),
+            found: Arity(found),
+        }),
         None => Ok(first),
     }
 }
@@ -319,14 +337,22 @@ fn check_decls(functional: &[Functional], arities: &BTreeMap<String, u32>) -> Re
     let mut decls: Vec<&Functional> = functional.iter().collect();
     decls.sort();
     for d in decls {
-        let Some(&arity) = arities.get(d.pred.as_str()) else { continue };
+        let Some(&arity) = arities.get(d.pred.as_str()) else {
+            continue;
+        };
         for &p in d.key.iter().chain(std::iter::once(&d.value)) {
             if p.get() > arity {
-                return Err(Dark::Functional { pred: d.pred.clone(), position: p });
+                return Err(Dark::Functional {
+                    pred: d.pred.clone(),
+                    position: p,
+                });
             }
         }
         if d.key.contains(&d.value) {
-            return Err(Dark::Functional { pred: d.pred.clone(), position: d.value });
+            return Err(Dark::Functional {
+                pred: d.pred.clone(),
+                position: d.value,
+            });
         }
     }
     Ok(())
@@ -334,11 +360,19 @@ fn check_decls(functional: &[Functional], arities: &BTreeMap<String, u32>) -> Re
 
 /// Arity, then range restriction, then declaration positions. Sorted walks
 /// make the verdict independent of rule order.
-fn check_program(views: &[View<'_>], functional: &[Functional]) -> Result<BTreeMap<String, u32>, Dark> {
+fn check_program(
+    views: &[View<'_>],
+    functional: &[Functional],
+) -> Result<BTreeMap<String, u32>, Dark> {
     let mut seen: BTreeMap<&str, BTreeSet<u32>> = BTreeMap::new();
     for v in views {
-        for a in std::iter::once(v.head).chain(v.pos.iter().copied()).chain(v.neg.iter().copied()) {
-            seen.entry(a.pred.as_str()).or_default().insert(a.args.len() as u32);
+        for a in std::iter::once(v.head)
+            .chain(v.pos.iter().copied())
+            .chain(v.neg.iter().copied())
+        {
+            seen.entry(a.pred.as_str())
+                .or_default()
+                .insert(a.args.len() as u32);
         }
     }
     let mut arities = BTreeMap::new();
@@ -354,7 +388,10 @@ fn check_program(views: &[View<'_>], functional: &[Functional]) -> Result<BTreeM
             needed.extend(atom_vars(a));
         }
         if let Some(var) = needed.difference(&bound).next() {
-            return Err(Dark::Unsafe { rule: v.id.clone(), var: (*var).clone() });
+            return Err(Dark::Unsafe {
+                rule: v.id.clone(),
+                var: (*var).clone(),
+            });
         }
     }
     check_decls(functional, &arities)?;
@@ -362,10 +399,17 @@ fn check_program(views: &[View<'_>], functional: &[Functional]) -> Result<BTreeM
 }
 
 impl PositiveProgram {
-    pub fn new(rules: Vec<PositiveRule>, functional: Vec<Functional>) -> Result<PositiveProgram, Dark> {
+    pub fn new(
+        rules: Vec<PositiveRule>,
+        functional: Vec<Functional>,
+    ) -> Result<PositiveProgram, Dark> {
         let views: Vec<View<'_>> = rules.iter().map(PositiveRule::view).collect();
         let arities = check_program(&views, &functional)?;
-        Ok(PositiveProgram { rules, functional, arities })
+        Ok(PositiveProgram {
+            rules,
+            functional,
+            arities,
+        })
     }
 
     pub fn rules(&self) -> &[PositiveRule] {
@@ -381,7 +425,11 @@ impl NormalProgram {
     pub fn new(rules: Vec<NormalRule>, functional: Vec<Functional>) -> Result<NormalProgram, Dark> {
         let views: Vec<View<'_>> = rules.iter().map(NormalRule::view).collect();
         let arities = check_program(&views, &functional)?;
-        Ok(NormalProgram { rules, functional, arities })
+        Ok(NormalProgram {
+            rules,
+            functional,
+            arities,
+        })
     }
 
     pub fn rules(&self) -> &[NormalRule] {
@@ -411,7 +459,11 @@ pub struct Instance<'p, P> {
     sufficient: Budget,
 }
 
-fn check_facts(arities: &BTreeMap<String, u32>, functional: &[Functional], facts: &Facts) -> Result<(), Dark> {
+fn check_facts(
+    arities: &BTreeMap<String, u32>,
+    functional: &[Functional],
+    facts: &Facts,
+) -> Result<(), Dark> {
     let mut extra: BTreeMap<&str, BTreeSet<u32>> = BTreeMap::new();
     let mut atoms: Vec<&Fact> = facts.atoms.iter().collect();
     atoms.sort();
@@ -419,7 +471,11 @@ fn check_facts(arities: &BTreeMap<String, u32>, functional: &[Functional], facts
         let n = f.args.len() as u32;
         match arities.get(f.pred.as_str()) {
             Some(&expected) if expected != n => {
-                return Err(Dark::Arity { pred: f.pred.clone(), expected: Arity(expected), found: Arity(n) });
+                return Err(Dark::Arity {
+                    pred: f.pred.clone(),
+                    expected: Arity(expected),
+                    found: Arity(n),
+                });
             }
             Some(_) => {}
             None => {
@@ -452,7 +508,9 @@ fn sufficient(rule_atoms: &[&Atom], facts: &Facts) -> Budget {
         }
     }
     let n = consts.len() as u64;
-    let b = arity.values().fold(0u64, |acc, &k| acc.saturating_add(n.saturating_pow(k as u32)));
+    let b = arity.values().fold(0u64, |acc, &k| {
+        acc.saturating_add(n.saturating_pow(k as u32))
+    });
     let f = facts.atoms.iter().collect::<BTreeSet<_>>().len() as u64;
     Budget::new(b.saturating_sub(f).saturating_add(1)).expect("≥ 1")
 }
@@ -477,7 +535,10 @@ impl sealed::Sealed for PositiveProgram {
         &self.functional
     }
     fn rule_atoms(&self) -> Vec<&Atom> {
-        self.rules.iter().flat_map(|r| std::iter::once(&r.head).chain(&r.body)).collect()
+        self.rules
+            .iter()
+            .flat_map(|r| std::iter::once(&r.head).chain(&r.body))
+            .collect()
     }
 }
 
@@ -509,7 +570,11 @@ impl<'p, P: Program> Instance<'p, P> {
     pub fn new(program: &'p P, facts: Facts) -> Result<Self, Dark> {
         check_facts(program.arities(), program.decls(), &facts)?;
         let sufficient = sufficient(&program.rule_atoms(), &facts);
-        Ok(Instance { program, facts, sufficient })
+        Ok(Instance {
+            program,
+            facts,
+            sufficient,
+        })
     }
     /// `|B| − |F| + 1`: a budget under which a positive run can't stop at
     /// its budget.
@@ -558,7 +623,12 @@ pub struct FunctionalViolation {
 impl FunctionalViolation {
     /// `None` unless `least < other`.
     pub fn new(pred: Predicate, key: Vec<Const>, least: Const, other: Const) -> Option<Self> {
-        (least < other).then_some(FunctionalViolation { pred, key, least, other })
+        (least < other).then_some(FunctionalViolation {
+            pred,
+            key,
+            least,
+            other,
+        })
     }
 
     pub fn pred(&self) -> &Predicate {
@@ -696,7 +766,10 @@ pub fn well_founded(instance: &Instance<'_, NormalProgram>) -> WellFounded {
         for (p, tuples) in &over {
             for args in tuples {
                 if !rel_contains(&next_over, p, args) {
-                    let fact = Fact { pred: Predicate(p.clone()), args: args.clone() };
+                    let fact = Fact {
+                        pred: Predicate(p.clone()),
+                        args: args.clone(),
+                    };
                     let a = addr(tau, &fact);
                     let status = Fact {
                         pred: Predicate("status".into()),
@@ -707,7 +780,12 @@ pub fn well_founded(instance: &Instance<'_, NormalProgram>) -> WellFounded {
                         ],
                     };
                     let status_addr = addr(&status_tau, &status);
-                    retractions.push(Retraction { addr: a, fact, round: Round(round), status_addr });
+                    retractions.push(Retraction {
+                        addr: a,
+                        fact,
+                        round: Round(round),
+                        status_addr,
+                    });
                 }
             }
         }
@@ -722,7 +800,10 @@ pub fn well_founded(instance: &Instance<'_, NormalProgram>) -> WellFounded {
                 if minus.is_some_and(|m| rel_contains(m, p, args)) {
                     continue;
                 }
-                let fact = Fact { pred: Predicate(p.clone()), args: args.clone() };
+                let fact = Fact {
+                    pred: Predicate(p.clone()),
+                    args: args.clone(),
+                };
                 out.insert(addr(tau, &fact), fact);
             }
         }
@@ -730,9 +811,20 @@ pub fn well_founded(instance: &Instance<'_, NormalProgram>) -> WellFounded {
     };
     let true_atoms = addressed(&under, None);
     let undefined = addressed(&over, Some(&under));
-    let outcome = if undefined.is_empty() { Outcome::Clear } else { Outcome::Opaque };
+    let outcome = if undefined.is_empty() {
+        Outcome::Clear
+    } else {
+        Outcome::Opaque
+    };
     let findings = violations(&keys, &under);
-    WellFounded { altitude: facts.altitude.clone(), true_atoms, undefined, retractions, outcome, findings }
+    WellFounded {
+        altitude: facts.altitude.clone(),
+        true_atoms,
+        undefined,
+        retractions,
+        outcome,
+        findings,
+    }
 }
 
 // ── Addressing (§5.0 bytes; §4.1 atom content) ───────────────────────────
@@ -858,12 +950,20 @@ fn compile(rule: &View<'_>) -> Compiled {
                 },
             })
             .collect();
-        Pattern { pred: a.pred.as_str().to_string(), args }
+        Pattern {
+            pred: a.pred.as_str().to_string(),
+            args,
+        }
     }
     let pos = rule.pos.iter().map(|a| slots(a, &mut names)).collect();
     let neg = rule.neg.iter().map(|a| slots(a, &mut names)).collect();
     let head = slots(rule.head, &mut names);
-    Compiled { head, pos, neg, vars: names.len() }
+    Compiled {
+        head,
+        pos,
+        neg,
+        vars: names.len(),
+    }
 }
 
 // ── Relations ────────────────────────────────────────────────────────────
@@ -912,7 +1012,9 @@ fn instantiate(pat: &Pattern, env: &[Option<Const>]) -> Vec<Const> {
         .iter()
         .map(|s| match s {
             Slot::Const(c) => c.clone(),
-            Slot::Var(i) => env[*i].clone().expect("safe rule: head variable bound by the body"),
+            Slot::Var(i) => env[*i]
+                .clone()
+                .expect("safe rule: head variable bound by the body"),
         })
         .collect()
 }
@@ -965,7 +1067,10 @@ impl Index {
                 chosen.push(k.clone());
             }
         }
-        Index { keys: chosen, by_key: BTreeMap::new() }
+        Index {
+            keys: chosen,
+            by_key: BTreeMap::new(),
+        }
     }
 
     fn key(&self, pred: &str) -> Option<&Key> {
@@ -975,13 +1080,22 @@ impl Index {
     fn insert(&mut self, pred: &str, tuple: &[Const]) {
         if let Some(k) = self.key(pred) {
             let kv = key_of(k, tuple);
-            self.by_key.entry(pred.to_string()).or_default().entry(kv).or_default().insert(tuple.to_vec());
+            self.by_key
+                .entry(pred.to_string())
+                .or_default()
+                .entry(kv)
+                .or_default()
+                .insert(tuple.to_vec());
         }
     }
 
     /// The tuples of `pat.pred` whose key equals `pat`'s key under `env`,
     /// if `pat.pred` is indexed and the key is fully bound.
-    fn lookup(&self, pat: &Pattern, env: &[Option<Const>]) -> Option<Option<&BTreeSet<Vec<Const>>>> {
+    fn lookup(
+        &self,
+        pat: &Pattern,
+        env: &[Option<Const>],
+    ) -> Option<Option<&BTreeSet<Vec<Const>>>> {
         let k = self.key(&pat.pred)?;
         let mut kv = Vec::with_capacity(k.key.len());
         for &p in &k.key {
@@ -999,10 +1113,15 @@ impl Index {
 fn violations(keys: &[Key], model: &Rel) -> Vec<FunctionalViolation> {
     let mut out = BTreeSet::new();
     for k in keys {
-        let Some(tuples) = model.get(&k.pred) else { continue };
+        let Some(tuples) = model.get(&k.pred) else {
+            continue;
+        };
         let mut values: BTreeMap<Vec<Const>, BTreeSet<Const>> = BTreeMap::new();
         for t in tuples {
-            values.entry(key_of(k, t)).or_default().insert(t[k.value].clone());
+            values
+                .entry(key_of(k, t))
+                .or_default()
+                .insert(t[k.value].clone());
         }
         for (key, vs) in values {
             let mut it = vs.into_iter();
@@ -1106,14 +1225,28 @@ fn least_model(
             if r.pos.is_empty() {
                 // A rule with no positive body fires once, in round 1.
                 if t == 1 {
-                    RoundJoin { rule: r, model: &model, index: &index, delta: &delta, delta_at: None, ctx }
-                        .join(0, &mut env, &mut next);
+                    RoundJoin {
+                        rule: r,
+                        model: &model,
+                        index: &index,
+                        delta: &delta,
+                        delta_at: None,
+                        ctx,
+                    }
+                    .join(0, &mut env, &mut next);
                 }
                 continue;
             }
             for i in 0..r.pos.len() {
-                RoundJoin { rule: r, model: &model, index: &index, delta: &delta, delta_at: Some(i), ctx }
-                    .join(0, &mut env, &mut next);
+                RoundJoin {
+                    rule: r,
+                    model: &model,
+                    index: &index,
+                    delta: &delta,
+                    delta_at: Some(i),
+                    ctx,
+                }
+                .join(0, &mut env, &mut next);
             }
         }
         if next.values().all(BTreeSet::is_empty) {
@@ -1124,7 +1257,13 @@ fn least_model(
             for args in tuples {
                 rel_insert(&mut model, p, args.clone());
                 index.insert(p, args);
-                tick_of.insert(Fact { pred: Predicate(p.clone()), args: args.clone() }, t);
+                tick_of.insert(
+                    Fact {
+                        pred: Predicate(p.clone()),
+                        args: args.clone(),
+                    },
+                    t,
+                );
             }
         }
         delta = next;
@@ -1132,12 +1271,18 @@ fn least_model(
 }
 
 /// Address `M` and lay out `D`.
-fn record(altitude: &Altitude, ticks: BTreeMap<Fact, u64>) -> (BTreeMap<Addr, Fact>, Addr, Vec<Deposit>) {
+fn record(
+    altitude: &Altitude,
+    ticks: BTreeMap<Fact, u64>,
+) -> (BTreeMap<Addr, Fact>, Addr, Vec<Deposit>) {
     let mut model = BTreeMap::new();
     let mut deposits = Vec::with_capacity(ticks.len());
     for (f, t) in ticks {
         let a = addr(altitude, &f);
-        deposits.push(Deposit { addr: a, tick: Tick(t) });
+        deposits.push(Deposit {
+            addr: a,
+            tick: Tick(t),
+        });
         model.insert(a, f);
     }
     deposits.sort_by_key(|d| (d.tick, d.addr));
@@ -1146,13 +1291,31 @@ fn record(altitude: &Altitude, ticks: BTreeMap<Fact, u64>) -> (BTreeMap<Addr, Fa
     (model, model_addr, deposits)
 }
 
-fn core(instance: &Instance<'_, PositiveProgram>, budget: Option<Budget>) -> (BTreeMap<Addr, Fact>, Addr, Vec<Deposit>, Bounded, Vec<FunctionalViolation>) {
+fn core(
+    instance: &Instance<'_, PositiveProgram>,
+    budget: Option<Budget>,
+) -> (
+    BTreeMap<Addr, Fact>,
+    Addr,
+    Vec<Deposit>,
+    Bounded,
+    Vec<FunctionalViolation>,
+) {
     let program = instance.program;
     let rules: Vec<Compiled> = program.rules.iter().map(|r| compile(&r.view())).collect();
-    let (ticks, stop, findings) = least_model(&rules, &keys(&program.functional), &instance.facts.atoms, budget, None);
+    let (ticks, stop, findings) = least_model(
+        &rules,
+        &keys(&program.functional),
+        &instance.facts.atoms,
+        budget,
+        None,
+    );
     // Prop. 5.4 / §4.1 A3: T ≤ |B| − |F| + 1. Unreachable by proof.
     if let Bounded::Fixed(Tick(t)) = stop {
-        debug_assert!(t <= instance.sufficient.get(), "Prop. 5.4: fixed at {t} > |B| − |F| + 1");
+        debug_assert!(
+            t <= instance.sufficient.get(),
+            "Prop. 5.4: fixed at {t} > |B| − |F| + 1"
+        );
     }
     let (model, model_addr, deposits) = record(&instance.facts.altitude, ticks);
     (model, model_addr, deposits, stop, findings)
@@ -1161,13 +1324,27 @@ fn core(instance: &Instance<'_, PositiveProgram>, budget: Option<Budget>) -> (BT
 /// `E(P, F) → (M, D, fixed at T)`: runs to the least fixed point. Total.
 pub fn run_to_fixpoint(instance: &Instance<'_, PositiveProgram>) -> Run<Fixed> {
     let (model, model_addr, deposits, stop, findings) = core(instance, None);
-    let Bounded::Fixed(t) = stop else { unreachable!("no budget was given") };
-    Run { model, model_addr, deposits, stop: Fixed(t), findings }
+    let Bounded::Fixed(t) = stop else {
+        unreachable!("no budget was given")
+    };
+    Run {
+        model,
+        model_addr,
+        deposits,
+        stop: Fixed(t),
+        findings,
+    }
 }
 
 /// `E(P, F, k_max) → (M, D, stop)`: stops at the fixed point or at round
 /// `k_max`, whichever comes first.
 pub fn run_bounded(instance: &Instance<'_, PositiveProgram>, budget: Budget) -> Run<Bounded> {
     let (model, model_addr, deposits, stop, findings) = core(instance, Some(budget));
-    Run { model, model_addr, deposits, stop, findings }
+    Run {
+        model,
+        model_addr,
+        deposits,
+        stop,
+        findings,
+    }
 }

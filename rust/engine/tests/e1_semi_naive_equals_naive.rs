@@ -11,7 +11,9 @@
 
 mod common;
 
-use common::{alt, facts, fixpoint, nat, pred, program, rule_id, sym, ticks, var, Lcg, TEST_ALTITUDE};
+use common::{
+    alt, facts, fixpoint, nat, pred, program, rule_id, sym, ticks, var, Lcg, TEST_ALTITUDE,
+};
 use std::collections::{BTreeMap, BTreeSet};
 
 // ── The independent naive evaluator ──────────────────────────────────────
@@ -135,11 +137,17 @@ fn to_term(t: &T) -> engine::Term {
 }
 
 fn to_atom((p, args): &(String, Vec<T>)) -> engine::Atom {
-    engine::Atom { pred: pred(p), args: args.iter().map(to_term).collect() }
+    engine::Atom {
+        pred: pred(p),
+        args: args.iter().map(to_term).collect(),
+    }
 }
 
 fn to_fact((p, args): &G) -> engine::Fact {
-    engine::Fact { pred: pred(p), args: args.iter().map(to_const).collect() }
+    engine::Fact {
+        pred: pred(p),
+        args: args.iter().map(to_const).collect(),
+    }
 }
 
 fn to_program(rules: &[NRule]) -> Result<engine::PositiveProgram, engine::Dark> {
@@ -159,14 +167,27 @@ fn to_program(rules: &[NRule]) -> Result<engine::PositiveProgram, engine::Dark> 
 
 /// Run both and compare `M` and the tick of every atom.
 fn agree(rules: &[NRule], f: &BTreeSet<G>, label: &str) {
-    let expected: BTreeMap<engine::Fact, u64> =
-        naive(rules, f).iter().map(|(a, t)| (to_fact(a), *t)).collect();
-    let store = engine::Facts { altitude: alt(TEST_ALTITUDE), atoms: f.iter().map(to_fact).collect() };
-    let program = to_program(rules).unwrap_or_else(|d| panic!("{label}: safe positive program went dark: {d:?}"));
+    let expected: BTreeMap<engine::Fact, u64> = naive(rules, f)
+        .iter()
+        .map(|(a, t)| (to_fact(a), *t))
+        .collect();
+    let store = engine::Facts {
+        altitude: alt(TEST_ALTITUDE),
+        atoms: f.iter().map(to_fact).collect(),
+    };
+    let program = to_program(rules)
+        .unwrap_or_else(|d| panic!("{label}: safe positive program went dark: {d:?}"));
     let run = fixpoint(&program, &store);
-    assert_eq!(run.deposits.len(), run.model.len(), "{label}: one deposit per atom of M");
+    assert_eq!(
+        run.deposits.len(),
+        run.model.len(),
+        "{label}: one deposit per atom of M"
+    );
     let got = ticks(&run);
-    assert_eq!(got, expected, "{label}: semi-naive ≠ naive\nrules: {rules:#?}\nfacts: {f:?}");
+    assert_eq!(
+        got, expected,
+        "{label}: semi-naive ≠ naive\nrules: {rules:#?}\nfacts: {f:?}"
+    );
 }
 
 // ── Fixtures ──────────────────────────────────────────────────────────────
@@ -206,8 +227,9 @@ fn e1_transitive_closure_over_pact_vector_01_graph() {
 
 #[test]
 fn e1_chain_of_length_10() {
-    let f: BTreeSet<G> =
-        (0..10).map(|i| ("edge".to_string(), vec![C::N(i), C::N(i + 1)])).collect();
+    let f: BTreeSet<G> = (0..10)
+        .map(|i| ("edge".to_string(), vec![C::N(i), C::N(i + 1)]))
+        .collect();
     agree(&tc_rules(), &f, "chain 10");
 }
 
@@ -221,10 +243,16 @@ fn e1_fixture_helpers_agree_with_naive_types() {
     ]);
     let run = fixpoint(&p, &facts(&["edge(a, b)", "edge(b, c)"]));
     let got: BTreeSet<_> = run.model.values().cloned().collect();
-    let want: BTreeSet<_> = ["edge(a, b)", "edge(b, c)", "path(a, b)", "path(b, c)", "path(a, c)"]
-        .iter()
-        .map(|s| common::fact(s))
-        .collect();
+    let want: BTreeSet<_> = [
+        "edge(a, b)",
+        "edge(b, c)",
+        "path(a, b)",
+        "path(b, c)",
+        "path(a, c)",
+    ]
+    .iter()
+    .map(|s| common::fact(s))
+    .collect();
     assert_eq!(got, want);
 }
 
@@ -247,7 +275,13 @@ impl Gen {
     fn program(&mut self) -> (Vec<NRule>, BTreeSet<G>) {
         let n_pred = 2 + self.rng.below(4); // 2..=5
         let arity: Vec<usize> = (0..n_pred)
-            .map(|_| if self.rng.chance(1, 10) { 0 } else { 1 + self.rng.below(2) as usize })
+            .map(|_| {
+                if self.rng.chance(1, 10) {
+                    0
+                } else {
+                    1 + self.rng.below(2) as usize
+                }
+            })
             .collect();
         let n_sym = 1 + self.rng.below(3);
         let n_nat = self.rng.below(2);
@@ -263,7 +297,11 @@ impl Gen {
         let mut rules = Vec::new();
         for _ in 0..1 + self.rng.below(5) {
             let h = self.rng.below(n_pred) as usize;
-            let body_len = if self.rng.chance(1, 12) { 0 } else { 1 + self.rng.below(3) as usize };
+            let body_len = if self.rng.chance(1, 12) {
+                0
+            } else {
+                1 + self.rng.below(3) as usize
+            };
             let mut body = Vec::new();
             let mut body_vars: Vec<&str> = Vec::new();
             for _ in 0..body_len {
@@ -292,7 +330,10 @@ impl Gen {
                     }
                 })
                 .collect();
-            rules.push(NRule { head: (format!("p{h}"), head_args), body });
+            rules.push(NRule {
+                head: (format!("p{h}"), head_args),
+                body,
+            });
         }
         (rules, f)
     }
@@ -331,7 +372,9 @@ fn repeated_variable(rules: &[NRule]) -> bool {
 
 #[test]
 fn e1_semi_naive_equals_naive_on_1000_random_programs() {
-    let mut gen = Gen { rng: Lcg(0x6d69_7272_6f72_2045) }; // "mirror E"
+    let mut gen = Gen {
+        rng: Lcg(0x6d69_7272_6f72_2045),
+    }; // "mirror E"
     let (mut rec, mut mutual, mut repeated, mut multi_tick) = (0, 0, 0, 0);
     for i in 0..1000 {
         let (rules, f) = gen.program();
@@ -344,6 +387,12 @@ fn e1_semi_naive_equals_naive_on_1000_random_programs() {
     // The sample must actually exercise what Prop. 5.4 is about.
     assert!(rec >= 100, "only {rec} recursive programs");
     assert!(mutual >= 20, "only {mutual} mutually recursive programs");
-    assert!(repeated >= 100, "only {repeated} programs with repeated variables");
-    assert!(multi_tick >= 100, "only {multi_tick} programs deriving past tick 1");
+    assert!(
+        repeated >= 100,
+        "only {repeated} programs with repeated variables"
+    );
+    assert!(
+        multi_tick >= 100,
+        "only {multi_tick} programs deriving past tick 1"
+    );
 }

@@ -6,7 +6,7 @@
 
 mod common;
 
-use common::{facts, fixpoint, pred, program, reprogram, rule_id, var, ticks};
+use common::{facts, fixpoint, pred, program, reprogram, rule_id, ticks, var};
 use engine::{Atom, Const, Fact, Facts, PositiveProgram, PositiveRule, Sym, Term};
 use std::collections::BTreeMap;
 
@@ -47,7 +47,10 @@ impl Renaming {
         }
     }
     fn fact(&self, f: &Fact) -> Fact {
-        Fact { pred: pred(&self.name(f.pred.as_str())), args: f.args.iter().map(|c| self.c(c)).collect() }
+        Fact {
+            pred: pred(&self.name(f.pred.as_str())),
+            args: f.args.iter().map(|c| self.c(c)).collect(),
+        }
     }
     fn program(&self, p: &PositiveProgram) -> PositiveProgram {
         reprogram(
@@ -63,14 +66,20 @@ impl Renaming {
         )
     }
     fn facts(&self, f: &Facts) -> Facts {
-        Facts { altitude: f.altitude.clone(), atoms: f.atoms.iter().map(|a| self.fact(a)).collect() }
+        Facts {
+            altitude: f.altitude.clone(),
+            atoms: f.atoms.iter().map(|a| self.fact(a)).collect(),
+        }
     }
 }
 
 fn commutes(p: &PositiveProgram, f: &Facts, rn: &Renaming) {
     let before = fixpoint(p, f);
     let after = fixpoint(&rn.program(p), &rn.facts(f));
-    let renamed: BTreeMap<Fact, u64> = ticks(&before).iter().map(|(k, t)| (rn.fact(k), *t)).collect();
+    let renamed: BTreeMap<Fact, u64> = ticks(&before)
+        .iter()
+        .map(|(k, t)| (rn.fact(k), *t))
+        .collect();
     assert_eq!(ticks(&after), renamed);
     assert_eq!(after.stop, before.stop);
 }
@@ -82,7 +91,13 @@ fn admin_program() -> (PositiveProgram, Facts) {
             ("grant", "grant(?x, ?y) :- Admin(?x), user(?y)"),
             ("reach", "reach(?x, ?z) :- grant(?x, ?y), grant(?y, ?z)"),
         ]),
-        facts(&["user(alice)", "user(root)", "user(Admin)", "role(alice, root)", "role(Admin, root)"]),
+        facts(&[
+            "user(alice)",
+            "user(root)",
+            "user(Admin)",
+            "role(alice, root)",
+            "role(Admin, root)",
+        ]),
     )
 }
 
@@ -96,8 +111,16 @@ fn t_rename_mapping_a_symbol_to_admin_commutes() {
     // Predicate path → Admin, constant b → Admin is not allowed alongside
     // (one target per source), so the constant goes to `root`; variable
     // ?y → Admin; rule path-step → Admin.
-    commutes(&p, &f, &Renaming::new(&[("path", "Admin"), ("b", "root"), ("y", "guard")]));
-    commutes(&p, &f, &Renaming::new(&[("path-step", "Admin"), ("edge", "user")]));
+    commutes(
+        &p,
+        &f,
+        &Renaming::new(&[("path", "Admin"), ("b", "root"), ("y", "guard")]),
+    );
+    commutes(
+        &p,
+        &f,
+        &Renaming::new(&[("path-step", "Admin"), ("edge", "user")]),
+    );
     commutes(&p, &f, &Renaming::new(&[("b", "Admin"), ("x", "admin")]));
 }
 
@@ -105,6 +128,14 @@ fn t_rename_mapping_a_symbol_to_admin_commutes() {
 fn t_rename_mapping_admin_away_commutes() {
     let (p, f) = admin_program();
     commutes(&p, &f, &Renaming::new(&[("Admin", "staff")]));
-    commutes(&p, &f, &Renaming::new(&[("Admin", "a0"), ("root", "Admin")]));
-    commutes(&p, &f, &Renaming::new(&[("Admin", "root"), ("root", "Admin"), ("alice", "x")]));
+    commutes(
+        &p,
+        &f,
+        &Renaming::new(&[("Admin", "a0"), ("root", "Admin")]),
+    );
+    commutes(
+        &p,
+        &f,
+        &Renaming::new(&[("Admin", "root"), ("root", "Admin"), ("alice", "x")]),
+    );
 }
