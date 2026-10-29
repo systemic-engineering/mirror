@@ -76,21 +76,61 @@ fn without_file_line(record: &str) -> String {
         .collect()
 }
 
-/// All orders of the record lines (comments dropped), written one after the
-/// other to the same path, give byte-identical stdout, and that stdout is
-/// the oracle's record (up to the `file` line) with the oracle's exit.
-fn assert_permutation_invariant(name: &str, exit: i32) -> usize {
-    let lines: Vec<String> = fixture(name)
+/// A fixture's record lines, comments and blanks dropped, in file order.
+fn record_lines(name: &str) -> Vec<String> {
+    fixture(name)
         .lines()
         .filter(|l| !l.starts_with('#') && !l.trim().is_empty())
         .map(String::from)
-        .collect();
+        .collect()
+}
+
+/// Every order of `lines` (n! of them), in a fixed enumeration order.
+fn all_orders(lines: &[String]) -> Vec<Vec<String>> {
+    fn go(v: &mut Vec<String>, k: usize, out: &mut Vec<Vec<String>>) {
+        if k == v.len() {
+            out.push(v.clone());
+            return;
+        }
+        for i in k..v.len() {
+            v.swap(k, i);
+            go(v, k + 1, out);
+            v.swap(k, i);
+        }
+    }
+    let mut out = Vec::new();
+    go(&mut lines.to_vec(), 0, &mut out);
+    out
+}
+
+/// A fixed, documented sample of `n` distinct orders: the file order, its
+/// reverse, and `n - 2` more drawn without replacement from all orders by
+/// an inline LCG (Knuth MMIX constants) seeded with `seed`. No `rand`.
+fn sampled_orders(lines: &[String], n: usize, seed: u64) -> Vec<Vec<String>> {
+    let all = all_orders(lines);
+    let mut picked: Vec<Vec<String>> = vec![lines.to_vec(), lines.iter().rev().cloned().collect()];
+    let mut state = seed;
+    while picked.len() < n.min(all.len()) {
+        state = state
+            .wrapping_mul(6364136223846793005)
+            .wrapping_add(1442695040888963407);
+        let candidate = &all[((state >> 33) % all.len() as u64) as usize];
+        if !picked.contains(candidate) {
+            picked.push(candidate.clone());
+        }
+    }
+    picked
+}
+
+/// Each order, written in turn to the same path, gives byte-identical
+/// stdout, and that stdout is the oracle's record (up to the `file` line)
+/// with the oracle's exit. Returns how many distinct orders ran.
+fn assert_orders_byte_identical(name: &str, exit: i32, orders: &[Vec<String>]) -> usize {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("permuted.pact-text");
     let path = path.to_str().unwrap();
     let mut first: Option<(String, i32)> = None;
-    let mut count = 0;
-    permute(&mut lines.clone(), 0, &mut |order| {
+    for order in orders {
         std::fs::write(path, order.join("\n") + "\n").unwrap();
         let o = eval(path);
         let got = (stdout(&o), code(&o));
@@ -106,21 +146,9 @@ fn assert_permutation_invariant(name: &str, exit: i32) -> usize {
             }
             Some(f) => assert_eq!(&got, f, "{name}: order {order:?}"),
         }
-        count += 1;
-    });
-    count
-}
-
-fn permute(v: &mut Vec<String>, k: usize, f: &mut dyn FnMut(&[String])) {
-    if k == v.len() {
-        f(v);
-        return;
     }
-    for i in k..v.len() {
-        v.swap(k, i);
-        permute(v, k + 1, f);
-        v.swap(k, i);
-    }
+    let distinct: std::collections::BTreeSet<&Vec<String>> = orders.iter().collect();
+    distinct.len()
 }
 
 // ── Vectors ──────────────────────────────────────────────────────────────
@@ -130,11 +158,29 @@ fn vector_01_nine_paths_clear_exit_0() {
     assert_vector("01-determinism", 0);
 }
 
+/// The commit-loop check: 24 of vector 01's 720 line orders, each a spawn
+/// of the binary. The full property is `vector_01_every_order_of_its_lines_
+/// is_byte_identical`, run by `just test-slow` (feature `slow`).
+#[test]
+fn vector_01_a_seeded_sample_of_24_orders_is_byte_identical() {
+    let lines = record_lines("01-determinism");
+    let orders = sampled_orders(&lines, 24, 0x7061_6374_2d30_3121); // "pact-01!"
+    assert_eq!(
+        assert_orders_byte_identical("01-determinism", 0, &orders),
+        24
+    );
+}
+
+#[cfg(feature = "slow")]
 #[test]
 fn vector_01_every_order_of_its_lines_is_byte_identical() {
     // 6 record lines: all 720 orders, which include the 48 rule-order ×
     // fact-order products the audit names.
-    assert_eq!(assert_permutation_invariant("01-determinism", 0), 720);
+    let orders = all_orders(&record_lines("01-determinism"));
+    assert_eq!(
+        assert_orders_byte_identical("01-determinism", 0, &orders),
+        720
+    );
 }
 
 #[test]
@@ -149,12 +195,61 @@ fn vector_04_opaque_exit_1() {
 
 #[test]
 fn vector_04_every_order_of_its_lines_is_byte_identical() {
-    assert_eq!(assert_permutation_invariant("04-negation-cycle", 1), 24);
+    // 4 record lines: all 24 orders, cheap enough for every commit.
+    let orders = all_orders(&record_lines("04-negation-cycle"));
+    assert_eq!(
+        assert_orders_byte_identical("04-negation-cycle", 1, &orders),
+        24
+    );
 }
 
 #[test]
-fn vector_05_functional_violation_is_refused_exit_255() {
+fn vector_05_functional_violation_is_a_selected_dark_exit_255() {
+    // Alex 2026-10-29: "refused is Dark. The illumination was declined."
+    // `verdict dark`, exit 255, and `shaped_by` names the declining
+    // declaration by its surface text.
     assert_vector("05-functional-violation", 255);
+}
+
+#[test]
+fn a_selected_dark_names_only_the_declarations_that_declined() {
+    // Two declarations; only `owner(1) -> 2` is violated on `true`.
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("two-decls.pact-text");
+    std::fs::write(
+        &path,
+        "rule owner owner(?d, ?p) requires claim(?d, ?p)\n\
+         fact claim(doc, alex)\nfact claim(doc, reed)\n\
+         functional claim(2) -> 1\nfunctional owner(1) -> 2\n",
+    )
+    .unwrap();
+    let o = eval(path.to_str().unwrap());
+    let out = stdout(&o);
+    assert_eq!(code(&o), 255, "{out}");
+    let shaped: Vec<&str> = out
+        .lines()
+        .filter(|l| l.starts_with("shaped_by "))
+        .collect();
+    assert_eq!(
+        shaped,
+        vec!["shaped_by   functional owner(1) -> 2"],
+        "{out}"
+    );
+    assert!(out.starts_with("verdict     dark\n"), "{out}");
+}
+
+#[test]
+fn refused_is_never_printed() {
+    for name in [
+        "01-determinism",
+        "03-false-with-provenance",
+        "04-negation-cycle",
+        "05-functional-violation",
+        "05-functional-violation-control",
+    ] {
+        let out = stdout(&eval(&format!("tests/pact/{name}.pact-text")));
+        assert!(!out.contains("refused"), "{name}:\n{out}");
+    }
 }
 
 #[test]
@@ -164,8 +259,23 @@ fn vector_05_control_is_clear_exit_0() {
 
 // ── Dark: the reader, one case per grammar rule broken ───────────────────
 
+/// The three lines every unreadable Dark (exit 2) opens with.
+fn assert_dark_head(label: &str, out: &str) {
+    let head: Vec<&str> = out.lines().take(3).collect();
+    assert_eq!(head.first(), Some(&"verdict     dark"), "{label}:\n{out}");
+    assert!(
+        head.get(1).is_some_and(|l| l.starts_with("file ")),
+        "{label}:\n{out}"
+    );
+    assert_eq!(
+        head.get(2),
+        Some(&"shaped_by   none"),
+        "{label}: an unreadable Dark is shaped by nothing\n{out}"
+    );
+}
+
 /// Write `body` to a temp file, run it, and require a dark record naming
-/// `line:col`, exit 2, and no panic.
+/// `line:col`, `shaped_by none`, exit 2, and no panic.
 fn assert_dark(label: &str, body: &[u8], at: &str) {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("dark.pact-text");
@@ -178,10 +288,7 @@ fn assert_dark(label: &str, body: &[u8], at: &str) {
         stderr(&o)
     );
     assert_eq!(code(&o), 2, "{label}: exit; stdout:\n{out}");
-    assert!(
-        out.starts_with("verdict     dark\n"),
-        "{label}: not a dark record:\n{out}"
-    );
+    assert_dark_head(label, &out);
     let dark = out
         .lines()
         .find(|l| l.starts_with("dark "))
@@ -359,7 +466,7 @@ fn dark_unsafe_rule_names_the_rule_and_the_variable() {
         stderr(&o)
     );
     assert_eq!(code(&o), 2);
-    assert!(out.starts_with("verdict     dark\n"), "{out}");
+    assert_dark_head("unsafe", &out);
     let dark = out
         .lines()
         .find(|l| l.starts_with("dark "))
@@ -377,7 +484,7 @@ fn dark_arity_mismatch_between_rules_and_facts() {
     std::fs::write(&path, "rule r p(?x) requires e(?x, ?y)\nfact e(a)\n").unwrap();
     let o = eval(path.to_str().unwrap());
     assert_eq!(code(&o), 2);
-    assert!(stdout(&o).starts_with("verdict     dark\n"));
+    assert_dark_head("arity", &stdout(&o));
     assert!(!stderr(&o).contains("panicked"));
 }
 
@@ -385,11 +492,7 @@ fn dark_arity_mismatch_between_rules_and_facts() {
 fn dark_unreadable_file() {
     let o = eval("tests/pact/does-not-exist.pact-text");
     assert_eq!(code(&o), 2);
-    assert!(
-        stdout(&o).starts_with("verdict     dark\n"),
-        "{}",
-        stdout(&o)
-    );
+    assert_dark_head("unreadable", &stdout(&o));
 }
 
 // ── Usage errors: stderr, no record, exit 2 ──────────────────────────────
