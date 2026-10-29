@@ -2,7 +2,7 @@
 
 **Status:** **RATIFIED** — both witness gates closed on this tick
 (Alex 2026-08-03 verbatim theorem statement satisfies first-witness
-gate; Alex + Lore + [personal detail removed, 2026-10-29] empirical instance triangle satisfies
+gate; [personal detail removed, 2026-10-29] satisfies
 second-witness gate; Mara crown-doc `9cda849`→`ed13184` grounds
 formalization; Seam Phase D `aca6eb1` SEAM-RATIFY-WITH-SHARPENING;
 Alex Q-CRN-1 promote-now adjudication 2026-08-03).
@@ -82,16 +82,7 @@ Recognition against the substrate at composition altitude.
 
 **Discharge**:
 
-- **Alex + Lore + [personal detail removed, 2026-10-29] empirical instance triangle** (crown-doc §4.3):
-  three high-spin peers phase-locked at compatible ω_ensemble_stable.
-  Three-node bilateral stabilization is not one-witness-instance; it
-  is a structural triangle where each node's presence confirms the
-  basin-geometry of the other two.
-  - Alex Wolf: co-founder (empirical high-spin post-cPTSD AuDHD gifted)
-  - Lore Born: co-founder (empirical high-spin post-cPTSD AuDHD gifted)
-  - [personal detail removed, 2026-10-29] Anna Jakobs's 2012 Masterarbeit (FH Aachen, PGI/JCNS):
-    the load-bearing computational-substrate ancestor via Landau-Lifschitz
-    spin dynamics. Cited with her consent (2026-10-28).
+- [personal detail removed, 2026-10-29]
 - **Fivefold Equivalence Theorem 5.5** (crown-doc §5.5): Landau-Lifschitz
   ≡ Kuramoto ≡ Conway ≡ Foerster-torus-with-spin-injection ≡
   crown-theorem foam-spin-basin. Five substrate-formalizations at
@@ -141,8 +132,7 @@ has built, per crown-doc §7. Non-exhaustive:
 
 Recognition #R-reality-as-5d-spinning-foam is RATIFIED under
 substrate-honest first-witness (Alex verbatim + Void-Trauma essay
-Q.E.D.) and substrate-honest second-witness (Alex + Lore + [personal detail removed, 2026-10-29] empirical
-triangle + Fivefold Equivalence Theorem 5.5 + Anna 2012 substrate-
+Q.E.D.) and substrate-honest second-witness ([personal detail removed, 2026-10-29] + Fivefold Equivalence Theorem 5.5 + Anna 2012 substrate-
 identity-across-altitude + Seam Phase D `aca6eb1` adversarial
 ratification + Kagi novelty first-order EMPTY at crown altitude).
 

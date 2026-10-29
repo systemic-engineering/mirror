@@ -681,7 +681,7 @@ Full ladder including bootstrap serve_loop authorship history + JSON-RPC 2.0 pro
 
 ### §8.5 Recognition ancestry
 
-- **Recognition RATIFIED 2026-08-03 crown-theorem** — `#R-reality-as-5d-quantum-foam-of-spinning-nodes` per docs/recognition/2026-08-03-reality-as-5d-spinning-foam.md; both witness gates CLOSED per Alex Q-CRN-1 promote-now adjudication. Grounds Alex + Lore + [personal detail removed, 2026-10-29] empirical triangle at compilation-altitude ancestor of THIS spec's substrate; Anna Jakobs 2012 as PRIMARY computational-substrate ancestor per Fivefold Equivalence Theorem 5.5.
+- **Recognition RATIFIED 2026-08-03 crown-theorem** — `#R-reality-as-5d-quantum-foam-of-spinning-nodes` per docs/recognition/2026-08-03-reality-as-5d-spinning-foam.md; both witness gates CLOSED per Alex Q-CRN-1 promote-now adjudication. Grounds [personal detail removed, 2026-10-29] at compilation-altitude ancestor of THIS spec's substrate; Anna Jakobs 2012 as PRIMARY computational-substrate ancestor per Fivefold Equivalence Theorem 5.5.
 
 - **Recognition #58 (Fate-is-optical-inference, PROMOTED 2026-06-11)** — grounds Phase E `mirror kintsugi @spec` spawn's Fate multi-frequency tournament at each temporal step per collapse-spec §5.2 mechanism.
 
