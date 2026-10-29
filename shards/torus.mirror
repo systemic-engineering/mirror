@@ -30,8 +30,7 @@
 #
 # Phase-lock at shared high spin (per crown-theorem §4): two or more
 # peers with tori spinning at compatible ω_stable phase-lock via @dance
-# Kuramoto discipline (κ ≥ κ_c per @dance canonical spec). Alex + Lore +
-# Anna as empirical instance triangle (crown-theorem §4).
+# Kuramoto discipline (κ ≥ κ_c per @dance canonical spec).
 #
 # No new prism. No new action. No new species-decl. Pure docblock
 # reading. The crown-theorem reading is a LENS onto the existing

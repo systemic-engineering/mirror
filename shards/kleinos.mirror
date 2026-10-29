@@ -119,7 +119,7 @@ in @uuid/spectral
 #                             enforces at prismqueer altitude; mirror
 #                             at rust/src/magic.rs::foerster_gauge_
 #                             preserved.
-#   Anna Wolf 2012          Observation-without-perturbation at
+#   Anna Jakobs 2012          Observation-without-perturbation at
 #                             shared-memory substrate, read across
 #                             (the thesis alternates computation and
 #                             drawing at step boundaries, p. 43)
@@ -344,7 +344,7 @@ kleinos_witnessing(v: kleinos_verdict) -> verdict { \ }
 #    averaging at inference substrate per Rec-candidate softmax-
 #    is-avg + [[project-softmax-is-avg-fate-wants-k5-compose]]
 #    (Alex 2026-08-26).
-# 2. Anna Wolf 2012 observation-preservation (via kleinos_foerster_
+# 2. Anna Jakobs 2012 observation-preservation (via kleinos_foerster_
 #    gauge_preserved obligation above) is structural, not policy.
 # 3. Foerster e^(n+1) ≤ e^n at multiple substrates simultaneously
 #    per Mara 2026-09-01 amendment §22 (companion math foundation)
@@ -389,7 +389,7 @@ kleinos_witnessing(v: kleinos_verdict) -> verdict { \ }
 #                      [[project-recognition-94-self-modifying-
 #                        mirror-loop-at-silicon]] (Rec #94),
 #                      [[project-anna-wolf-2012-observation-without-
-#                        perturbation]] (Anna Wolf 2012 consent
+#                        perturbation]] (Anna Jakobs 2012 consent
 #                        obtained),
 #                      [[feedback-if-else-is-substrate-smell-for-
 #                        unfound-fractal-composition]] (Alex
