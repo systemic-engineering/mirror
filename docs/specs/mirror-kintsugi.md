@@ -1,12 +1,27 @@
 # `mirror kintsugi` — gluing compiled shards (spec)
 
-*2026-10-29. Mara. Status: **Red** (nothing here runs; §9 is the red-test order).*
+*2026-10-29. Mara. Status: **Red** (nothing here runs; §9 is the red-test order). Second pass the same day, after Seam's crowbar (`docs/audits/2026-10-29-seam-crowbar-compile-kintsugi.md`, merged at `0fbc75d`) and Alex's seven defaults.*
 
 **Decision (Alex, 2026-10-29, ratified: "yes … excitiiiing!"):** `mirror compile` compiles a single shard. `mirror kintsugi` does kintsugi. Compile computes local sections and can only say "I don't know here" (a **hole**). Kintsugi glues them and says "you two disagree" (a **comma**). The recorded resolution of a comma (rerere) is the gold in the seam.
 
-**Math root:** `docs/math/2026-10-29-mara-compile-kintsugi-local-sections-and-gluing.md` (cited "math §n"). **Sibling:** `docs/specs/mirror-fixpoint-parser.md` (cited "compile §n"): §1 compile is one shard; §1.1 its record; §1.3 its interface and the `undeclared` lint; §5.1 holes as question/occurrence. **Prior:** `docs/math/2026-10-10-mara-the-difference-that-makes-a-difference-math-foundation.md` §8; Taut's scouts 2026-10-28 (switchboard) and 2026-10-29 (psychohistory).
+**Math root:** `docs/math/2026-10-29-mara-compile-kintsugi-local-sections-and-gluing.md` (cited "math §n"). **Siblings:** `docs/specs/mirror-fixpoint-parser.md` (cited "compile §n") and `docs/specs/mirror-convergence.md` (the loop that mends what kintsugi finds). **Prior:** `docs/math/2026-10-10-mara-the-difference-that-makes-a-difference-math-foundation.md` §8; Taut's scouts 2026-10-28 (switchboard) and 2026-10-29 (psychohistory).
 
 Mirror-text is the default output. `--out @data/json` is the only JSON, through `E(G_json)` and `print_json` (compile §9). No serde.
+
+---
+
+## §0 v0: a full run (Alex 2026-10-29: "The model holds. That means we can ship it.")
+
+**v0 glues everything every time.** It recompiles (or reads the compile cache), rebuilds the book, the cover and the line graph, and re-checks every line on every run. That makes it correct by the parts of the math that HOLD (math §9, column "v0"):
+- the cover and its counts (Prop 1.4 under (A1)–(A3), Prop 2.2);
+- per-line gluing (Prop 3.2);
+- the twist check by solving for gauges (Prop 3.6).
+
+**After v0** (folded and corrected, but not needed for a correct full run): the switchboard (§5), early cutoff keys, `reglued`/`cached`, the incremental tests (K3, K7, K7′, K8's cache half), and similar-distance rerere offers (convergence §4, which wait for the `active` ruler).
+
+Seam's FAILS split into two kinds:
+- **Data findings.** The compiler reports these, and they are kintsugi's first real test (**K0**, §9): bare names (`verdict` in `roomba.mirror`), duplicate claims (`@song`, `@mirror/spec`; 20 names across `boot/` + `shards/`), the 11 shards without `out`, and the undeclared references.
+- **Incremental claims.** R7 is not star-local; "+1 when it joins two" needs Σ connected; the cache key needs start and path; K3/K7 pass with a cache that never invalidates. These are folded into §5 and §9 and marked *after v0*.
 
 ---
 
@@ -17,19 +32,19 @@ Mirror-text is the default output. `--out @data/json` is the only JSON, through 
 - a directory: every `*.mirror` under it;
 - one or more `.mirror` files.
 
-**Pipeline.**
+**Pipeline (v0: every stage runs in full, every run).**
 
 | # | stage | input → output | math |
 |---|---|---|---|
-| 1 | **compile** | each shard → its compile record and interface `I(S)`. Served from the compile cache when the shard's bytes and grammar are unchanged; kintsugi never re-parses a cached shard | compile §1 |
-| 2 | **book** | `@name → current addr` for the set: `shard(X)` holds iff some compiled shard's normal form has `out @X` | §3 |
-| 3 | **cover** | the `in @X` lines and the `uses` of each interface → the reference graph Σ, the cover `Kᵢ`, the line graph G | math Def. 1.1–1.3 |
-| 4 | **resolve keys** | per line end, `κ = H(addr of the restriction output ‖ κ of every foreign name it mentions)`, bottom-up over G's condensation | math §4, Prop. 4.2 item 3 |
-| 5 | **glue** | per line: compare the two restriction outputs → line commas; per set: union-find → `fractured`, comma among all | math §2, §3 |
-| 6 | **mend** | recorded resolutions applied by occurrence; around each cycle of mended lines, check holonomy | math §3.3 |
-| 7 | **deposit** | each finding as a splinter at `@kintsugi/record`, with question, occurrence and tick; the run's record as a fragment | §6 |
+| 1 | **compile** | each shard → its compile record and interface `I(S)`. Read from the compile cache when `(grammar, start, bytes)` is unchanged (compile §1) | compile §1 |
+| 2 | **book** | `@name → shard`, from each normal form's `out @X` / `grammar @X` / `prism @X`. The book must be a **function** (Alex default 1). Two claimants of one name give a `claim` finding, and every `in @X` to that name reads Opaque ("which one?") | §3 |
+| 3 | **bind** | each shard's `free` bare names against the exports of its in-targets → bound, **unbound** (Dark), or **ambiguous** (Opaque, "which one?") | §3; math (A1), (A3) |
+| 4 | **cover** | qualified uses + bound free names → the reference multigraph Σ, the cover `Kᵢ`, the line graph G (a line is used iff `U(Y, X) ≠ ∅`) | math Def. 1.1–1.3 |
+| 5 | **glue** | per line: the kind/arity relation `R` on the two restriction outputs → line commas. Per set: union-find → `among`, `fractured` | math §2, §3 |
+| 6 | **mend** | recorded resolutions applied by occurrence. Per line: does the mend glue it? Per set: solve for gauges; a family that isn't gauge-trivial is a **twist** | math Prop 3.6, Def 3.7 |
+| 7 | **deposit** | each finding as a splinter at `@kintsugi/record` with question, occurrence and tick; the run's record as a fragment | §6 |
 
-**What kintsugi never does:** read bytes of a shard outside the target, look up a path to resolve `@X`, or compare `uuid`s (merges and identity are on `addr`, compile §8).
+**What kintsugi never does:** read bytes of a shard outside the target, look up a path to resolve `@X`, compare `uuid`s (merges and identity are on `addr`, compile §8), or check types beyond **kinds and arity** (Alex default 7: full type checking needs a type system mirror doesn't have yet).
 
 ---
 
@@ -38,43 +53,65 @@ Mirror-text is the default output. `--out @data/json` is the only JSON, through 
 ### §2.1 Summary record
 
 ```text
-verdict     comma
+verdict     red
 target      "mirror.spec"
 shards      410
 lines       2311
 unused      14
 holes       1873
-undeclared  35
-unresolved  1
+names       11
+dark        44
+unbound     6
+opaque      2
+gaps        1
+claims      2
 commas      3
+twists      0
 among       2
 fractured   1
-reglued     17
-cached      2294
+expected    1
 run         <addr of this run's record fragment, 64 hex>
 ```
 
-| field | meaning | owner |
-|---|---|---|
-| `shards`, `lines` | compiled shards; used `in @X` lines (math Def. 1.3) | kintsugi |
-| `unused` | declared lines with an empty overlap (`in @X`, nothing of X used): **questions**, not failures | kintsugi |
-| `holes`, `undeclared` | sums of the compile records; kintsugi passes them through and **adds no holes of its own** except `unresolved` | compile |
-| `unresolved` | `in @X` with no shard X in the set (§3) | kintsugi |
-| `commas` | line commas: lines whose two restriction outputs differ (math Def. 3.2) | kintsugi |
-| `among` | the comma among all: `Ĥ¹(𝒩; H⁰) = b₁(Σ) − Σᵢ b₁(Kᵢ)` (math Prop. 2.2). With mends recorded, the number of independent cycles of lines with non-trivial holonomy is reported as `holonomy <n>` beside it | kintsugi |
-| `fractured` | `b₀(𝒩) = b₀(G)`: how many compositions the set falls into (math Def. 2.4). `1` is glued | kintsugi |
-| `reglued`, `cached` | lines re-checked vs. served from the κ cache (§5) | kintsugi |
+| field | meaning | owner | verdict |
+|---|---|---|---|
+| `shards`, `lines` | compiled shards; used lines (`U(Y, X) ≠ ∅`) | kintsugi | — |
+| `unused` | `in @X` with `U(Y, X) = ∅`: questions | kintsugi | partial |
+| `holes` | `\` occurrences, summed from compile | compile | partial |
+| `names` | shards with a `name?` hole (no `out`) | compile | partial |
+| `dark` | undeclared `(S, X)` **pairs** (Dark lines), summed from compile | compile | partial |
+| `unbound` | free bare names no in-target exports (Dark: no speaker) | kintsugi | partial |
+| `opaque` | ambiguous bindings (two in-targets export the name) and `in @X` to a claimed-twice name: "which one?" | kintsugi | partial |
+| `gaps` | `in @X` with no shard X: the kintsugi-altitude hole | kintsugi | partial |
+| `claims` | names claimed by more than one shard (the book is not a function) | kintsugi | red |
+| `commas` | line commas: kind/arity mismatch or `exports absent` | kintsugi | red |
+| `twists` | mend families accepted line by line that are not gauge-trivial (math Def 3.7; name provisional) | kintsugi | red |
+| `among` | the topology count `b₁(Σ) − Σᵢ b₁(Kᵢ)`: where a comma *could* live | kintsugi | — (reported) |
+| `fractured`, `expected` | `b₀(𝒩) = b₀(G)`, and the count the spec's ruler declares | kintsugi | red iff they differ |
 
-**Every b₁ is named with its complex** in field docs and output: `among` is `b₁(Σ) − Σ b₁(Kᵢ)`, never "b₁". `b₁(Γ(N))` (reuse inside one AST, compile §8) and `b₁(G)` (cycles of lines, the holonomy capacity) are different numbers, and neither is `among`.
+`reglued` and `cached` join the summary **after v0**.
+
+**Every b₁ is named with its complex.** `among` is `b₁(Σ) − Σ b₁(Kᵢ)`. `b₁(Γ(N))` (reuse inside one AST, compile §8) and `b₁(G)` (cycles of lines) are different numbers. Neither is `among`.
 
 ### §2.2 One record per finding
 
 Blank-line separated, after the summary, sorted by `(kind, shard name, name)`:
 
 ```text
-unresolved  @epistemologic/bogus
+claim       @song
+by          shards/song.mirror  shards/song/keywords.mirror
+
+gap         @epistemologic/bogus
 in          @kintsugi/fracture/inport
 line        14:1
+
+opaque      verdict
+in          @kintsugi/roomba
+candidates  @glass  @kintsugi
+question    which one?
+
+unbound     frobnicate
+in          @kintsugi/roomba
 
 comma       line
 from        @kintsugi/roomba
@@ -85,6 +122,10 @@ exports     absent
 question    <H("comma\0" ‖ addr ρ_X ‖ addr ρ_Y), 64 hex>
 resolution  none
 
+twist       mends
+lines       @y1—@x  @y2—@x
+gauge       unsolvable at @x
+
 among       cycle
 via         @a/x  @b/y  @c/z
 symbols     a.x  b.y  c.z
@@ -93,10 +134,10 @@ unused      @glass
 in          @sheaf
 ```
 
-- `exports` is `absent`, or `<kind> <addr>` when X exports the name with a different kind.
-- `resolution` is `none`, or `offered <addr>` when a recorded resolution exists for this **question** but hasn't been applied at this **occurrence** (rerere: offered by question, applied by occurrence; compile §5.1).
-- `among cycle` lists one representative cycle per independent class (a basis from the union-find spanning forest). The class is the invariant; the representative is a choice and is marked as one.
-- Source coordinates (`line 14:1`) come from the erasure record. They are for people and never part of identity.
+- `exports` is `absent`, or `<kind>/<arity>` when X exports the name with another kind or arity.
+- `resolution` is `none`; `offered exact <addr>` when a recorded resolution exists for this question but hasn't been applied at this occurrence; or *(after the active ruler)* `offered similar <addr> distance <d> ruler <addr>` (convergence §4). Offers are never applied without the guard (convergence §1).
+- `among cycle` gives one representative cycle per independent class. The class is the invariant; the representative is a choice and is marked as one.
+- Source coordinates come from the erasure record. They are for people and never part of identity.
 
 ### §2.3 `--out @data/json`
 
@@ -104,178 +145,244 @@ The same fields as JSON, through the JSON grammar's printer. An `@io` crossing.
 
 ---
 
-## §3 The lint split: two pact rules, one per verb
+## §3 The rules
+
+Datalog over compile's records, in the same engine as compile §4:
 
 ```text
-# compile (one shard; compile §1.3):
-undeclared(S, X) :- references(S, X), not imports(S, X), not declares(S, X).
+# compile (one shard; compile §1.3)
+undeclared(S, X) :- references(S, X), not imports(S, X), not declares(S, X).   # Dark line
 
-# kintsugi (the set):
-unresolved(S, X) :- imports(S, X), not shard(X).
+# kintsugi (the set)
+claim(X)          :- declares(S1, X), declares(S2, X), S1 != S2.
+shard(X)          :- declares(S, X), not claim(X).
+gap(S, X)         :- imports(S, X), not declares(_, X).
+opaque_in(S, X)   :- imports(S, X), claim(X).
+binds(S, n, X)    :- free(S, n), imports(S, X), shard(X), exports(X, n).
+unbound(S, n)     :- free(S, n), not binds(S, n, _).                             # Dark
+ambiguous(S, n)   :- binds(S, n, X1), binds(S, n, X2), X1 != X2.                 # Opaque
+used(S, X)        :- uses(S, X, _).
+used(S, X)        :- binds(S, n, X), not ambiguous(S, n).
+unused(S, X)      :- imports(S, X), shard(X), not used(S, X).
+comma(S, X, n)    :- uses_kind(S, X, n, k), not matches(X, n, k).               # incl. absent
 ```
 
-- `references` reads **code lines only**. Prose references are reported (`--prose`), never failed (compile §1.3).
-- `shard(X)` is content: some compiled shard declares `out @X` in its normal form (reversed R3 inserts it, decision 13). Never a path lookup.
-- **`unresolved` is a hole of the cover**, not a comma: the cover names a site that has no section ("I don't know here"). It is `@epistemologic/pact/composition_closed` reborn (`shards/epistemologic/pact/composition_closed.mirror`: "every `in @X` statement … resolves to a … declaration"); its Rust discharge was deleted with `bootstrap/` in `9de3eca`.
-- **Why `undeclared` is compile's and not kintsugi's:** it is decidable from one shard (`inport.mirror` §5's proof), and it is the precondition for kintsugi's cutoff to be sound. A dependency with no line has no key (math Prop. 4.2, item 1).
-- **Cross-shard type errors** are line commas: Y uses `X.n` as kind k and X's interface doesn't export `n`, or exports it as another kind. Kintsugi reports them at the line (§2.2).
+- `references` and `free` read **code lines only**, and the comment tokens come from `μ_mirror` (compile §1.3).
+- Coverage is **exact**: `in @kintsugi` doesn't cover `@kintsugi/roomba` (compile row 21).
+- **No new comma kinds** (Alex default 4). Unbound is Dark (no speaker). Ambiguous is Opaque, "which one?", the same as a `settle` with two candidates and no ruler. A duplicate claim is a `claim` finding (default 1). `observed` waits for the Voice (§7).
+- A **gap** is a hole of the cover: the cover names a site that has no section. It is `@epistemologic/pact/composition_closed` reborn; that pact's Rust discharge was deleted with `bootstrap/` in `9de3eca`.
+- Assumption (A2) is pinned: **no `out` of a foreign name**. A shard that `out`s a name it doesn't declare is a `claim` finding against the declaring shard.
 
 ---
 
-## §4 Verdict and exit codes
+## §4 Verdict, exit codes, and the gate ruler
 
-| verdict | when | exit | with `--strict` |
-|---|---|---|---|
-| `success` | no holes, undeclared, unresolved, line commas, or comma among all with non-trivial holonomy | 0 | 0 |
-| `partial` | holes only (compile `partial` somewhere; `unused` lines are questions and also land here) | 0 | 1 |
-| `comma` | any line comma, any non-trivial holonomy, or any `unresolved` | 1 | 1 |
-| `fail` | any compile `fail` (`undeclared > 0`) | 1 | 1 |
-| `dark` | any shard dark | 2 | 2 |
+| verdict | when | exit |
+|---|---|---|
+| `success` | no finding with a verdict column in §2.1 | 0 |
+| `partial` | only holes, `name?`, Dark (undeclared, unbound), Opaque, gaps, unused lines | 1 |
+| `red` | any claim, line comma, twist, or `fractured ≠ expected` | 255 |
+| `dark` | any shard dark | 2 |
 
-- `among > 0` **with no mends recorded** is capacity, not a disagreement: places a comma *could* live (math §2.2, §3.3). It is reported and does not change the verdict. With mends recorded, `holonomy > 0` is a comma.
-- `fractured > 1` is reported. Whether it fails the gate is Alex's call (§10 Q4). Lean: report only, since a spec may legitimately hold two compositions.
-- **The commit gate is `mirror kintsugi mirror.spec`**, exit 0 required, restored when the verb dispatches. Until the 35 undeclared references (compile T17d) are mended, the gate fails by design: that is the lint doing its job.
+The same table as compile §1.1 and `mirror love` (Alex default 5). Partial, red and dark are three codes.
+
+**The gate is a ruler, declared in `mirror.spec`** and approved by a human like any ruler (compile §10):
+
+```text
+ruler @mirror/gate {
+  tolerate   partial
+  refuse     red  dark
+  fractured  1
+}
+```
+
+- `mirror kintsugi mirror.spec` reads the ruler, and the gate passes iff the run's verdict is tolerated and `fractured` equals the declared count.
+- Lean: tolerate partial (honest holes, Dark lines and gaps don't block commits); refuse red and dark. Whether gaps belong in the tolerated set is the ruler's to say, field by field.
+- With `boot/` in the target, today's 20 claims make the run red. That is the first convergence work (convergence §3), not a reason to soften the ruler.
 
 ---
 
-## §5 The incremental contract (the switchboard)
+## §5 The incremental contract (the switchboard) — after v0
 
-The switchboard Alex named (Taut 10-28) is this contract. Its book is `@name → current addr` (§1 stage 2). Its lines are `in @X` (math Def. 1.3). It rings the star of what changed.
+The switchboard Alex named (Taut 10-28) is this contract. v0 doesn't use it. Everything below is folded from Seam's crowbar and corrected.
 
-**Content layer (line commas).** Cache each line's verdict under its two resolved keys `κ` (§1 stage 4).
-- An edit to shard S re-glues only the lines whose κ changed. Those lie in the star of S in G, plus any line upward whose resolved key mentions a changed name (math Prop. 4.2).
-- **Sound under stalk completeness**: no undeclared references (compile lint); exact coverage (compile §12 row 21); resolved keys through re-exports; `requires` on another shard's behaviour pulls that body's address into the line's stalk (math Def. 4.1).
-- The restriction output is the **coarsest** sound key for these equality verdicts (math Prop. 4.3). Nothing smaller works.
+**Content layer (line commas).**
+- Cache each line's verdict under the key `κ = H(rule-set addr ‖ X-side key ‖ Y-side key)`. *[Seam 6]* The rule-set address is in κ: change the relation `R` or the Datalog program, and every cached verdict is stale.
+- *[Seam 7]* The coarsest sound X-side key is the **kinds and arities** of the used names (plus a body address for `pact` uses), not `addr(ρ_X)`. `addr` is sound but re-glues every kind-preserving signature change (math Prop 4.3(b)).
+- `U(Y, X)` includes **all of Y's free bare names** on every line, so X starting or stopping exporting one of them moves κ (math Def 3.1).
+- **Undeclared references are pseudo-lines** keyed on X's κ. A shard with any Dark line is otherwise re-glued every run, never served from cache (math §4 item 1).
+- **Grammar and μ edits re-glue everything in that format.** They are not shard edits.
 
-**Shape layer (`among`, `fractured`).** Per shard, cache `(b₀(Kᵢ), b₁(Kᵢ), the component of each shared symbol in Kᵢ)`.
-- A new or removed reference to a symbol already in `Kᵢ` is private (math Prop. 2.5). `among` updates by 10-10 Thm 8.4: unchanged inside a component, +1 when it joins two.
-- A first use of a foreign symbol, or the last use removed, changes an overlap (R7). It is recomputed by union-find over the stars it touches, and is **OPEN** as a locality claim.
+**Shape layer (`among`, `fractured`).** *[Seam 3]*
+- A private edge changes `among` by `[d ∼ r in Σ] − [d ∼ r in Kᵢ]`.
+- R7 (first use of a foreign symbol) changes it by `[d ∼ r in Σ]`.
+- Both need Σ's **global** component map: neither is star-local.
+- Cache the map globally. An insertion is O(α) by union-find. A deletion recomputes the affected component.
 
-**Holonomy layer.** A changed mend, or a changed restriction output under a mend, invalidates only the cycles through that line (math Prop. 4.5). Whether the count updates from star data alone is OPEN.
+**Twist layer.** A changed mend, or a changed restriction under a mend, re-solves the gauges of the component of G it lies in. The cost is not star-local in general (math Prop 3.6: on a tree the constraints propagate).
 
-**Not used:** `action_cache.mirror`'s closure key (`inputs_oid`). It is sound and never star-local (math Prop. 4.4). The kintsugi cache keys on κ. The action cache stays for actions whose inputs genuinely are a closure.
+**Not used:** `action_cache.mirror`'s closure key (sound, never star-local; math Prop 4.4).
 
-**Determinism.** Same compiled crystals + same recorded mends → same `run` address, independent of which lines came from the cache. Test K7.
+**Determinism.** Same compiled crystals, same recorded mends, same rule set → same `run` address, whether lines came from the cache or not (K7′).
 
 ---
 
 ## §6 rerere for commas
 
-- A **line comma** has a question (`H("comma\0" ‖ addr ρ_X ‖ addr ρ_Y)`: the disagreement itself, independent of where it occurs) and an occurrence (`(line, name)` = `(addr I(Y), addr I(X), name)`).
-- `mirror fate <occurrence> <resolution>` records a mend `g_e` as a splinter `resolution(question, body)`. That is the same verb and the same store as hole resolutions (compile §5.1). Recording it **offers** it at every occurrence of the same question and **applies** it only at the named occurrence.
-- An applied mend makes the line glue under the mend. The mends of all lines are a 1-cochain, and kintsugi checks holonomy around each cycle of mended lines (math Prop. 3.5). A mend family that every line accepts and some cycle doesn't is a **comma among all**. It is owned by no pair, and no single mend can fix it.
-- Holes and commas rotate (math §5): a line comma is a hole of the mend sheaf (no mend recorded yet), and an unfillable hole is a comma with its surroundings.
+- A **line comma** has a question, `H("comma\0" ‖ addr ρ_X ‖ addr ρ_Y)` (the disagreement itself, wherever it occurs), and an occurrence, `(addr I(Y), addr I(X), name)`.
+- `mirror fate <occurrence> <resolution>` records a mend as a splinter `resolution(question, body)`, with the same verb and store as hole resolutions (compile §5.1). It is **offered** at every occurrence of the question and **applied** only where the human approves it (convergence §1, the guard).
+- Kintsugi checks two things, separately (Seam 5):
+  - **per line**: does the mend make this line glue? A renaming does not mend a kind mismatch;
+  - **jointly**: is the mend family gauge-trivial? If not, it is a **twist**. A twist can sit on a tree of lines (math Prop 3.6) and can be owned by a pair (a mutual `in`). It is "not owned by one line", not "owned by no pair". A new export sometimes repairs it.
+- **Holes and commas rotate** (math §5). A line comma is a hole of the mend sheaf. An unfillable hole is a comma with its surroundings.
 
-**Psychohistory is history.** The deposits of §1 stage 7 (`(line, question, resolution, tick)`: what cracked, when, how it was mended) are the history of gluings. `mirror kintsugi --history <@name>` prints them for one shard's lines. They are constitutive (the 2026-06-26 insight §4.4), not predictive. **Predicted futures are out of scope.** Recorded as future work, the light-cone flip: a sheaf over hypothetical edits; 10-10 Thm 8.4(ii)/(iii) already gives its exact one-edit case.
+**Psychohistory is history.** The deposits of §1 stage 7, `(line, question, resolution, tick)`, record what cracked, when, and how it was mended: the history of gluings. `mirror kintsugi --history <@name>` prints them. They are constitutive (the 2026-06-26 insight §4.4), not predictive. **Predicted futures are parked until the light-cone flip** (Alex).
 
 ---
 
 ## §7 Three readings of one base
 
-All three live over the same shard set (Alex + Reed; Taut-checked 2026-10-29):
+1. **Declared topology** (`in @X`): the cover kintsugi routes on (§1–§5). v0.
+2. **Voices.** Section ownership via `peer/colony` (Alex: "makes a lot of sense", held lightly). A comma's owners are the voices at its two ends. Reserved field: `owners <voice> <voice>`.
+3. **Observed** (the Voice: calls seen at run time). A second sheaf over the same base, over **owner-qualified** facts (math Def 6.0). Per line:
+   - `observed explained`: an observed call with no declaration, where a **declared path** joins the two shards (higher-order flow, Seam §9);
+   - `observed unexplained`: no declared path (a hidden dependency);
+   - `dead`: declared and never observed in the window. A question.
 
-1. **Declared topology** (`in @X`): the cover kintsugi routes on. §1–§5. Built first.
-2. **Voices** (section ownership; `shards/peer/colony.mirror`, one psychohistory root per K ≥ 2 peers; `@mirror/spectral` sections): a second cover, over who wrote what. A comma's **owners** are the voices on its two ends. Reserved fields: `owners <voice> <voice>` on each comma record, filled once a voice cover is declared. Alex: the colony is "probably" the voice cover (§10 Q3).
-3. **Observed** (the Voice: calls seen at run time): a second sheaf over the same base. Per line (math Prop. 6.1):
-   - an observed call with no declaration → `comma observed` (an undeclared dependency at run time);
-   - a declared line never observed in the window → `question dead` (absence in a window isn't falsity).
-
-   Not built until the Voice lands (prism `Beam → Voice` is still "Next"). Record kinds reserved.
+   These wait for the Voice (prism `Beam → Voice` is still "Next").
 
 ---
 
 ## §8 Collapse plan for the shard declarations
 
-The spec only. No shard is edited by this pass: none of these edits is a mechanical rename, and two need Alex's call. Each item lands as its own `.mirror`-only commit once ratified.
+A plan only. No shard is edited by this spec. Each item lands as its own `.mirror`-only commit once ratified, and from now on as a **convergence mend** (convergence §3): offered, approved, written back.
 
 | # | where | today | after |
 |---|---|---|---|
-| C1 | `shards/sheaf.mirror` `sheaf_of` (`:240`) | `{stalks: ref, restrictions: ref, base_graph: ref}`, no cover, restriction `restrict(s, e)` maps vertex stalk to **vertex** stalk (`:293-299`), contradicting its own prose (`:78`: `𝓕_{v◁e}: 𝓕(v) → 𝓕(e)`) | **one** `sheaf_of = { base: cell_complex, cover: [site], nerve: ref, overlaps: ref, stalks: ref, restrictions: ref }` with `restrict(s: sheaf_of, v: ref, e: ref) -> ref { \ }`, vertex → **edge**, per incidence. `sheaf_laplacian` applies only when the stalks are vector spaces (docstring), and its "LANDED primitive" claim (`:249, :305`) becomes "deleted in `9de3eca`" |
-| C2 | `psychohistory_sheaf`, declared twice: `shards/song/narrative.mirror:1099` (`= ref`, history, consumed by `fate/tournament.mirror:9, 861`) and `shards/psychohistory.mirror:297` (record over possible futures, no consumer) | two | **one**, at the family root `@psychohistory`, with the **history** reading (Alex 10-29: "the history is history"): base = the trajectory of gluings (§6), stalks = kintsugi deposits. `narrative.mirror` replaces its `type` with `in @psychohistory`. The futures carriers (`possibility_projection`, `future_settlement`, `project_future`, `settle_future`) move under a "light-cone flip: future work" block or are retired: **Alex's call (§10 Q5)** |
-| C3 | `psychohistory_fiedler_monotone_climb` (`psychohistory.mirror:381-389`) | λ₂ non-decreasing per tick, from Rec #89 | retired. 10-10 §8.6: "Fiedler strict rise as a law … not in general"; comma doc Prop 2.7: on a fixed frame no letter widens |
-| C4 | **fractured**, three definitions: `sheaf.mirror:38, 91` (dim H⁰ > 1); `psychohistory.mirror:292-294, 345` (H¹ > 0 "multiple disconnected"); `narrative.mirror:1143-1170` (λ₀ > 0, no global section) | three | **one**, declared once at `@sheaf`: `fractured(s) := dim H⁰ > 1` (at shard altitude, `b₀(𝒩)`, math Def. 2.4). `psychohistory.mirror`'s H¹ gloss becomes "comma among all"; `narrative.mirror`'s λ₀ bilateral splits into **hole** (some site has no section) and **comma** (sections exist and disagree) |
-| C5 | **comma** | no declaration (`type comma` has zero hits) | **one**, declared once (proposed home `@kintsugi`, since kintsugi is the verb that reports it): `comma = { question, occurrence, kind: line \| among \| observed }`. Line = degree 0, owned by a pair; among = the H¹ class (math §3.2–3.3) |
-| C6 | **hole** | `\` in the grammar; question/occurrence in compile §5.1 | **one**, compile-side, at `@mirror` (it is syntax): `hole = { question, occurrence }`. `unresolved` reuses it with site = the missing shard |
-| C7 | **b₁**, four meanings (Taut 10-28 §2: comma, holes/tasks, reuse, bugs) | bare "b₁"/"H¹" | always written with its complex: `b₁(Σ)`, `b₁(Kᵢ)`, `b₁(G)`, `b₁(Γ(N))`, `Ĥ¹(𝒩; H⁰)`. A docstring with a bare b₁ is a drift finding |
-| C8 | `shards/kintsugi/fracture/inport.mirror` | "Consumers: `mirror kintsugi <shard>`" | consumer: `mirror compile` (the lint is compile's, §3). `docs/math/2026-07-23-…inport…` §3's H¹ theorem gets a pointer to math §8 (it fails) |
-| C9 | `shards/epistemologic/pact/composition_closed.mirror` | discharge "the Rust impl in `bootstrap/src/lib.rs`" (deleted) | discharge: `mirror kintsugi`, `unresolved` |
+| C1 | `shards/sheaf.mirror` `sheaf_of` (`:240`) | `{stalks, restrictions, base_graph}` (all `ref`), no cover; `restrict(s, e)` maps vertex stalk to **vertex** stalk (`:293-299`), against its own prose (`:78`) | one `sheaf_of = { base, cover, nerve, overlaps, stalks, restrictions }`, `restrict(s, v, e)` vertex → **edge** per incidence. `sheaf_laplacian` only for vector stalks; its "LANDED primitive" claim (`:249, :305`) → "deleted in `9de3eca`" |
+| C2 | `psychohistory_sheaf`, declared twice: `song/narrative.mirror:1099` (`= ref`, history; consumed by `fate/tournament.mirror`) and `psychohistory.mirror:297` (futures; no consumer) | two | one, at `@psychohistory`, **history** reading. `narrative.mirror` imports it. Futures carriers parked under "light-cone flip" (Alex: parked) |
+| C3 | `psychohistory_fiedler_monotone_climb` (`psychohistory.mirror:381-389`) | λ₂ non-decreasing per tick | retired (10-10 §8.6; comma doc Prop 2.7) |
+| C4 | **fractured**, three definitions (`sheaf.mirror:38, 91`; `psychohistory.mirror:292-294, 345`; `narrative.mirror:1143-1170`) | three | one at `@sheaf`: `dim H⁰ > 1` (shard altitude: `b₀(𝒩)`). The H¹ gloss becomes "comma"; narrative's λ₀ bilateral splits into hole and comma |
+| C5 | **comma** | no declaration | one, at `@kintsugi`: `comma = { question, occurrence, kind: line }`, plus `twist` as its own record (name provisional). No other kinds (Alex default 4) |
+| C6 | **hole** | `\`; question/occurrence (compile §5.1) | one, at `@mirror`: `hole = { question, occurrence }`. `gap` and `name?` reuse it |
+| C7 | **b₁**, four meanings | bare | always with its complex |
+| C8 | `kintsugi/fracture/inport.mirror` | consumer `mirror kintsugi` | consumer `mirror compile`; the 07-23 math §3 points to math §8 (it fails) |
+| C9 | `epistemologic/pact/composition_closed.mirror` | discharge in deleted Rust | discharge: kintsugi `gap` |
+| C10 | `@song`, `@mirror/spec` claimed twice in `shards/` (each by `X.mirror` and `X/keywords.mirror`) | two claimants | one claimant each. The `keywords.mirror` files carry no `out`, so they are `name?` holes too. Fold them into the parent shard, or give them their own names (`@song/keywords`): a human picks |
+| C11 | 20 names claimed across `boot/` + `shards/` | duplicates | `boot/` collapses into `shards/` (`mirror.spec` lists `boot/` as legacy). That is the first convergence run (convergence §3) |
 
-**Names Alex hasn't given yet (he names primitives).** Substrate-native names for:
-- the **hole** at kintsugi altitude (`unresolved`);
-- the **line comma** versus the **comma among all**;
-- what the corpus calls b₁ when it means **bugs** (Young's sense) and when it means **tasks** (prism `tension.rs`).
-
-The spec uses the descriptive names above as placeholders.
+**Names Alex hasn't given yet:** b₁-as-bugs, b₁-as-tasks; the final name for `twist`.
 
 ---
 
 ## §9 Red tests, in order
 
-Against the binary, the way `rust/tests/pact_vectors.rs` drives `mirror pact eval`. Fixtures under `tests/kintsugi/`. Every count has an oracle independent of the code under test: union-find, Euler's formula, or a rank computation (math §2.2 gives all three).
+Against the binary, the way `rust/tests/pact_vectors.rs` drives `mirror pact eval`. Fixtures under `tests/kintsugi/`. Every count has an oracle independent of the code under test.
 
-**K1. Compile is local (gates everything).** Compile T17a is green: compile reads no other shard.
+### K0. The golden test: reproduce Seam's audit (v0; gates the gate)
 
-**K2. Čech (port of 10-10 T28).**
-- a) **C₆ in three arcs, as an import DAG** (math §2.2 table): `among 1`. Each pair glued alone (`mirror kintsugi a.mirror b.mirror`, etc.): `among 0`. **P₆ control**: `among 0`.
-- b) **Theta** (cannot be built from shards, math §2.2): a test of the union-find oracle on a raw cover. It checks `Ĥ¹(𝒩;H⁰) = 0`, `Ĥ⁰(𝒩;H¹) = 3`, `Ĥ²(𝒩;H⁰) = 1` against rank computations. Not a CLI test.
-- c) **Diamond**: `among 1`, while `b₁(𝒩) = 0`. Guards against reading the bare nerve.
-- d) Random shard sets (≥ 1000, fixed seed): `among` = Euler (`b₁(Σ) − Σ b₁(Kᵢ)`) = Čech rank.
+**Oracle:** Seam's crowbar (`docs/audits/2026-10-29-seam-crowbar-compile-kintsugi.md` §7.1, §7.2, §7.3, §10), mechanised by `tests/kintsugi/oracles/golden_k0.py`. Its outputs at `346253b` reproduce every count Seam reports: `golden_k0.shards.out` and `golden_k0.all.out`.
 
-**K3. Incremental (port of 10-10 T29).** On a connected set:
-- a private reference inside a component of `Kᵢ` → `among` unchanged, `reglued` ⊆ the star of i;
-- one joining two components of `Kᵢ` → `among` + 1;
-- an edit to a body that no interface exposes → `reglued 0` (math Prop. 4.4: the closure key would re-glue every importer).
+**Fixture:** `git archive 346253b shards boot` into a sandbox, so the corpus can't drift under the test.
 
-**K4. Lint split.**
-- `in @bogus` with no shard `@bogus` → `unresolved 1`, `verdict comma`, exit 1.
-- The same file under `mirror compile` alone → no finding (compile can't know).
-- The corpus `undeclared` fixture (compile T17d) passes through: kintsugi's `undeclared` = the sum of compile's.
+**K0a, `shards/` only** (`mirror kintsugi <sandbox>/shards`). Must find:
+- `claim` for **`@mirror/spec`** and **`@song`** (2);
+- `name?` for the **11** shards listed in `golden_k0.shards.out` (e.g. `shards/mirror/book.mirror`, `shards/mirror/lens/knife.mirror`, both `keywords.mirror` files);
+- `dark` (undeclared) for the **44 `(S, X)` pairs in 33 shards** listed there.
 
-**K5. Line commas.**
-- Y uses `X.f` as `action/2`, X exports `f` as a carrier → `comma line`, `expects action/2`, `exports carrier <addr>`.
-- X doesn't export `f` → `exports absent`.
-- The same disagreement in two different lines → one `question`, two occurrences.
+**K0b, `boot/` + `shards/`.** Must find:
+- the **20** claimed names in `golden_k0.all.out` (among them `@kintsugi`, `@prism`, `@io` with three claimants, `@nl` with four, `@fate`);
+- the **62** `name?` shards and **50** undeclared pairs listed there;
+- Seam's ambiguity (§5.3): `roomba.mirror` uses bare `verdict`, exported by `@glass` (`shards/glass.mirror:467`) and by `boot/std/kintsugi.mirror:93`. Under §3's rules it surfaces **first as `opaque in @kintsugi`** in `@kintsugi/roomba`, because `@kintsugi` is claimed by both `shards/kintsugi.mirror` and `boot/std/kintsugi.mirror`. A companion fixture with the claim collapsed onto the `boot/` claimant must give `opaque verdict`, candidates `@glass @kintsugi`. Collapsed onto the `shards/` claimant (which doesn't export `verdict`), `verdict` binds to `@glass`.
 
-**K6. rerere.** Record a mend at one occurrence (`mirror fate`): that line glues; the other occurrence of the same question shows `resolution offered <addr>` and still counts as a comma until applied. **Holonomy:** three shards in a cycle of lines, each line mended by a renaming whose composite around the cycle is not the identity → `holonomy 1`, `verdict comma`, while each line alone glues.
+**Pass rule.**
+- **Every oracle finding appears** in kintsugi's records, matched by `(kind, shard, name)`. A missing one means the compiler is wrong, and the test is red.
+- **Every extra finding is listed** in a `k0-extra` record set and reviewed by a human. An extra is a comma between the compiler and the oracle: either the oracle's lexical rule is too weak (fix the oracle, with a note) or the compiler is wrong (fix the compiler). Extras never pass silently and never fail silently.
+- **Bare names (unbound, ambiguous) have no full oracle yet.** `golden_k0.py` doesn't parse free names. K0 asserts the one ambiguity Seam names and lists the rest as extras for review. A free-name oracle is open work (§10).
 
-**K7. Determinism.** A full run and an incremental run after an edit-and-revert print the same `run` address.
+**K1. Compile is local.** Compile T17a, T17e and T17f are green.
 
-**K8. Stalk completeness (the cutoff is unsound without it).** X re-exports `T = {a: @Z.U}`; Y uses T only. Change U in Z → Y's line re-glues (resolved κ moved). With a fixture where Y references `@Z.U` on a code line without `in @Z`, compile fails (`undeclared`), so the unsound state cannot reach kintsugi.
+**K2. Čech (port of 10-10 T28).** v0.
+- a) **C₆ in three arcs, as an import DAG** (math §2.2 table): `among 1`; each pair alone `among 0`. **P₆ control**: `among 0`.
+- b) **Theta**: an oracle test on a raw cover (it can't be built from shards). `Ĥ¹(𝒩;H⁰) = 0`, `Ĥ⁰(𝒩;H¹) = 3`, `Ĥ²(𝒩;H⁰) = 1`, against rank.
+- c) **Diamond**: `among 1` while `b₁(𝒩) = 0`.
+- d) Random sets: `among` = Euler = Čech rank. *[Seam 13]* This checks the counting, not the model.
+- e) *[Seam 13]* **Mutual reference** (`A.a → B.b`, `B.b → A.a`): `among 1` (Σ is a multigraph).
+- f) *[Seam 13]* **Absent export** (Y `in @X`, uses `X.f`, X declares no `f`): one `comma line … exports absent`, and the line counts as **used**, not `unused`.
+- g) *[Seam 13]* **Bare name bound by two imports**: `opaque`, candidates listed.
 
-**K9. Gate.** `mirror kintsugi mirror.spec` prints one summary record and exits per §4. Recorded as the first measured `undeclared`/`unresolved`/`commas` numbers.
+**K4. The rules.**
+- `in @bogus` → `gap`, `partial`, exit 1.
+- The same file under `mirror compile` alone → no `gap` (compile can't know).
+- Two shards with `out @x` → `claim @x`, `red`, exit 255; a third shard's `in @x` → `opaque`.
+- A bare name exported by no in-target → `unbound`, `partial`.
 
-Order: K1, K4, K2, K5, K3, K7, K8, K6, K9.
+**K5. Line commas (kinds and arity).**
+- Y uses `X.f` as `action/2`, X exports a carrier → `comma line`, `exports carrier/0`.
+- X exports `f` as `action/3` → `exports action/3`.
+- The same disagreement on two lines → one `question`, two occurrences.
+- Y reads a field that `X.T` lacks → **no comma**: kinds only (Alex default 7). The test asserts the absence, so the limit is visible.
+
+**K6. Mends and twists.**
+- Record a mend at one occurrence: offered at the other occurrence of the same question, applied only where approved.
+- *[Seam 5]* A renaming mend on a **kind** mismatch leaves the line a comma.
+- *[Seam 5]* **Tree twist:** `Y₁ — X — Y₂`, both using `X.f`, consumers frozen, mends (swap f↔g, id): every line glues under its mend, there are no cycles, and the result is `twist 1`, `red`.
+- **Cycle twist:** three shards in a cycle of lines, renaming mends whose composite isn't the identity: `twist 1`.
+- **Repair:** adding a second export name at X makes the tree twist 0.
+
+**K9. Gate.** `mirror kintsugi mirror.spec` reads `ruler @mirror/gate` and exits per §4. The first measured numbers are recorded.
+
+**After v0:**
+- **K3. Incremental (port of 10-10 T29).** *[Seam 3, 13]* Each fixture states b₀(Σ). Assert `Δ among = [d∼r in Σ] − [d∼r in Kᵢ]` (a private edge inside a component: 0; joining two components of Kᵢ: +1 iff joined in Σ). R7: `Δ = [d∼r in Σ]`, with Seam's identical-star pair (Δ 1 vs 0). **Positive control** in the same harness: an edit that changes a line's restriction reports `reglued ≥ 1` and the new verdict. Only next to it is "`reglued 0` for a body no interface exposes" meaningful.
+- **K7′ (replaces K7).** An edit **without** revert, chosen to change a line verdict: the incremental `run` equals a from-scratch run on the edited set. (K7's edit-and-revert passes with a cache that never invalidates.)
+- **K8. Stalk completeness.** X re-exports `T = {a: @Z.U}`, Y uses T only; change U in Z → Y's line re-glues. A shard with an undeclared reference reaches kintsugi as `partial` (Alex's decision), and the test asserts that its lines are **not** served from cache (or are keyed as pseudo-lines on X's κ).
+- **K10.** Changing the rule set (the relation `R`) re-glues every line.
+
+**Order:** K0a, K1, K4, K2, K5, K6, K0b, K9; after v0: K3, K7′, K8, K10.
 
 ---
 
-## §10 Questions
+## §10 Decisions
 
-**Answered by Alex, 2026-10-29 (second round).** These supersede the matching leans below and in compile §12; the body text is updated in the next pass.
-- **Comma `kind`:** one word, comma, and the kind says who owns it: `comma line` (owned by a pair; local; degree 0) and `comma among` (owned by no pair; mends whose holonomy doesn't close; H¹). The summary counts both separately.
-- **`gap`:** the kintsugi-altitude hole. A **hole** is inside a shard (no section at a site; compile). A **gap** is between shards (`in @X` with no X; kintsugi). `unresolved` is renamed `gap`. Still unnamed: b₁-as-bugs, b₁-as-tasks.
-- **Numbers (row 18): exact values.** `1 ≡ 1.0`; the spelling goes to the erasure record (source address differs, meaning root doesn't).
-- **Undeclared (row 20): Dark at the line, Partial for the document.** A reference to `@X` without `in @X` points into what compile can't see, so that line is Dark; Success lines plus a Dark line compose to `partial`, with the dark lines listed. (A hole is Opaque: a question asked. Undeclared is Dark: nothing looked.) **Exit codes follow Alex's oriented ternary (2026-09-08), as `mirror love` already does: success 0, partial 1.** The spec's "partial exits 0 (1 with `--strict`)" changes accordingly, in §4 here and in compile §1.1.
-- **Start rule (row 17): what the grammar exports.** The closure derives every rule at every position at once (no rule is first); the start is the question an observer puts to it. No new keyword: `out <rule>`. One exported rule is the entry; several are legitimate, and the caller names one (`@mirror/grammar.file`); none named → hole "start?". A grammar's entry points are part of its interface, like any export.
-- **`fixed` (row 17 note):** a rule declared `fixed` is already at its fixed point, `x = COORD(x)`: settled, nothing in it recurses. `settle` is the act, `fixed` is its result. The boot grammar comment calling the declaration form `settle <name> = …` is the drift, not the keyword.
-- **Voice cover (§7):** `peer/colony`, "makes a lot of sense", held lightly: whether it becomes its own thing (mirror or Rust) and whether prism's musical naming carries over stays open.
-- **Futures of `@psychohistory`: parked** until the light-cone flip.
-- **Still open:** `fractured > 1` and the gate (Reed's lean: the spec declares how many compositions it expects; a deviation fails); row 21 (exact coverage) unchanged.
+**Answered by Alex, 2026-10-29, second round** (recorded by Reed in `002656a`; folded into the body text above):
+- **Comma kind:** one word, comma, and the kind says who owns it. `comma line` is owned by a pair. *(The second-round "`comma among` = mends whose holonomy doesn't close" is superseded by default 3 below: that record is `twist`, and `among` is the topology count.)*
+- **`gap`:** the kintsugi-altitude hole (formerly `unresolved`). A hole is inside a shard; a gap is between shards.
+- **Numbers:** exact values; spelling to erasure. Refined by default 6.
+- **Undeclared:** Dark at the line, partial for the document. A hole is Opaque (a question asked); undeclared is Dark (nothing looked).
+- **Start rule:** what the grammar exports, named by the caller (compile §2 item 10).
+- **`fixed`:** a rule declared `fixed` is already at its fixed point, `x = COORD(x)`. `settle` is the act, `fixed` the result.
+- **Voice cover:** `peer/colony`, held lightly.
+- **Futures of `@psychohistory`:** parked until the light-cone flip.
 
-**For Alex.**
-1. **Names** (§8): the kintsugi-altitude hole; line comma versus comma among all; b₁-as-bugs and b₁-as-tasks.
-2. **"Commas are H¹ classes."** For compiled shards, a line disagreement is a degree-0 failure owned by a pair, and H¹ classes are the disagreements no pair owns: mends that don't compose (math §3.2–3.3). Keep "comma" for both with a kind field (lean), or reserve "comma" for the H¹ class?
-3. Is `peer/colony` the voice cover (§7)?
-4. Does `fractured > 1` fail the gate (lean: report only)?
-5. The futures half of `@psychohistory`: park under "light-cone flip", or retire (§8 C2)?
-6. Rows 18, 20, 21 of compile §12: the number type for `1 ≡ 1.0`; `undeclared` = fail; exact coverage.
+**Alex's seven defaults (2026-10-29, relayed by Reed; revisable once the compiler reports real cases):**
+1. Several files claiming one `@X` is a finding. The book is a function: one name, one shard.
+2. A shard with no `out` gets a `name?` hole, not a name from its path, so compile reads only its own bytes.
+3. `among` stays the topology count. The record of mends whose gauge doesn't close is provisionally named **`twist`** (a shear: invisible from any single line). Alex's naming call is still open; it doesn't block v0.
+4. No new comma kinds. Unbound bare name → Dark (no speaker). Ambiguous bare name → Opaque, "which one?". Duplicate claim → default 1. `observed` waits for the Voice.
+5. Exits follow the ternary as `mirror love` implements it: success 0, partial 1, fail/red 255, dark 2. The gate is a declared ruler in `mirror.spec` (lean: partial yes; comma, fail and dark no). `fractured`: the spec declares the expected count, and a deviation fails.
+6. Numbers: μ marks data positions (exact, `1 ≡ 1.0`, spelling to erasure) and typed positions (the type is kept: an `f64` field prints as a float). Unmarked = exact.
+7. Kinds and arity now, types later. Full type checking needs a type system mirror doesn't have yet.
 
-**For Seam.** Math §10, items 1–5. Plus: (6) is resolving κ through re-exports enough when `μ` or a ruler changes (a grammar-level dependency that is not a line)? (7) K6's holonomy fixture: find a mend family whose holonomy is trivial on every cycle of G and still fails to glue.
+**Still open, for Alex:**
+- the final name for `twist`; b₁-as-bugs and b₁-as-tasks;
+- C10: fold `keywords.mirror` into its parent, or give it its own name;
+- exact coverage (compile row 21) is still Mara's lean, not decided;
+- whether gaps are tolerated by the gate ruler (field by field);
+- frozen shards (math Prop 3.3′): which shards are frozen (`@std`? other peers' crystals? `boot/` until it collapses?), since that decides whether their line commas are mendable from their side.
+
+**Open, for Seam (round 2):**
+- the corrected Prop 2.5 and the twist solve (math Prop 3.6) on cycles plus trees;
+- Prop 4.3(b);
+- whether `golden_k0.py`'s lexical rule matches `μ_mirror` once `mirror.mirror` exists;
+- a free-name oracle independent of the compiler (needed to close K0's bare-name half);
+- convergence §4's refutation test.
 
 ---
 
 ## §11 What this spec does not do
 
 - It predicts no futures (§6).
-- It builds no sheaf Laplacian. Interface stalks are typed sets, and δᵀδ/λ₂ don't apply (math §3.1).
-- It edits no shards (§8 is a plan).
-- It writes no Rust. The engine for kintsugi is the same Datalog core as compile §4 (`undeclared` and `unresolved` are its rules). Union-find is the one non-Datalog piece, and it lives where the engine lives.
+- It builds no sheaf Laplacian. Interface stalks are typed sets (math §3.1).
+- It checks kinds and arity, not types (Alex default 7).
+- It edits no shards (§8 is a plan; convergence writes back).
+- It writes no Rust. Kintsugi's rules are Datalog in compile §4's engine. Union-find and the gauge solve are the non-Datalog pieces, and they live where the engine lives.
