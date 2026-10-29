@@ -1,0 +1,16 @@
+1. Vector 04 (p :- not q; q :- not p; r :- not s; t :- p):
+   true WF model: under=['r'] over=['p', 'q', 'r', 't'] -> undefined ['p', 'q', 't']
+   certificate 'q, r true; nothing undefined' with contexts (['q', 'r'], ['q', 'r']): failed checks []
+   => the period-2 witness holds for every fixpoint of gamma^2; it does not certify the LEAST one.
+
+2. Diamond a->b, a->c, b->d, c->d; certificate omits d's derivation via c:
+   failed checks []  (CT3 expects a failure; §4 has no check for it)
+
+3. Vector-05 shape (functional owner(1) -> 2), certificate says verdict clear:
+   failed checks []  => a wrong 'clear' passes; check 7 runs only when 255 is claimed
+
+4. Certificate's own fact list includes edge(a,z), the source has only edge(a,b):
+   checked against the certificate's facts: failed []; against the source's facts: failed [2, 4]
+
+5. Replay of the diamond in all 6 linear extensions: 1 distinct final set(s).
+   The result is the union of heads and facts in every extension; one acyclicity check covers all.
