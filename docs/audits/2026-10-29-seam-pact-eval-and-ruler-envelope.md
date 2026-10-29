@@ -72,7 +72,7 @@ sp        = " " , { " " } ;
 key  "rule"       body = rule-id , sp , atom , sp , "requires" , sp , literal , { "," , sp0 , literal } ;
 key  "fact"       body = ground-atom ;
 key  "query"      body = ground-atom ;
-key  "functional" body = pred , sp , position , { "," , sp0 , position } , sp , "->" , sp , position ;
+key  "functional" body = pred , "(" , position , { "," , sp0 , position } , ")" , sp , "->" , sp , position ;   (* amended 2026-10-29, Mara: the spec's form `functional p(1, 2) → 3`, ASCII arrow *)
 
 literal     = atom | "not" , sp , atom ;
 atom        = pred | pred , "(" , term , { "," , sp0 , term } , ")" ;   (* zero-ary: no parentheses; "p()" is dark *)
@@ -98,6 +98,25 @@ Rules the grammar can't say, checked by the reader (each failure is `dark`, nami
 - **No size limit** in the reader. A limit is a narrowing parameter (R1); if one is needed later, it is a `Count` ruler.
 
 The reader is linear, single-pass and allocation-bounded by the input. It has no recursion, no regex dependency, and no lookahead beyond one line.
+
+**Mara's confirmation (2026-10-29), with one amendment.**
+
+The grammar has two layers, judged separately.
+
+1. **The fixture envelope:** the record keys `rule <id>`, `fact`, `query` and `functional`. These are a fixture format, the pact analogue of mirror-text records (kintsugi-ci §1.4). Mirror's pact surface has no counterpart for them: shards carry no rule ids, and facts and queries are not shard syntax. **They are not, and needn't be, a sublanguage of the pact surface.** At retirement, `E(G_pact)` reads the envelope through the record-format grammar and the clause through `G_pact`.
+2. **The clause:** `atom requires literal, …` with `?x` variables and `not`. Against what exists:
+   - **Mirror's specified surface (fixpoint spec §2):** `pact / requires` is in `L₀`, and "pact variables `?x`" are named as binders (§2 item 6). The clause's `?x` and `requires` are in it. **Confirmed.**
+   - **The landed shards** (`shards/epistemologic/pact/*.mirror`, e.g. `algebra.mirror:78-92`) write `requires` **one per line**, positive only, after a typed action signature `name(a: T) -> verdict … { \ }`, with no `?x` and no `not`. The reader's clause differs in exactly three ways:
+     - (a) **`not`**: not present in any shard, and not listed in `L₀`;
+     - (b) **comma conjunction** after one `requires`, versus repeated `requires` lines;
+     - (c) **untyped atoms with `?x`**, versus typed signatures.
+   - **Divergence (a)** is real: `not` must be added to the pact surface. Fixpoint spec §2 now requires `mirror.mirror` to declare `not` in a `requires` literal (commit with this note).
+   - **Divergence (b)** is a free move: "`requires a, b`" and "`requires a` / `requires b`" mean the same conjunction. Fixpoint spec §2 now requires `mirror.mirror` to declare both spellings and normalize one to the other.
+   - **Divergence (c)** is two forms for two things. The shard form declares a *pact signature* (an action with obligations). The vectors' form declares a *Datalog rule*. Both belong in `G_pact`; the reader reads only the second.
+
+**Verdict: the clause layer is a sublanguage of mirror's specified pact surface once (a) and (b) are declared in `mirror.mirror`, which the fixpoint spec now requires.** It is not a sublanguage of today's landed shards, which have neither `not` nor comma conjunction. The fixtures pin the vectors' surface (their `text` fields), not a new dialect.
+
+**One amendment:** the `functional` body now uses the spec's own notation, `functional p(1, 2) -> 3` (fixpoint §4.1, ASCII arrow), instead of `functional p 1, 2 -> 3`. Vector 05 in `oracles.md` uses this form.
 
 **Retirement.** When T1 is green and `E(G_pact)` exists, the verb reads through it, and the same fixtures must produce the same `Instance` through both readers before the hand reader is deleted. That is a diverse double read, in the spirit of Prop 6.4. **Extending this grammar (new keys, numbers, trailing comments, includes) is outside this audit.**
 

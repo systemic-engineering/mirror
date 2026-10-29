@@ -170,6 +170,12 @@ This spec does not write `mirror.mirror`. It states what the file must contain f
 7. **`split` as syntax.** The verb exists in the grammar (math §4.2–4.3: choice needs it). Its semantics on the spectral triple live in prismqueer.
 8. **Ruler positions.** `settle`'s `by:` and every threshold or bin position accept an `@ruler` reference (§10). Until `@ruler` lands, a bare number in a ruler position reads as `Opaque` ("whose ruler?"), mirror-005's rule.
 9. **Holes.** `\` is an atom, valid wherever a body or value is expected, and never reduced (math §3.4). Each hole has a **question** and an **occurrence** (§5.1).
+9′. *[2026-10-29, for `mirror pact eval`; Seam's pact-eval audit §1.2]* **The pact clause form.** `mirror.mirror` declares:
+    - Datalog rules `atom requires literal, …` with `?x` binders;
+    - **`not`** as a literal prefix inside `requires`;
+    - **both conjunction spellings**, comma-separated after one `requires` and one `requires` per line. They normalize to one form: a free move (§2.3 of the math), since both denote the same conjunction.
+
+    This makes the hand reader's clause layer a sublanguage of `G_pact`, so its fixtures stay valid at retirement.
 10. *[T1; Alex 10-29 second round; Seam 9]* **The start rule is named, never positional, and it is what the grammar exports.** No new keyword: a grammar's entry points are its exported rules (`out <rule>`), and the caller names one (`@mirror.shard`). *[T1 (a)]* **A rule's qualified name is `<grammar name>.<rule>`**: `grammar @mirror { … }` (item 1) gives `@mirror.shard`, the same `@X.name` form as any reference (§1.3). `@mirror/grammar` is the legacy `boot/std/mirror/grammar.mirror` grammar, a different name (slated to become `@mirror/prism`), and never the qualifier of `mirror.mirror`'s rules. The closure derives every rule at every position at once, so the start is the question an observer puts to it. **Start candidates = exported names whose declaration is a rule** (kind `rule`); an exported keyword or sigil (`out in`, `out @`, `out #` in `boot/`) is kind `keyword` and never a start. Order stays out of meaning, so T1.3 holds. The start is an input to compile (§1), not part of the grammar's `root`.
 
 ---
