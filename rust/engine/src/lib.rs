@@ -419,10 +419,104 @@ fn least_model(
     }
 }
 
+// ── Validation: a program that is not run is dark ────────────────────────
+
+fn atom_vars(a: &Atom) -> BTreeSet<&str> {
+    a.args
+        .iter()
+        .filter_map(|t| match t {
+            Term::Var(v) => Some(v.as_str()),
+            Term::Const(_) => None,
+        })
+        .collect()
+}
+
+/// Arity, then safety (range restriction), then, for the positive core,
+/// negation. Every check walks sorted collections, so the verdict does not
+/// depend on rule or fact order.
+fn validate(program: &Program, facts: &Facts, allow_negation: bool) -> Result<(), Dark> {
+    let mut arities: BTreeMap<&str, BTreeSet<usize>> = BTreeMap::new();
+    for f in &facts.atoms {
+        arities.entry(&f.pred).or_default().insert(f.args.len());
+    }
+    for r in &program.rules {
+        arities.entry(&r.head.pred).or_default().insert(r.head.args.len());
+        for l in &r.body {
+            let (Literal::Pos(a) | Literal::Not(a)) = l;
+            arities.entry(&a.pred).or_default().insert(a.args.len());
+        }
+    }
+    for (pred, set) in &arities {
+        let mut it = set.iter();
+        if let (Some(&expected), Some(&found)) = (it.next(), it.next()) {
+            return Err(Dark::Arity { pred: pred.to_string(), expected, found });
+        }
+    }
+
+    let mut rules: Vec<&Rule> = program.rules.iter().collect();
+    rules.sort();
+    for r in &rules {
+        let mut bound = BTreeSet::new();
+        let mut needed = atom_vars(&r.head);
+        for l in &r.body {
+            match l {
+                Literal::Pos(a) => bound.extend(atom_vars(a)),
+                Literal::Not(a) => needed.extend(atom_vars(a)),
+            }
+        }
+        if let Some(var) = needed.difference(&bound).next() {
+            return Err(Dark::Unsafe { rule: r.id.clone(), var: var.to_string() });
+        }
+    }
+    if !allow_negation {
+        if let Some(r) = rules.iter().find(|r| r.body.iter().any(|l| matches!(l, Literal::Not(_)))) {
+            return Err(Dark::Negation { rule: r.id.clone() });
+        }
+    }
+    Ok(())
+}
+
+/// `|B|`, saturating: every predicate over every constant the program and
+/// the facts mention (Prop. 5.4's bound on ticks).
+fn herbrand_size(program: &Program, facts: &Facts) -> u64 {
+    let mut consts: BTreeSet<&Const> = BTreeSet::new();
+    let mut arity: BTreeMap<&str, usize> = BTreeMap::new();
+    for f in &facts.atoms {
+        consts.extend(&f.args);
+        arity.insert(&f.pred, f.args.len());
+    }
+    for r in &program.rules {
+        let atoms = std::iter::once(&r.head).chain(r.body.iter().map(|l| {
+            let (Literal::Pos(a) | Literal::Not(a)) = l;
+            a
+        }));
+        for a in atoms {
+            arity.insert(&a.pred, a.args.len());
+            for t in &a.args {
+                if let Term::Const(c) = t {
+                    consts.insert(c);
+                }
+            }
+        }
+    }
+    let n = consts.len() as u64;
+    arity
+        .values()
+        .fold(0u64, |acc, &k| acc.saturating_add(n.saturating_pow(k as u32)))
+}
+
 /// `E(P, F, k_max) → (M, D, stop)`.
 pub fn run(program: &Program, facts: &Facts, k_max: u64) -> Result<Run, Dark> {
+    validate(program, facts, false)?;
     let rules: Vec<Compiled> = program.rules.iter().map(compile).collect();
     let (ticks, stop) = least_model(&rules, &facts.atoms, k_max, None);
+    // Prop. 5.4: at most |B| ticks carry deposits. Exceeding it is a bug in
+    // E, reported, never looped on.
+    let last = ticks.values().copied().max().unwrap_or(0);
+    let bound = herbrand_size(program, facts);
+    if last > bound {
+        return Err(Dark::Bound { ticks: last, bound });
+    }
     let tau = facts.altitude.as_str();
     let mut model = BTreeMap::new();
     let mut deposits = Vec::with_capacity(ticks.len());
