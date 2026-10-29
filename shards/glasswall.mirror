@@ -27,10 +27,15 @@ in @uuid/spectral
 #
 # @glasswall IS the substrate-altitude type-membrane that:
 #
-#   (i)   preserves Anna Wolf 2012 observation-without-perturbation
-#         at shared-memory substrate — every observation crossing
-#         the membrane satisfies observer-non-perturbation by
-#         construction (structural, not policy);
+#   (i)   preserves observation-without-perturbation — every
+#         observation crossing the membrane satisfies observer-
+#         non-perturbation by construction (structural, not policy).
+#         The apparatus from Anna Jakobs's 2012 thesis, read across:
+#         the thesis shares one GPU buffer between OpenCL and OpenGL,
+#         but computation and visualization take turns at step
+#         boundaries, not simultaneously (p. 43, ~1/3 runtime cost),
+#         and the separate-thread live view was not achieved (p. 31).
+#         Non-perturbation is our reading, not the thesis's result;
 #   (ii)  refuses Rice 1953 undecidability — sub-Turing polynomial-
 #         time bounded per Rec #90 §5.4; no semantic-property-
 #         decision-of-arbitrary-programs escapes the membrane;
@@ -72,7 +77,8 @@ in @uuid/spectral
 #
 #   Anna Wolf 2012          Integration von OpenGL-Visualisierungs-
 #                             techniken in GPU-Anwendungen
-#                             (Diplomarbeit PGI/JCNS; consent
+#                             (Masterarbeit, FH Aachen Campus
+#                             Jülich, PGI/JCNS; consent
 #                             obtained via Alex 2026-08-26 per HARD
 #                             RULE [[project-anna-wolf-2012-
 #                             observation-without-perturbation]]).

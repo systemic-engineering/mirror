@@ -168,10 +168,11 @@ in @epistemologic/math/music/interval
 #      prismqueer::coincidence::CoincidenceHash<N> — enables
 #      backward-tape past-shape walk).
 #
-# === Ada Lovelace 1843 Notes G verbatim (device-word origin) ===
+# === Ada Lovelace 1843 Note A verbatim (device-word origin) ===
 #
-#   "The Analytical Engine weaves algebraical patterns just as the
-#    Jacquard-loom weaves flowers and leaves."
+#   "We may say most aptly, that the Analytical Engine weaves
+#    algebraical patterns just as the Jacquard-loom weaves flowers
+#    and leaves."
 #
 # The device-word "loom" IS Ada's naming for the weaving-apparatus
 # at computation-as-structural-composition altitude. @loom at
