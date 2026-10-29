@@ -250,6 +250,17 @@ Order: K1, K4, K2, K5, K3, K7, K8, K6, K9.
 
 ## §10 Questions
 
+**Answered by Alex, 2026-10-29 (second round).** These supersede the matching leans below and in compile §12; the body text is updated in the next pass.
+- **Comma `kind`:** one word, comma, and the kind says who owns it: `comma line` (owned by a pair; local; degree 0) and `comma among` (owned by no pair; mends whose holonomy doesn't close; H¹). The summary counts both separately.
+- **`gap`:** the kintsugi-altitude hole. A **hole** is inside a shard (no section at a site; compile). A **gap** is between shards (`in @X` with no X; kintsugi). `unresolved` is renamed `gap`. Still unnamed: b₁-as-bugs, b₁-as-tasks.
+- **Numbers (row 18): exact values.** `1 ≡ 1.0`; the spelling goes to the erasure record (source address differs, meaning root doesn't).
+- **Undeclared (row 20): Dark at the line, Partial for the document.** A reference to `@X` without `in @X` points into what compile can't see, so that line is Dark; Success lines plus a Dark line compose to `partial`, with the dark lines listed. (A hole is Opaque: a question asked. Undeclared is Dark: nothing looked.) **Exit codes follow Alex's oriented ternary (2026-09-08), as `mirror love` already does: success 0, partial 1.** The spec's "partial exits 0 (1 with `--strict`)" changes accordingly, in §4 here and in compile §1.1.
+- **Start rule (row 17): what the grammar exports.** The closure derives every rule at every position at once (no rule is first); the start is the question an observer puts to it. No new keyword: `out <rule>`. One exported rule is the entry; several are legitimate, and the caller names one (`@mirror/grammar.file`); none named → hole "start?". A grammar's entry points are part of its interface, like any export.
+- **`fixed` (row 17 note):** a rule declared `fixed` is already at its fixed point, `x = COORD(x)`: settled, nothing in it recurses. `settle` is the act, `fixed` is its result. The boot grammar comment calling the declaration form `settle <name> = …` is the drift, not the keyword.
+- **Voice cover (§7):** `peer/colony`, "makes a lot of sense", held lightly: whether it becomes its own thing (mirror or Rust) and whether prism's musical naming carries over stays open.
+- **Futures of `@psychohistory`: parked** until the light-cone flip.
+- **Still open:** `fractured > 1` and the gate (Reed's lean: the spec declares how many compositions it expects; a deviation fails); row 21 (exact coverage) unchanged.
+
 **For Alex.**
 1. **Names** (§8): the kintsugi-altitude hole; line comma versus comma among all; b₁-as-bugs and b₁-as-tasks.
 2. **"Commas are H¹ classes."** For compiled shards, a line disagreement is a degree-0 failure owned by a pair, and H¹ classes are the disagreements no pair owns: mends that don't compose (math §3.2–3.3). Keep "comma" for both with a kind field (lean), or reserve "comma" for the H¹ class?
