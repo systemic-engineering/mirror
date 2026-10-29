@@ -170,9 +170,14 @@ pub enum Outcome {
 /// (an atom of `over_{round−1}` missing from `over_round`). Nothing is deleted.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Retraction {
+    /// The retracted atom's address.
     pub addr: Addr,
     pub fact: Fact,
     pub round: u64,
+    /// The status splinter deposited for it: the atom
+    /// `status(addr, undefined, false)` at `@pact/status`. The round is a
+    /// deposit coordinate, never in this address.
+    pub status_addr: Addr,
 }
 
 /// The well-founded model: `true = under`, `undefined = over ∖ under`,
@@ -245,7 +250,13 @@ pub fn well_founded(program: &Program, facts: &Facts, k_max: u64) -> Result<Well
             for args in tuples {
                 if !rel_contains(&next_over, p, args) {
                     let fact = Fact { pred: p.clone(), args: args.clone() };
-                    retractions.push(Retraction { addr: addr(tau, &fact), fact, round });
+                    let a = addr(tau, &fact);
+                    let status = Fact {
+                        pred: "status".into(),
+                        args: vec![Const::Addr(a), Const::Sym("undefined".into()), Const::Sym("false".into())],
+                    };
+                    let status_addr = addr(STATUS_ALTITUDE, &status);
+                    retractions.push(Retraction { addr: a, fact, round, status_addr });
                 }
             }
         }
@@ -274,14 +285,16 @@ pub fn well_founded(program: &Program, facts: &Facts, k_max: u64) -> Result<Well
 
 // ── Addressing (§5.0 bytes; §4.1 atom content) ───────────────────────────
 
-/// Tag bytes, in §4.1's listing order. §4.1 names the tag byte but does not
-/// pin its value; no test pins derived-atom hex (audit §3.2) until it does.
+/// Tag bytes, pinned by §4.1: sym 0x00, nat 0x01, addr 0x02.
 const TAG_SYM: u8 = 0x00;
 const TAG_NAT: u8 = 0x01;
 const TAG_ADDR: u8 = 0x02;
 
-/// The fragment label of `M`'s store-merge fragment. Not pinned by §4.1.
+/// The fragment label of `M`'s store-merge fragment (§4.1).
 const MODEL_LABEL: &[u8] = b"model";
+
+/// The altitude of W's status splinters (§4.1).
+const STATUS_ALTITUDE: &str = "@pact/status";
 
 fn put_u64(h: &mut blake3::Hasher, n: u64) {
     h.update(&n.to_be_bytes());
@@ -298,30 +311,42 @@ fn put_tau(h: &mut blake3::Hasher, altitude: &str) {
     h.update(&[0x00, 0x00]);
 }
 
-/// `addr = H("splinter\0" ‖ τ ‖ enc(p) ‖ u64(n) ‖ for each argument:
-/// tag ‖ enc(bytes))` (§4.1, §5.0).
+fn push_enc(out: &mut Vec<u8>, b: &[u8]) {
+    out.extend_from_slice(&(b.len() as u64).to_be_bytes());
+    out.extend_from_slice(b);
+}
+
+/// `content = enc(p) ‖ u64(n) ‖ arg₁ ‖ … ‖ arg_n`, `arg = tag ‖ enc(bytes)`.
+fn content(fact: &Fact) -> Vec<u8> {
+    let mut c = Vec::new();
+    push_enc(&mut c, fact.pred.as_bytes());
+    c.extend_from_slice(&(fact.args.len() as u64).to_be_bytes());
+    for a in &fact.args {
+        match a {
+            Const::Sym(s) => {
+                c.push(TAG_SYM);
+                push_enc(&mut c, s.as_bytes());
+            }
+            Const::Nat(n) => {
+                c.push(TAG_NAT);
+                push_enc(&mut c, &n.to_be_bytes());
+            }
+            Const::Addr(x) => {
+                c.push(TAG_ADDR);
+                push_enc(&mut c, x);
+            }
+        }
+    }
+    c
+}
+
+/// `addr = H("splinter\0" ‖ τ ‖ enc(content))` (§5.0; §4.1 "Fact store").
+/// One formula for every atom in the system.
 pub fn addr(altitude: &str, fact: &Fact) -> Addr {
     let mut h = blake3::Hasher::new();
     h.update(b"splinter\0");
     put_tau(&mut h, altitude);
-    put_enc(&mut h, fact.pred.as_bytes());
-    put_u64(&mut h, fact.args.len() as u64);
-    for c in &fact.args {
-        match c {
-            Const::Sym(s) => {
-                h.update(&[TAG_SYM]);
-                put_enc(&mut h, s.as_bytes());
-            }
-            Const::Nat(n) => {
-                h.update(&[TAG_NAT]);
-                put_enc(&mut h, &n.to_be_bytes());
-            }
-            Const::Addr(a) => {
-                h.update(&[TAG_ADDR]);
-                put_enc(&mut h, a);
-            }
-        }
-    }
+    put_enc(&mut h, &content(fact));
     *h.finalize().as_bytes()
 }
 
@@ -764,7 +789,9 @@ pub fn run(program: &Program, facts: &Facts, k_max: u64) -> Result<Run, Dark> {
     // Prop. 5.4: at most |B| ticks carry deposits. Exceeding it is a bug in
     // E, reported, never looped on.
     let last = ticks.values().copied().max().unwrap_or(0);
-    let bound = herbrand_size(program, facts);
+    // §4.1 A3: T ≤ |B| − |F| + 1, so the last deposit tick T − 1 ≤ |B| − |F|.
+    let distinct_facts = facts.atoms.iter().collect::<BTreeSet<_>>().len() as u64;
+    let bound = herbrand_size(program, facts).saturating_sub(distinct_facts);
     if last > bound {
         return Err(Dark::Bound { ticks: last, bound });
     }
