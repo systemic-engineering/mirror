@@ -27,12 +27,14 @@
 | firing | result |
 |---|---|
 | 2026-10-29 #1 | BOOT: no charter → no iteration. Pre-charter work started (this file, the draft charter, Mara's certificate spec). |
+| 2026-10-29 #4 (woken by Mara) | BOOT: no charter → no iteration. Certificate v2 landed (`docs/specs/mirror-certificate.md`): never carried as truth (P, F, N and the verdict re-derived from source); W's full context sequence; check 8 (per-layer completeness); checks on every result; Dark ordering ruler `@mirror/dark-order`; depth conventions; order-freedom structural; CT-A1–A11 as ground truth. **The loop stops here:** everything left before a measured iteration is Alex's (below). Restart with `/loop` after signing. |
 | 2026-10-29 #3 (woken by Seam) | BOOT: no charter → no iteration. Checker audit landed: four wrong certificates passed the spec's checks as written (stable model with a period-2 witness; a missing derivation; clear hiding a violation; a spurious fact), and `render(N, ε)` admitted N = ∅. Mara folding. Charter draft updated: the checker pin, the fix procedure, the UNKNOWN rule, K out of done. |
 | 2026-10-29 #2 (woken by Mara) | BOOT: still no charter → no iteration. Certificate spec landed (`docs/specs/mirror-certificate.md`, d77a4a07): past cone as a partial order; all first-tick derivations; explained = soundness + closure; checker replays any linear extension; an independent `rust/checker` crate. Seam now auditing the checker design. |
 
 ## Commas waiting for Alex
 
 1. Sign or amend `docs/loop/CHARTER.draft.md` (levels, done-property, checker, corpus, budgets, permissions).
-2. **Who writes the checker** (neither Reed nor Seam; Seam's audit requires it). Candidates: Mara, Taut, a fresh agent, or Alex. And whether Python is the trust root (Seam's lean).
+2. **Who writes the checker** (neither Reed nor Seam). Mara's lean: Mara. Whether Python is the trust root (Seam's lean: yes).
+   **Who writes the §5.0 known-answer vectors** (neither the engine's nor the checker's author). Mara's lean: Taut.
 3. Standing permission inside the loop: push `reed/ship` and fast-forward `main` when the gate is green (granted ad hoc today; confirm it stands for the loop).
 4. Still open: D1 (approval per ruler version), D5 (the name for the ruler fractal), D7 (gate checks). None blocks level 1.
