@@ -188,16 +188,88 @@ pub struct WellFounded {
 }
 
 impl WellFounded {
-    /// The status of any ground atom, queried or not.
-    pub fn status(&self, _fact: &Fact) -> Status {
-        todo!("W: status")
+    /// The status of any ground atom, queried or not. Closed world for
+    /// facts only: an atom neither true nor undefined is false.
+    pub fn status(&self, fact: &Fact) -> Status {
+        let a = addr(&self.altitude, fact);
+        if self.true_atoms.contains_key(&a) {
+            Status::True
+        } else if self.undefined.contains_key(&a) {
+            Status::Undefined
+        } else {
+            Status::False
+        }
     }
 }
 
 /// `W(P, F, k_max)`: the alternating fixpoint (math §5.3), two core calls
 /// per round, stopping at consecutive equality of `under`.
-pub fn well_founded(_program: &Program, _facts: &Facts, _k_max: u64) -> Result<WellFounded, Dark> {
-    todo!("W: alternating fixpoint (audit §3.4)")
+pub fn well_founded(program: &Program, facts: &Facts, k_max: u64) -> Result<WellFounded, Dark> {
+    validate(program, facts, true)?;
+    let rules: Vec<Compiled> = program.rules.iter().map(compile).collect();
+    let keys = keys(program);
+    // γ(S): one core run with each `not a` read as the EDB test `a ∉ S`.
+    let gamma = |s: &Rel| -> Result<Rel, Dark> {
+        let (ticks, stop, _) = least_model(&rules, &keys, &facts.atoms, k_max, Some(s));
+        if let Stop::Budget(k_max) = stop {
+            return Err(Dark::Budget { k_max });
+        }
+        let mut m = Rel::new();
+        for f in ticks.into_keys() {
+            rel_insert(&mut m, &f.pred, f.args);
+        }
+        Ok(m)
+    };
+    let tau = facts.altitude.as_str();
+
+    // under₀ = F; over_k = γ(under_k); under_{k+1} = γ(over_k).
+    let mut under = Rel::new();
+    for f in &facts.atoms {
+        rel_insert(&mut under, &f.pred, f.args.clone());
+    }
+    let mut over = gamma(&under)?;
+    let mut retractions = Vec::new();
+    let mut round = 0u64;
+    loop {
+        let next_under = gamma(&over)?;
+        // Non-monotone outer loop: stop on consecutive equality (Prop. 1.9).
+        if next_under == under {
+            break;
+        }
+        under = next_under;
+        let next_over = gamma(&under)?;
+        round += 1;
+        // γ is antitone (Prop. 5.5): over only shrinks. Each atom that
+        // leaves it moved from undefined to false: a status splinter.
+        for (p, tuples) in &over {
+            for args in tuples {
+                if !rel_contains(&next_over, p, args) {
+                    let fact = Fact { pred: p.clone(), args: args.clone() };
+                    retractions.push(Retraction { addr: addr(tau, &fact), fact, round });
+                }
+            }
+        }
+        over = next_over;
+    }
+    retractions.sort_by(|a, b| (a.round, a.addr).cmp(&(b.round, b.addr)));
+
+    let addressed = |r: &Rel, minus: Option<&Rel>| -> BTreeMap<Addr, Fact> {
+        let mut out = BTreeMap::new();
+        for (p, tuples) in r {
+            for args in tuples {
+                if minus.is_some_and(|m| rel_contains(m, p, args)) {
+                    continue;
+                }
+                let fact = Fact { pred: p.clone(), args: args.clone() };
+                out.insert(addr(tau, &fact), fact);
+            }
+        }
+        out
+    };
+    let true_atoms = addressed(&under, None);
+    let undefined = addressed(&over, Some(&under));
+    let outcome = if undefined.is_empty() { Outcome::Clear } else { Outcome::Opaque };
+    Ok(WellFounded { altitude: facts.altitude.clone(), true_atoms, undefined, retractions, outcome })
 }
 
 // ── Addressing (§5.0 bytes; §4.1 atom content) ───────────────────────────
