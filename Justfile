@@ -334,6 +334,14 @@ test-red:
     cargo test --manifest-path {{MANIFEST_PATH}} --features red-claims --test fixpoint_t1
     cargo test --manifest-path rust/fractal/Cargo.toml --features red-claims --test fire_d_measure
 
+# Run the slow-but-green checks kept out of the commit loop (feature
+# `slow`): all 720 line orders of pact vector 01 through the binary.
+test-slow:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    [ -n "${IN_NIX_SHELL:-}" ] || { set +u; source "$(just _devenv)"; set -u; }
+    cargo test --manifest-path {{MANIFEST_PATH}} --features slow --test pact_eval
+
 # Watch + retest on every change (requires cargo-watch).
 # Install with: cargo install cargo-watch
 test-watch:

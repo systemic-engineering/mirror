@@ -102,6 +102,11 @@ serde_json = "1.0"
 # so the commit gate runs what is meant to pass; each RED test names where
 # on the roadmap it turns green. `just test-red` runs them.
 red-claims = []
+# Slow-but-green checks kept out of the commit loop (Alex: a whole commit
+# under a minute). `just test-slow` runs them: today, all 720 line orders
+# of pact vector 01 through the binary (tests/pact_eval.rs); every commit
+# runs a seeded sample of 24.
+slow = []
 
 # Dev-dependencies for property-based RED tests grounded in Mara
 # 3cd9a42 (grounding spec) + 5d3040d (math foundation). These are
