@@ -1,0 +1,16 @@
+# python3 undeclared_variants.py <git archive 346253b shards>/shards
+rule      prefix  exact  (S,X) exact
+M             20     35           47
+I             20     35           47
+C             18     33           44
+E             20     35           47
+R             19     34           45
+T             20     35           52
+ICE           18     33           44
+ICER          18     33           44
+ICERT         18     33           49
+
+shards that leave the exact list under ICER (lexer false positives in M):
+  - epistemologic/cybernetic/algedonic.mirror
+  - epistemologic/cybernetic/design.mirror
+shards that join the exact list under ICER:
