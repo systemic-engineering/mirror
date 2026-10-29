@@ -1,0 +1,20 @@
+[package]
+# `ruler` — the ruler envelope (docs/specs/mirror-ruler.md §1, §1.1),
+# admitted by docs/audits/2026-10-29-seam-pact-eval-and-ruler-envelope.md
+# §2. `Ruler<B>` with a sealed `Body` (only `Count` in this slice),
+# `Shaped<T, E>` recording `shaped_by` and `Approval::Unsigned`, and
+# `run_bounded`, the shaped wrapper over engine's bounded core.
+#
+# Depends on `engine` (Addr, Tick, Budget, Run) and `blake3` only. The
+# direction is fixed: ruler → engine, never the reverse. No serde, no
+# keys, no crypto dependency, no signing, no `Approved`, no `verify`.
+# The name is a placeholder (Alex names primitives).
+name = "ruler"
+version = "0.1.0"
+edition = "2021"
+description = "mirror's ruler envelope: addressed narrowing parameters (Count only)"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+engine = { path = "../engine" }
+blake3 = "1.8"

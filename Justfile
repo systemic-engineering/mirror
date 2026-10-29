@@ -31,10 +31,12 @@ set positional-arguments
 # Pass --manifest-path so recipes work from the repo root without `cd`.
 MANIFEST_PATH := "rust/Cargo.toml"
 
-# rust/ is not a workspace: the binary crate plus five path crates, each
+# rust/ is not a workspace: the binary crate plus six path crates, each
 # with its own manifest and tests. rust/engine is E, the evaluator core
-# (docs/audits/2026-10-29-seam-engine-core-scope.md §2).
-CRATE_MANIFESTS := "rust/Cargo.toml rust/fractal/Cargo.toml rust/matrix/Cargo.toml rust/spectral/Cargo.toml rust/roomba/Cargo.toml rust/engine/Cargo.toml"
+# (docs/audits/2026-10-29-seam-engine-core-scope.md §2); rust/ruler is
+# the ruler envelope (docs/audits/2026-10-29-seam-pact-eval-and-ruler-
+# envelope.md §2.1).
+CRATE_MANIFESTS := "rust/Cargo.toml rust/fractal/Cargo.toml rust/matrix/Cargo.toml rust/spectral/Cargo.toml rust/roomba/Cargo.toml rust/engine/Cargo.toml rust/ruler/Cargo.toml"
 
 # The cargo target dir. The flake's devShell sets CARGO_TARGET_DIR
 # (typically /Users/reed/.cargo-target), so we honour that; fall back to
