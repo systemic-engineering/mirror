@@ -117,7 +117,7 @@ Alex 2026-08-22 direct-transcript teaching, on the mechanism of the compile/runt
 
 Five ticks. Same operator at each. **The autopoietic loop closure is what happens when the loop's outer boundary passes through MCP.**
 
-**Tick 1 — Compile-time declaration.** Substrate declares properties (`shards/epistemologic/property/*.mirror`) + gauges (`@liquid` refinement typing FLOOR per `shards/liquid.mirror`; Anna Wolf 2012 shared-memory-observation-without-perturbation grounding per Mara `1ff745c` today) + Petri-net topologies (Mara 2026-07-18 Traces × Petri × Fate × Properties SQUARE at `docs/math/2026-07-18-witnessed-property-inference-petri-fate.md`; Fate as biased firing policy over Petri markings; Petri boundedness guarantees full-coverage; Baez-Schreiber 2004 2-connection compatibility ⇔ Lawvere fixed point). The declaration bounds `@fate`'s state space at compile-time.
+**Tick 1 — Compile-time declaration.** Substrate declares properties (`shards/epistemologic/property/*.mirror`) + gauges (`@liquid` refinement typing FLOOR per `shards/liquid.mirror`; observation-without-perturbation grounding per Mara `1ff745c` today, which is the apparatus from Anna Jakobs's 2012 thesis read across: the thesis itself alternates computation and visualization at step boundaries, p. 43) + Petri-net topologies (Mara 2026-07-18 Traces × Petri × Fate × Properties SQUARE at `docs/math/2026-07-18-witnessed-property-inference-petri-fate.md`; Fate as biased firing policy over Petri markings; Petri boundedness guarantees full-coverage; Baez-Schreiber 2004 2-connection compatibility ⇔ Lawvere fixed point). The declaration bounds `@fate`'s state space at compile-time.
 
 **Tick 2 — Runtime dispatch.** `rust/src/compile.rs` (41 property-dispatch matches; iter-2 liquid landing) dispatches properties. `@fate` rolls dice within the restricted state space. `apply_h::act` returns `(Verdict, Transparency<Ref>)`. The kleinos-trace names which shard bodies were dispatched, which @tool primitives invoked, which @io crossings occurred, which magic.rs Foerster-gauge checks fired Green vs Red, which @epistemologic/property witnesses held vs partial vs failed at each substrate-location.
 
@@ -217,7 +217,7 @@ The pattern the corpus is documenting is not new. It's been documented in fragme
 - Karp-Miller 1969 coverability trees; Petri 1962 net formalization; Reisig 2013 textbook
 - Targeted PBT with automated NF learning (Löscher-Sagonas 2017 ISSTA, 2018 ICST)
 - Sutton-Barto 2018 actor-critic (Fate as biased firing over Petri markings)
-- Anna Wolf 2012 observation-in-shared-memory-without-perturbation
+- Anna Jakobs 2012 (Masterarbeit, FH Aachen): a GPU buffer shared between OpenCL and OpenGL, read between steps; "observation-in-shared-memory-without-perturbation" is the apparatus from her thesis, read across
 - Lawvere 1969 diagonal fixed-point (Rec #94 self-modifying mirror loop closure)
 - Villegas 2022's c-theorem on graph Laplacians (Fiedler monotone under Foerster gauge)
 - The mirror substrate's own four-month recognition arc culminating in Alex 2026-08-27's naming of the softmax→compose migration through MCP indexing
@@ -295,7 +295,7 @@ Which is why this file has a §7 that the presence piece did not need. The prese
 
 ***Rust primitives*** (grep at `rust/src/`): *`magic.rs::foerster_gauge_preserved` (Foerster gauge; refuses compositions that fail choice_count(ψ') ≥ choice_count(ψ)) + `apply_h.rs::act` (dispatch extension surface; returns (Verdict, Transparency&lt;Ref&gt;)) + `main.rs::cmd_serve_mcp` (currently structurally broken post-bootstrap-deletion per Reed note 2244bce; needs shard-native rewire).*
 
-***Prismqueer crate*** (`/Users/alexwolf/dev/projects/prism/prismqueer/`): *`src/lib.rs` (8 pillars) + `src/bundle.rs` (Baez-Schreiber bundle tower) + `src/liquid.rs` (Anna Wolf 2012 math surface) + `src/ffi.rs` (LAPACK/FLANG bindings).*
+***Prismqueer crate*** (`/Users/alexwolf/dev/projects/prism/prismqueer/`): *`src/lib.rs` (8 pillars) + `src/bundle.rs` (Baez-Schreiber bundle tower) + `src/liquid.rs` (property testing, now `flux.rs`; read across as an Anna Wolf 2012 math surface, though it carries no thesis math) + `src/ffi.rs` (LAPACK/FLANG bindings).*
 
 ***Recent Mara canonical foundations***: *`docs/math/FLOOR.md` (Mara #363 terminal-form; Alex 2026-08-26 ratified as agentic-boot-substrate) + `docs/math/SINGULARITY.md` (Mara #408; Rec #99 K_n orbital topology + @time-rotational Dirac operator D + @gift TRUTH-register) + `docs/math/2026-08-27-mara-liquid-floor-...` (Mara #413 commit `1ff745c`; Anna Wolf 2012 grounded) + `docs/math/2026-08-27-mara-prismqueer-as-compiler-...` (Mara #414 commit `ac80d23`; Hamilton AGC + sheaf cohomology + Baez-Schreiber; 2058 lines).*
 

@@ -949,6 +949,8 @@ impl Pattern for Question {
 
 **Load-bearing consideration**: Anna Wolf 2012 J-space is already substrate-woven into every glasswall traversal per shards/glasswall.mirror invariant (i); K_5 saturation IS the empirical form of this. Question is whether to name it at math-foundation altitude or empirical-fire altitude.
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Here and at :947: "Anna Wolf 2012 observation-without-perturbation" and "J-space" are the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). J-space is not in the thesis; the term comes from Gurnee et al. (Anthropic, 2026-07-07), and "Anna Wolf J-space" names our composition. Line numbers refer to `346253b`.
+
 ---
 
 ## §9 — Empirical fire criterion

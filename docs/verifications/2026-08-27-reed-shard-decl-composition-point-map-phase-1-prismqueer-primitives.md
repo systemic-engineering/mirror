@@ -45,6 +45,8 @@ This carrier IS the wire payload per Alex 2026-08-26 frame: `@liquid(@X)` refine
 | ~304 | `extract(lens, observation: ref) -> ref { \ }` | Pulls refinements FROM observation via inverse-lens; consumes Anna-2012-observation-without-perturbation primitive at prismqueer::spectral (§4.1 companion @liquid FLOOR spec `1ff745c`) |
 | ~313 | `project(lens, p: ref) -> ref { \ }` | Back-projects refinement onto substrate; consumes Kleinos-compose when combining multiple back-projections into K_3-topology |
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Here and at :145: "Anna-2012-observation-without-perturbation primitive" is the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). Line numbers refer to `346253b`.
+
 **All 4 bodies are `\`-obligation-blocked at HEAD.** Body composition realizes at Reed Phase 1 tick per Mara `ac80d23` §6.1 + companion `1ff745c` §5.
 
 ### §1.3 Composition path (once prismqueer primitives land)

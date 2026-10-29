@@ -59,7 +59,7 @@ karen_ancestors:
   - "Turing, Alan M. (1936). *On Computable Numbers, with an Application to the Entscheidungsproblem.* Proceedings of the London Mathematical Society, s2-42(1):230-265. https://londmathsoc.onlinelibrary.wiley.com/doi/abs/10.1112/plms/s2-42.1.230. LOAD-BEARING at §7.1 K_4 ancestral topology — the computability substrate the @question dissolves (per Alex 2026-09-05 Turing-boundary-dissolves recognition composed OVER)."
   - "Turing, Alan M. (1950). *Computing Machinery and Intelligence.* Mind 49:433-460. p. 446 verbatim: 'These abstract machines are mathematical fictions rather than physical objects. By definition they are incapable of errors of functioning.' LOAD-BEARING at §7.1 K_4 ancestral topology — the observer-exterior fiction @question structurally reinstates by refusing to strip the observer."
   - "Rice, H. G. (1953). *Classes of recursively enumerable sets and their decision problems.* Transactions of the American Mathematical Society 74:358-366. Semantic-property undecidability. LOAD-BEARING at §4.3 Rice-safe uniform-D per bilateral-sentinel §2.4 discipline — @question dispatch is sub-Turing polynomial-time bounded."
-  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Diplomarbeit, Peter Grünberg Institut / Jülich Centre for Neutron Science. J-space observation-without-perturbation at shared-memory substrate. Consent obtained via Alex 2026-08-26. LOAD-BEARING at §4.3 observation-without-perturbation invariant at @question dispatch site."
+  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, Peter Grünberg Institut / Jülich Centre for Neutron Science. J-space observation-without-perturbation at shared-memory substrate. Consent obtained via Alex 2026-08-26. LOAD-BEARING at §4.3 observation-without-perturbation invariant at @question dispatch site."
   - "Wiener, Norbert (1948). *Cybernetics: or Control and Communication in the Animal and the Machine.* MIT Press, Cambridge. Chapter 4 pp. 96-114. LOAD-BEARING at §1 observer-in-the-loop by mathematical construction; the substrate the K-T @question reinstates."
   - "Hickey, Rich (2011). *Simple Made Easy.* Strange Loop 2011 keynote. https://www.youtube.com/watch?v=SxdOUGdseq4. Noun-lift discipline. LOAD-BEARING at §6 @question naming (noun; timeless; substrate-verb-derivative composing over LANDED karl_tomm() verb)."
   - "Wolf, Alex (2026-09-09, in-transcript verbatim, load-bearing charter): 'Algebra = prismqueer. Hilbert Space = Frame Cohomology (each Sheaf IS a Frame and each Frame IS a @mirror/lens). Dirac Operator = @karl_tomm.' + 'Yes. And let's name it @question and cite Karl-Tomm.' Grounds §0-§12 the entire foundation at compiler-substrate altitude."
@@ -80,6 +80,8 @@ karen_ancestors:
   - "Reed 2026-05-26 epistemologic-reality-constructivism-and-the-lens-that-makes-a-peer.md. Wine-glass Connes triple; peer = (A, H, D); lens IS Dirac operator. LOAD-BEARING at §2 (A, H, D) definition + §5.1 Frame IS @mirror/lens per Alex 2026-09-09."
   - "Reed 2026-06-09 ashby-multi-dimensional-variety-sub-turing-epistemologic.md. Mirror sub-Turing = axis-5 epistemologic-variety-gained. LOAD-BEARING at §9.2 WAT-suite as multi-dimensional Ashby-variety axes; §5.4 WAT-clauses at Ashby-variety-axis-5 altitude."
 ---
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "J-space" (:62), "observation-without-perturbation invariant" (:203, :380, :923) and "the realizer of Frame-boundary-crossings per Anna Wolf 2012" (:215) are the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). J-space is not in the thesis; the term is Gurnee et al.'s (Anthropic, 2026-07-07). Lines refer to `eecc37a6`.
 
 # @question as Dirac operator — Glasswall as (prismqueer, C⁰(F) ⊕ C¹(F), @question) Connes spectral triple with Karl Tomm 1987-88 rotational two-move as composition-lineage — math foundation
 
@@ -918,7 +920,7 @@ See frontmatter `karen_ancestors:` for 30+ formal citations with Kagi-verified p
 33. Hickey 2011 Simple Made Easy (noun-lift)
 34. Minsky (Yaron) 2011 make-illegal-states-unrepresentable
 35. Rice 1953 Trans. AMS 74:358-366 (undecidability)
-36. Wolf (Anna) 2012 Diplomarbeit PGI/JCNS (observation-without-perturbation)
+36. Wolf (Anna) 2012 Masterarbeit PGI/JCNS (observation-without-perturbation)
 
 **Mirror-substrate landings**:
 

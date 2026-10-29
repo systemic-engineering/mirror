@@ -165,9 +165,10 @@ in @butterfly
 #                               closes at MCP-layer altitude (the
 #                               compiler-under-observation OBSERVES
 #                               ITS OWN OBSERVATION of @bumblebee-
-#                               wobbles; per Anna 2012 shared-memory-
-#                               observation-in-motion pattern lifted
-#                               per Taut #390 §4.2).
+#                               wobbles; the apparatus from Anna
+#                               Jakobs's 2012 thesis, read across:
+#                               a shared GPU buffer read between
+#                               steps, per Taut #390 §4.2).
 #   @magic                    — Foerster-gauge preservation carrier;
 #                               @bumblebee.buzz MUST preserve |Ω| per
 #                               magic.rs discipline (ethical-imperative

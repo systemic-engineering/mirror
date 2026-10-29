@@ -20,12 +20,14 @@ karen_ancestors:
   - "Curry, J. M. (2014). *Sheaves, Cosheaves and Applications.* arXiv:1303.3255."
   - "Hansen, J.; Ghrist, R. (2019). *Toward a Spectral Theory of Cellular Sheaves.* arXiv:1808.01513."
   - "Ghrist, R.; Riess, H. (2019). *Cellular sheaves of lattices and the Tarski Laplacian.* arXiv:2007.04099."
-  - "Wolf, A. (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Diplomarbeit, PGI/JCNS. Consent obtained via Alex 2026-08-26."
+  - "Wolf, A. (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS. Consent obtained via Alex 2026-08-26."
   - "von Foerster, H. (1974). *Notes on an Epistemology for Living Things.* Ethical imperative."
   - "Fiedler, M. (1973). *Algebraic connectivity of graphs.* Czech. Math. J. 23:298."
   - "Requardt, M. (2002). *Dirac Operators and the Calculation of the Connes Metric.* J. Phys. A 35:759-779."
   - "Lawvere, F. W. (1969). *Diagonal arguments and Cartesian closed categories.* LNCS 92:134-145."
 ---
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
 
 # Prismqueer as compiler / mirror as geometry composer — canonical spec
 

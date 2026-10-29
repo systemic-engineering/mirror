@@ -9,7 +9,7 @@
 - **Insight:** `docs/insights/2026-05-24-backpressure-as-modular-flow.md` (the structural argument; this spec implements the recognition there).
 - **Existing actor abstraction:** `boot/std/mirror/runtime/gen_prism.mirror` (the demand contract extends this; no new actor abstraction needed).
 - **Heterogeneous numerical layer:** `~/dev/systemic.engineering/practice/insights/coincidence/heterogeneous-numerical-prism.md` (the Scheduler Tower sits above NumericalPrism + Backend trait).
-- **Bus architecture:** Jakobs (2012) `~/dev/systemic.engineering/practice/collaborators/anna-wolf/master_jakobs.pdf` §3 (OpenCL host/device + command queue as backpressure), §4.4 (Vertex Buffer Objects — the shared-memory pattern), §7.2.1 (VBO interop with explicit acquire/release synchronization), §7.4 (build-time vs. runtime kernel compilation).
+- **Bus architecture:** Jakobs (2012) `~/dev/systemic.engineering/practice/collaborators/anna-wolf/master_jakobs.pdf` §3 (OpenCL host/device + command queue as backpressure), §4.4 (Vertex Buffer Objects — the shared-memory pattern), §7.2.1 (VBO interop with explicit acquire/release synchronization), §3 p. 11 + §7.1 (runtime kernel compilation; §7.4 is the Makefile).
 - **Protocol prior art:** GenStage (Elixir, 2016, hexdocs.pm/gen_stage/1.3.2), Broadway (Elixir, 2019, hexdocs.pm/broadway/1.3.0), `stage_play` (Gleam, `/Users/alexwolf/dev/projects/stage_play/` — the statically-typed BEAM stage exploration).
 - **Kintsugi integration:** `docs/specs/kintsugi-formatter.md` (the iteration the Scheduler runs), `docs/specs/kintsugi-tournament.md` (the merge resolution — each round is a Scheduler tick).
 
@@ -83,8 +83,8 @@ grammar @mirror/runtime/gen_prism {
     cancel:     cancel_mode,   # see below
   }
 
-  # subscription cancel mode (Jakobs §3 OpenCL queues use clReleaseEvent
-  # in a transient mode; GenStage exposes the same three).
+  # subscription cancel mode (GenStage exposes three; the Jakobs 2012
+  # thesis doesn't use clReleaseEvent).
   type cancel_mode =
     | transient    # subscriber exits cleanly when producer goes down
     | permanent    # subscriber crashes on producer-down (escalates to supervisor)
@@ -213,11 +213,11 @@ CPU writes the message body to a Metal buffer in unified memory; GPU kernel read
 
 ### 5.2 OpenCL command queue (Linux + NVIDIA/AMD; Anna's pattern)
 
-From Jakobs (2012) §3: an OpenCL program is host + kernel, separated by a command queue. The host enqueues `clEnqueueNDRangeKernel`; the queue absorbs up to its depth; further enqueues block until prior commands drain. **The command queue depth IS the demand window.** No additional protocol layer is needed — the OpenCL runtime enforces backpressure.
+From Jakobs (2012) §3: an OpenCL program is host + kernel, separated by a command queue. The rest of this paragraph is our reading, not the thesis's (§3 doesn't discuss queue depth or blocking): the host enqueues `clEnqueueNDRangeKernel`; the queue absorbs up to its depth; further enqueues block until prior commands drain. **The command queue depth IS the demand window.** No additional protocol layer is needed — the OpenCL runtime enforces backpressure.
 
-From Jakobs §7.2.1: VBO interop adds an explicit acquire/release synchronization (`clEnqueueAcquireGLObjects` / `clEnqueueReleaseGLObjects`) bracketing kernel calls that touch shared buffers. This is the OpenCL analog of mirror's CAS-safe ref update: the bus serializes access without copying.
+From Jakobs §7.2.1: VBO interop adds an explicit acquire/release synchronization (`clEnqueueAcquireGLObjects` / `clEnqueueReleaseGLObjects`) bracketing kernel calls that touch shared buffers. This is the OpenCL analog of mirror's CAS-safe ref update: the bus serializes access. Not without copying, though: arrows aren't GL primitives, so the drawing path reads the spins back out of the VBO (`glGetBufferSubData`, pp. 29–30), and computation and drawing alternate at step boundaries (p. 43).
 
-From Jakobs §7.4: kernels are compiled at **runtime** (`clBuildProgram`), not link time. Mirror's gen_prism `tick` body is similarly declared at grammar-level and resolved at runtime when the gen_prism is spawned — the symmetry is structural; the Scheduler's GPU-bus integration inherits OpenCL's late-binding model.
+From Jakobs §3 (p. 11) and §7.1: kernels are compiled at **runtime**, not link time (§7.4 is the Makefile). Mirror's gen_prism `tick` body is similarly declared at grammar-level and resolved at runtime when the gen_prism is spawned — the symmetry is structural; the Scheduler's GPU-bus integration inherits OpenCL's late-binding model.
 
 ### 5.3 Generic Rust channels (CPU-only intra-process)
 

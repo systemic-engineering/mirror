@@ -283,6 +283,8 @@ All 5 candidates pending Alex Fourth-Chair. Full CONFIRMED requires §7 empirica
 - **CommutatorSpectrum singular values** as complex-part carrier.
 - **is_observer_inclusive: true** as observer-carriage witness.
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** The `anna_wolf_psi` axis here and at :205 ("observation-without-perturbation") is the apparatus from Anna Jakobs's 2012 thesis, read across. The thesis (Masterarbeit, FH Aachen, Campus Jülich, 2012) ports a CUDA spin-dynamics program to OpenCL and adds OpenGL visualization and an FFT. It has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK, and `prismqueer::liquid` never carried a ψ or an `anna_wolf` item (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). Line numbers refer to `346253b`.
+
 The compose-not-average discipline empirical-fires at Level-1 iff the composition produces new-Crystal-with-preserved-endpoint-sovereignty (LOVE §3.6.1) + emergent-third (LOVE §3.6.2) + Fiedler λ₂ strict rise (LOVE §3.6.3) + no averaging (LOVE §3.6.4).
 
 ### §7.2 Level-2 fire (self-measurement autopoiesis)

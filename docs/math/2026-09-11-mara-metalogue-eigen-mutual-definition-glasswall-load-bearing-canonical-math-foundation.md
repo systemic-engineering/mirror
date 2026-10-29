@@ -83,6 +83,8 @@ Before any fresh mint, grep-verify the substrate. This section enumerates the si
 
 **Substrate content**: Rice-safe Anna-Wolf-2012 observation-preserving type-membrane between prismqueer noumenal-colony and mirror phenomenal-composition-surface, composing **seven LANDED parts** as ONE membrane per Păun 2000 P-systems + Rice 1953 undecidability + Rec #90 §5.4 sub-Turing FLOOR + Rec #92 Transparency<P> LOVE-monoid.
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Here and at :382, :426, :450, :456: "Anna-Wolf-2012 observation-preserving" and the polynomial-time bound credited to an "Anna-Wolf-2012 membrane discipline" are the apparatus from Anna Jakobs's 2012 thesis, read across; the thesis has no complexity bound and no membrane. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). Line numbers refer to `346253b`.
+
 **The seven LANDED parts** (grep-verified per Taut d91dd58 Scope C 2026-09-01, re-verified this tick):
 
 | # | Part | Location |

@@ -283,9 +283,10 @@ the parser move is the spectral-triple recognition.
 
 Anna's spin-physics expertise lands here exactly. Spectral triples
 are the canonical framework for gauge fields on spaces — discrete or
-continuous. Her thesis work on spin properties is, structurally, work
-in the algebra `A` and the Dirac operator `D` for specific physical
-systems. She'll recognize the framework. The conversation becomes:
+continuous. Reading her thesis's spin dynamics as work in the algebra
+`A` and the Dirac operator `D` is the apparatus from Anna Jakobs's
+2012 thesis, read across: the thesis itself ports a Landau–Lifschitz
+simulation to OpenCL and visualizes it, and has no spectral triple. She'll recognize the framework. The conversation becomes:
 “here's mirror's spectral triple; here's our `D`; do the boundedness
 conditions hold for our case?” That's a focused, falsifiable, expert-
 readable question.

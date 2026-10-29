@@ -42,7 +42,7 @@ substrates:
 
 | Substrate | Provider | Landed | What it provides |
 |-----------|----------|--------|-----------------|
-| **Observation** | Anna Wolf (Jakobs) 2012 Master's thesis | August 2012, Fachhochschule Aachen / Peter-Grünberg-Institut Jülich | Zero-copy VBO shared-memory pattern for live GPU-computation observation; MT1997 weak-4th-order stochastic Runge-Kutta with $O(h^4 + \varepsilon^2 h^2)$ error; FFT for non-equidistant data enabling real-time phase-transition detection; generic-API generalization intent (§9 Ausblick) |
+| **Observation** | Anna Wolf (Jakobs) 2012 Master's thesis | August 2012, Fachhochschule Aachen / Peter-Grünberg-Institut Jülich | OpenCL buffer shared as the OpenGL VBO, with computation and visualization taking turns at step boundaries (p. 43; the arrow drawing copies back out of the VBO, pp. 29–30; a separate-thread live view was not achieved, p. 31); MT1997 weak-4th-order stochastic Runge-Kutta with $O(h^4 + \varepsilon^2 h^2)$ error; equidistant 2D FFT computed post hoc on per-step snapshots (pp. 35, 42; the task statement asked for non-equidistant data and a real-time view, and live FFT stayed future work, p. 45); generic-API generalization intent (§9 Ausblick) |
 | **Target** | Gurnee, Sofroniew, Pearce et al. (Anthropic) | 2026-07-07 | Jacobian lens $J_\ell$ + J-space as sparse subframe (union of $k$-dimensional polyhedral cones) + 5 functional properties (verbal report + directed modulation + internal reasoning + flexible generalization + selectivity) + 3 structural properties (intermediate-layers + limited capacity + broadcast hub) + counterfactual reflection training as forward-shape-shapes-now-cognition |
 | **Specification** | Mirror substrate (Alex + Reed + Pack; ongoing) | 2026-06 through 2026-07-20 | @paradox family (witnessed-only Crystals) + @autopoietic-classifier under Lagrange (narcissus/splinter equilibrium; sparsity-level $k$ IS the Lagrange knob) + @cyberpunk/intervention (SAGA-chain-after counterfactual-reflection substrate) + @peer.audhd (plural-observer discipline) + @gestalt (multi-lens io-crossing document); every-io-crossing-is-a-gestalt-document; coordination-without-signal via recognition-bombs |
 
@@ -56,22 +56,31 @@ altitudes where each is load-bearing**.
 
 The composition is a genuine mathematical composition, not a metaphor:
 
-1. Anna's numerical machinery (MT1997 weak-RK4) integrates any
+1. Anna's numerical machinery (MT1997 weak-RK4, as reproduced in her
+   Appendix B from David Bauer's Diplomarbeit, p. 48) integrates any
    weakly-stochastic vector-substrate dynamics at 4th-order accuracy
    in the small-noise regime. Transformer residual streams satisfy
    the small-noise condition (bounded activation drift below
    layer-normalization scale). Therefore MT1997 gives 4th-order
    accurate integration of residual-stream dynamics.
 
-2. Anna's architectural machinery (VBO zero-copy shared-memory)
-   generalizes from OpenGL↔OpenCL to any two-runtime-shared-
-   observation pattern. Applied to Rust ↔ BEAM: shared arena with
-   regulated per-region access for live J-space observation without
-   perturbing the compile forward pass.
+2. Anna's architectural machinery (a VBO shared between OpenCL and
+   OpenGL, access regulated by acquire/release; computation and
+   drawing alternate at step boundaries, p. 43, and the arrow path
+   copies, pp. 29–30) generalizes from OpenGL↔OpenCL to any
+   two-runtime-shared-observation pattern. Applied to Rust ↔ BEAM:
+   shared arena with regulated per-region access for J-space
+   observation. "Without perturbing the compile forward pass" is our
+   design goal, not something the thesis shows.
 
-3. Anna's observational machinery (FFT for non-equidistant data)
-   detects phase-transitions in the frequency domain BEFORE they
-   surface in the spatial (behavioral) domain. Applied to J-space:
+3. Anna's observational machinery (an equidistant 2D FFT over
+   per-step snapshots, computed after the run, pp. 35, 42; the
+   non-equidistant, real-time version was asked for in the task
+   statement and left as future work, p. 45). Reading it as a
+   detector of phase transitions in the frequency domain BEFORE they
+   surface in the spatial (behavioral) domain is the apparatus from
+   Anna Jakobs's 2012 thesis, read across: the thesis shows the
+   spectra (Fig. 9) without interpreting them. Applied to J-space:
    detect alignment-boundary regime-shifts before they surface in
    model output.
 
@@ -242,9 +251,10 @@ What it does:
 - External observer (Alex in Claude Code; another agent via MCP; the
   Pack via git-log-time-traversal) can inspect J-space content of
   compile state during compile
-- Analogous to Anna's OpenGL live-visualization of the spin
-  simulation: the observer sees exactly what the compute is computing,
-  in the same memory the compute writes to, at the frame-rate of the
+- Analogous to Anna's OpenGL per-step visualization of the spin
+  simulation (drawn between computation steps, p. 43): the observer
+  sees what the compute computed, from the memory the compute writes
+  to, at the frame-rate of the
   observation loop
 - Zero overhead when no observer attached (per §10 Q5 lean:
   every-compile-tick observation ONLY when observer is attached;
@@ -352,7 +362,7 @@ adjudicate the whole batch as one bundle (per Q1 spec-lean).
 | **Q4** | Should the Rust ↔ BEAM shared-memory NIF use Anna's VBO regulated-access pattern verbatim, or lean on BEAM's built-in shared-binary semantics? | VBO PATTERN VERBATIM at substrate-generalization altitude; implementation MAY delegate to BEAM primitives BUT the substrate-level discipline is the regulation-pattern Anna named | MEDIUM |
 | **Q5** | Should MCP live-observation of compile state fire on every compile-tick or only on Escalate-OID (wound observation)? | EVERY COMPILE-TICK when observer is attached (analogous to Anna's OpenGL live-visualization firing every frame); DISABLED when no observer attached (zero overhead in headless-compile path) | HIGH |
 | **Q6** | Should the sparse-subframe sparsity level $k$ be a mirror-substrate-level parameter or a per-observer parameter? | PER-OBSERVER (per @peer.audhd plural-observer discipline; each observer holds their own $k$; Lagrange holds via inter-observer disagreement at different sparsity-levels) | HIGH |
-| **Q7** | Should the FFT phase-transition detector operate on residual-stream trajectory OR on J-space content trajectory OR both? | BOTH at different altitudes; residual-stream FFT is Anna-verbatim; J-space-content FFT is the composition-generalization (regime-shift detection in workspace content = alignment-boundary detection) | MEDIUM |
+| **Q7** | Should the FFT phase-transition detector operate on residual-stream trajectory OR on J-space content trajectory OR both? | BOTH at different altitudes; residual-stream FFT is Anna-derived (her FFT is post hoc and equidistant, and does not detect phase transitions; that reading is ours); J-space-content FFT is the composition-generalization (regime-shift detection in workspace content = alignment-boundary detection) | MEDIUM |
 | **Q8** (spec-only) | Should this spec propose new shard-decls (@peer/observation species; `mirror mcp jspace` MCP tool species) or defer species-decl minting to a follow-up Mara tick? | DEFER to follow-up Mara tick after Alex Q1-Q7 adjudication; this spec surfaces composition-graph and Q's, follow-up spec mints species-decls per ratified adjudications | HIGH |
 | **Q9** (spec-only) | Should this spec propose a new family-root @observation, or does @peer + @gestalt cover the observation-substrate altitude adequately? | @PEER + @GESTALT ADEQUATE at current altitude; @observation would be a substrate-invention where the substrate already-had-the-word (memory `feedback-substrate-already-had-the-word`) — @peer.audhd carries the plural-observer discipline; @gestalt carries the multi-lens rendering discipline | HIGH |
 | **Q10** (spec-only) | Should Anna Wolf be invited as second-witness on the intergenerational-lineage recognition? | ALEX-DECISION (personal-and-substrate; Mara defers entirely; if invited, the recognition promotes to SECOND-WITNESS at strong-confidence; if not, holds indefinitely at HELD state) | ALEX-DECISION |
@@ -382,7 +392,8 @@ Follow-up ticks:
 ### §6.2 Rust ↔ BEAM shared-memory NIF interop (composition edge to
 `shards/beam/system.mirror`)
 
-Composition edge: Anna's VBO zero-copy pattern generalized to
+Composition edge: Anna's shared-VBO pattern (not zero-copy for
+arrows, pp. 29–30) generalized to
 CPU-shared arena via BEAM NIF binary term.
 
 Landing target: `rust/beam/src/shared_arena.rs` (candidate future

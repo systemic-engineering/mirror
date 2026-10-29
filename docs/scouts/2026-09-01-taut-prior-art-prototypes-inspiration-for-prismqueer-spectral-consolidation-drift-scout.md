@@ -94,6 +94,8 @@ substrate — content hash is observer-independent (measurement doesn't
 alter computation); commit hash carries observer-dependent Witnessed
 provenance.
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Here and at :522, :563, :575, :1130: "Anna Wolf 2012 observation-without-perturbation" is the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). "Anna Wolf 2012 d_s(σ)" (spectral dimension, :563) is not in the thesis. Line numbers refer to `346253b`.
+
 ### §1.2 What fractal recursive Mandelbrot-like structure fragmentation instantiates
 
 `README.md:49-71` (DAG-native):

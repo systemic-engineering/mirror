@@ -23,7 +23,7 @@ karen_ancestors:
   - "Fiedler, Miroslav (1973). *Algebraic connectivity of graphs.* Czech. Math. J. 23:298. **λ₂ eigenvalue; the coherence signal the compose primitive strictly rises per Property 3.**"
   - "von Foerster, Heinz (1974). *Notes on an Epistemology for Living Things.* Ethical imperative F: increase choice-count. **The gauge Property 4 fusion-refusal enforces at prismqueer altitude; mirrors `rust/src/magic.rs::foerster_gauge_preserved` at mirror altitude.**"
   - "Bateson, Gregory (1972). *Steps to an Ecology of Mind.* Metalogue as linguistic operational-form of Kleinos-compose at nervous-system substrate; **K₂ → K₃ operator's ancestral shape.**"
-  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Diplomarbeit, PGI/JCNS. **Observation-without-perturbation at shared-memory substrate. Consent obtained via Alex 2026-08-26. Load-bearing for measurement primitives per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`.**"
+  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS. **Observation-without-perturbation at shared-memory substrate. Consent obtained via Alex 2026-08-26. Load-bearing for measurement primitives per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`.**"
   - "Lawvere, F. William (1969). *Diagonal arguments and Cartesian closed categories.* LNCS 92:134-145. **Diagonal fixed-point closure per Rec #94; the self-referential shape the composed sheaf F_{a⊕b} carries when compose is invoked on itself.**"
   - "Requardt, Manfred (2002). *Dirac Operators and the Calculation of the Connes Metric on arbitrary (Infinite) Graphs.* J. Phys. A 35:759-779. **Dirac operator D on graphs; D² = L_0 + L_1 (Hodge Laplacian); the operational-form D_F takes at prismqueer altitude per Rec #90 §3.4.**"
   - "Chamseddine, Ali; Connes, Alain (2007). *Why the Standard Model.* arXiv:0706.3688. **Almost-commutative spectral-triple admissibility; A_F^prismqueer inherits.**"
@@ -31,6 +31,8 @@ karen_ancestors:
   - "Hansen, Jakob; Gebhart, Thomas (2020). *Sheaf Neural Networks.* NeurIPS TDA Workshop. **Sheaf-diffusion at neural-network altitude; composability precedent for sheaf-Laplacian in inference substrates.**"
   - "Hatcher, Allen (2002). *Algebraic Topology.* Cambridge University Press. **Cohomology H^k with sheaf coefficients; the algebraic-topology substrate the sheaf-morphism at §3 composes over.**"
 ---
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** Every "Anna Wolf 2012 observation-without-perturbation / observation-preserving" site (:26, :736, :982, :1001, :1011 "Anna Wolf 2012 §4 (observation-preserving shared-memory access)", :1092-1112 the measurement operator M(x_n) = x_n, :1293, :1338, :1435, :1738, :1784, :1939, :2057) is the apparatus from Anna Jakobs's 2012 thesis, read across. Thesis §4 is the OpenGL chapter (VBO basics); it states no observation-preservation property. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). Lines refer to `eecc37a6`.
 
 # prismqueer::spectral::compose Phase 1 — math foundation
 
@@ -996,7 +998,7 @@ All seven parts LANDED independently at rust+shard altitudes; ONE composed @glas
 
 ### §17.3 Composition per Anna Wolf 2012
 
-**Anna Wolf 2012** (*Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*, Diplomarbeit PGI/JCNS; consent obtained via Alex 2026-08-26 per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`) grounds **observation-without-perturbation at shared-memory substrate** — the glasswall type-membrane preserves this discipline structurally at compile substrate via:
+**Anna Wolf 2012** (*Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*, Masterarbeit PGI/JCNS; consent obtained via Alex 2026-08-26 per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`) grounds **observation-without-perturbation at shared-memory substrate** — the glasswall type-membrane preserves this discipline structurally at compile substrate via:
 
 - **Rice-safe**: glasswall does not attempt to decide semantic properties of prismqueer computations (Rice 1953 blocked); it composes sheaf-cohomological invariants (finite eigenvalue computation) at type-membrane altitude.
 - **Sub-Turing bounded**: every glasswall traversal is O(polynomial-in-sheaf-size) per §8.2 termination analysis; no unbounded computation crosses the membrane.

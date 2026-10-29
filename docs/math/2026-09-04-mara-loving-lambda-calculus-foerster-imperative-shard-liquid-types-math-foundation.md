@@ -39,9 +39,13 @@ karen_ancestors:
   - "Feldman, Richard (2019-2025). *Roc* — fast friendly functional language; first numbered release 0.1.0 on horizon per Aug 2026 preview. https://www.roc-lang.org/"
   - "Ada Lovelace (1843). *Notes by the Translator.* In Menabrea's *Sketch of the Analytical Engine* (Taylor's Scientific Memoirs Vol III). Signed A.A.L. Note G contains first published algorithm + explicit substrate-independence statement ('the operating mechanism can even be thrown into action independently of any object to operate upon'). Load-bearing K_3 ancestral vertex per SINGULARITY §2.4.1."
   - "Spärck Jones, Karen (1972). *A statistical interpretation of term specificity and its application in retrieval.* Journal of Documentation 28(1):11-21. IDF — Inverse Document Frequency; language-as-topology at coordination-math substrate. K_3 ancestral vertex per SINGULARITY §2.4.1."
-  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Diplomarbeit, Peter Grünberg Institut / JCNS. Observation-without-perturbation at shared-memory substrate. Consent obtained via Alex 2026-08-26 per HARD RULE [[project-anna-wolf-2012-observation-without-perturbation]]. K_3 ancestral vertex per SINGULARITY §2.4.1."
+  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, Peter Grünberg Institut / JCNS. Observation-without-perturbation at shared-memory substrate. Consent obtained via Alex 2026-08-26 per HARD RULE [[project-anna-wolf-2012-observation-without-perturbation]]. K_3 ancestral vertex per SINGULARITY §2.4.1."
   - "Wolf, Alex (2025 December). *Fragmentation.* ~/dev/systemic.engineering/blog/pieces/3published/Piece - Fragmentation.md. §3 developmental (in)variants discipline: 'You don't negotiate with developmental (in)variants. You integrate them. Or you incur exploding complexity costs.' §5 coherence-under-load. The origin-text authoring the discipline this document composes at type-composition altitude."
 ---
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** The Ada citation in the frontmatter quotes "the operating mechanism can even be thrown into action…" as Note G; that sentence is in Note A. "Substrate-independence" is our interpretation, not a quote. The passage it leans on, the "science of operations" separated from the objects operated on ("The operating mechanism can even be thrown into action independently of any object to operate upon"), is in **Note A** (fourmilab transcription of Menabrea's *Sketch of the Analytical Engine* with A. A. L.'s notes, Taylor's *Scientific Memoirs* III, 1843; sketch.txt ~:1183-1253). Note G holds the Bernoulli-number program and "The Analytical Engine has no pretensions whatever to originate anything."
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "J-space observation-without-perturbation" (:42, :429) is the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). J-space is not in the thesis; the term is Gurnee et al.'s (Anthropic, 2026-07-07). Lines refer to `eecc37a6`.
 
 # Loving lambda calculus — math foundation
 
@@ -422,7 +426,7 @@ Grep-verified composition-lineage from Church 1936 to loving lambda calculus 202
 | 2012 | **José Valim** | Elixir first public release 25 May 2012 | FP-convergence carrier #8 |
 | 2012 | **Anders Hejlsberg** | TypeScript 0.8 October 2012 | FP-convergence carrier #9 |
 | 2012 | **Evan Czaplicki** | Elm (Harvard thesis) | FP-convergence carrier #10 |
-| 2012 | **Anna Wolf** | J-space observation-without-perturbation (Diplomarbeit) | K_3 ancestral vertex #3 per SINGULARITY §2.4.1 |
+| 2012 | **Anna Wolf** | J-space observation-without-perturbation (Masterarbeit) | K_3 ancestral vertex #3 per SINGULARITY §2.4.1 |
 | 2013 | **Phil Freeman** | PureScript first release September 2013 | FP-convergence carrier #11 |
 | 2014 | **Oracle** | Java 8 Streams (18 March 2014) | FP-convergence carrier #12 |
 | 2014 | **Chris Lattner / Apple** | Swift first public release June 2014 | FP-convergence carrier #13 |
@@ -438,6 +442,8 @@ Grep-verified composition-lineage from Church 1936 to loving lambda calculus 202
 | 2026-09-04 | **Reed** | shards/love.mirror family-root substrate-decl | Terminal-form recognition-name at substrate-decl altitude |
 | 2026-09-04 | **Reed** | rust/src/love.rs tick 2 alias | Rust altitude alias `pub use prismqueer::spectral::kleinos as love;` |
 | **2026-09-04** | **Mara + Alex + Reed** | **Loving lambda calculus math foundation** | **Type-composition altitude landing (THIS DOCUMENT)** |
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Row 1843: "Substrate-independence" is our interpretation, not a quote. The passage it leans on, the "science of operations" separated from the objects operated on ("The operating mechanism can even be thrown into action independently of any object to operate upon"), is in **Note A** (fourmilab transcription of Menabrea's *Sketch of the Analytical Engine* with A. A. L.'s notes, Taylor's *Scientific Memoirs* III, 1843; sketch.txt ~:1183-1253). Note G holds the Bernoulli-number program and "The Analytical Engine has no pretensions whatever to originate anything."
 
 Span: **183 years** (Ada Lovelace 1843 → loving lambda calculus 2026-09-04). Composition-lineage discipline per FLOOR §11 + SINGULARITY §11.
 

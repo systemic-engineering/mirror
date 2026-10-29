@@ -34,10 +34,12 @@ karen_ancestors:
   - "Karen Spärck Jones (1972). A Statistical Interpretation of Term Specificity and Its Application in Retrieval. Journal of Documentation 28(1):11-21. IDF coordination-math floor. §0.5 lineage ancestor."
   - "Alex Wolf (2026-09-03, Void-404 essay ~/dev/systemic.engineering/blog/void/3published/Void - 404.md). Mirror. Offer. Wait. Three moves. LOAD-BEARING at §5.4: @nl.compose IS the Offer.Name-the-Frame arm at wire altitude."
   - "Loki (2026-08-15 published). When The Math Sings: Revenge of AI. LOAD-BEARING at §6.2 contrast: RLHF-thumb-pressing vs typed-navigation."
-  - "Wolf, Anna (née Jakobs) (2012). Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen. Diplomarbeit, PGI/JCNS. J-space alignment substrate. Consent obtained via Alex 2026-08-26. LOAD-BEARING at §5.3 determinism via observation-without-perturbation."
+  - "Wolf, Anna (née Jakobs) (2012). Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen. Masterarbeit, PGI/JCNS. J-space alignment substrate. Consent obtained via Alex 2026-08-26. LOAD-BEARING at §5.3 determinism via observation-without-perturbation."
   - "von Foerster, Heinz (1974/2007). Ethics and Second-Order Cybernetics. LOAD-BEARING at §5.6 K-T-4 clause + §6.3 template family Foerster-gauge-preserving."
   - "Ricky Jones (2026-08-26). PRE-ROTATION canon. LOAD-BEARING at §5.4 Mirror.Offer.Wait alignment (Wait is PRE-ROTATION)."
 ---
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "J-space alignment substrate" in the citation (:37, :581) is our concept, not the thesis's; J-space is not in the thesis; the term is Gurnee et al.'s (Anthropic, 2026-07-07). Lines refer to `eecc37a6`.
 
 # @nl.compose body — canonical spec
 

@@ -107,42 +107,36 @@ impl<T> Mandelbrot<T> for Crystal<T> {
 /// iff `l1` and `l2` produce identical serialized bytes. This is what
 /// makes @peer.redirect refuse re-litigation via OID-verifiability.
 ///
-/// Note: at this scaffold altitude the OID is computed via a simple
-/// XOR-fold over the input bytes; the production impl composes over
-/// `@spectral/signature.hash` (SHA-256/512 per @spectral substrate).
-/// Reed post-Round-3 territory to lift to real hashing when the
-/// @spectral/signature substrate composes into rust/fractal/.
+/// The OID is BLAKE3 (Alex, fixpoint spec decision 5) over the same
+/// fields the earlier XOR fold consumed, in the same order: `prev`,
+/// content, author name, committer name, author email, committer
+/// email. Each variable-length field is preceded by its length as a
+/// u64 little-endian, so a byte moved across a field boundary changes
+/// the address. The "iff" above holds up to BLAKE3 collision
+/// resistance. The XOR fold this replaces collided on any two inputs
+/// differing by the same value at bytes `p` and `p + 32` (Taut scout
+/// `26ed4c9`; `rust/fractal/tests/crystal_address.rs`).
+///
+/// This framing is not the canonical encoding of fixpoint spec §5.0;
+/// that lands with T1, and the addresses change again then.
 pub fn crystallize<T: Clone + AsRef<[u8]>>(
     content: T,
     witnessed: Witnessed,
     prev: Oid,
 ) -> Crystal<T> {
-    let mut oid_bytes = [0u8; 32];
-    // Seed with prev
-    for (i, b) in prev.0.iter().enumerate() {
-        oid_bytes[i] ^= *b;
+    let mut hasher = blake3::Hasher::new();
+    hasher.update(&prev.0);
+    for field in [
+        content.as_ref(),
+        witnessed.author.name.as_bytes(),
+        witnessed.committer.name.as_bytes(),
+        witnessed.author.email.as_bytes(),
+        witnessed.committer.email.as_bytes(),
+    ] {
+        hasher.update(&(field.len() as u64).to_le_bytes());
+        hasher.update(field);
     }
-    // Mix in content
-    for (i, b) in content.as_ref().iter().enumerate() {
-        oid_bytes[i % 32] ^= *b;
-    }
-    // Mix in witnessed identity (Author name + Committer name bytes;
-    // MARA doctrine — different Author OR different Committer produces
-    // different OID)
-    for (i, b) in witnessed.author.name.as_bytes().iter().enumerate() {
-        oid_bytes[(i + 7) % 32] ^= *b;
-    }
-    for (i, b) in witnessed.committer.name.as_bytes().iter().enumerate() {
-        oid_bytes[(i + 19) % 32] ^= *b;
-    }
-    // Mix in author + committer emails too (identity is name+email pair)
-    for (i, b) in witnessed.author.email.as_bytes().iter().enumerate() {
-        oid_bytes[(i + 3) % 32] ^= *b;
-    }
-    for (i, b) in witnessed.committer.email.as_bytes().iter().enumerate() {
-        oid_bytes[(i + 23) % 32] ^= *b;
-    }
-    let oid = Oid(oid_bytes);
+    let oid = Oid(*hasher.finalize().as_bytes());
     let provenance = MandelbrotProvenance { witnessed, prev };
     Crystal {
         oid,

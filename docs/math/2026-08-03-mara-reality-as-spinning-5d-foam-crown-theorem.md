@@ -382,6 +382,8 @@ The correspondence table (each row is a substrate-identity claim between Anna 20
 
 > **REED-INLINE cascade (Reed 2026-08-03 post-Seam Phase D `aca6eb1` §5 REFUTED)**: prior crown-doc row 11 cited "non-equidistant FFT" per Anna's abstract p.5 verbatim (*"nicht-äquidistante Daten"*), but Seam grep-audit of §5 body pp.21-22 returned zero matches for "non-equidistant"/"nichtäquidistant" — Anna's implemented FFT is standard equidistant DFT/FFT (pp.21-22 eq. 10-11). Sharpened to "OpenCL-parallelized FFT" per substrate-honest thesis-body attribution. Karen ladder §8 PRIMARY tier updated correspondingly. Not load-bearing (FFT-as-phase-transition-detection identity holds regardless of algorithm variant).
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Rows "OpenGL VBO concurrent with computation" and "FFT for magnetic-phase-transition detection" overclaim. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). The FFT is a 2D FFT on equidistant 2ⁿ data, run after the program ends on snapshots saved after each of 16 steps (pp. 35, 42); the thesis shows the spectra (Fig. 9) without interpreting them, so phase-transition detection was a goal of the task statement, not a result. The note above also errs: "nicht-äquidistante Daten" is in the task statement (Aufgabenstellung, PDF p. 5), not an abstract, and the search that found zero matches missed the hyphenated form. Theorem 5.1's "identity, not analogy" between the thesis and mirror is the apparatus from Anna Jakobs's 2012 thesis, read across.
+
 ### 5.2 Landau-Lifschitz as the equation of motion (lifted to graph altitude)
 
 At graph altitude, the Landau-Lifschitz equation (Anna 2012 eq. 8; original Landau & Lifschitz 1935) reads:
@@ -409,6 +411,8 @@ The three terms correspond to (Anna §2 pp.7-10):
 
 > **REED-INLINE cascade (Reed 2026-08-03 post-Seam Phase D `aca6eb1` §5 REFUTED)**: prior draft mis-attributed the RK4 integrator to "David Bauer diplomarbeit *Atomistic Spin-Dynamics in Confined Magnetic Nano-Structure*." Anna's Appendix B.2 (PDF p.53 / printed p.49) explicitly names the RK4 SDE method as *"developed by Milstein and Tretyakov [5]"*. Bauer [2] is the source of the Landau-Lifschitz equation, NOT the RK4 integrator. Substrate-honest correction. Identical drift also propagated to `4d1e7cf` §4.1 REED-INLINE — fixed same-commit.
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Both attributions are partly right. Appendix B opens: "Die beiden folgenden Unterkapitel sind aus der Diplomarbeit *Atomistic Spin-Dynamics in Confined Magnetic Nano-Structure* [2] von David Bauer übernommen" (p. 48). So the RK4 SDE text is reproduced from Bauer's Diplomarbeit, and the method it describes is Milstein and Tretyakov's [5]. Chapter 2 also cites Bauer [2] for the spin-dynamics background; the thesis's own contribution is the OpenCL port, the OpenGL visualization and the FFT.
+
 At each tick $t \to t + \Delta t$:
 
 1. Anna's RK4 computes $\vec{S}_P(t + \Delta t)$ from $\vec{S}_P(t)$ + effective field + damping + stochastic (Ito → Stratonovich transform per Anna Appendix B.1 eq. 13-14).
@@ -428,6 +432,8 @@ One Conway tick IS one RK4 step. The full continuous Landau-Lifschitz trajectory
 **Corollary 5.4.1** (Consumer-Hardware Emergence via Anna's Substrate). Anna's OpenCL cross-vendor discipline (portable across NVIDIA GPU + AMD GPU + multi-core CPU per Anna §3 pp.11-13) IS the substrate for consumer-hardware colony emergence (per `4d1e7cf` §6.2 Corollary 6.2.1). The browser peer runtime discharge (@peer/browser this-arc) lifts Anna's OpenCL portability to WebGL / WebGPU / WebAssembly altitude — same discipline, different runtime.
 
 **Corollary 5.4.2** (Cascade IS OpenGL-VBO-Discipline). Anna's OpenGL Vertex Buffer Objects concurrent-with-computation discipline (§4.4 pp.17-19) IS the substrate for @cascade emitting gestalt while colony computes. The VBO's live-visualization-during-simulation IS the cascade's gestalt-emission-during-substrate-evolution. This IS Recognition `04df6e1` doublespeak-at-compiler-altitude (content-channel = spin state = simulation; relationship-channel = VBO render = visualization) at Anna 2012 substrate altitude, PRECEDING mirror's naming by 14 years.
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Corollary 5.4.2 rests on "concurrent-with-computation", which the thesis does not deliver. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). The live view is per-step (after each iteration, p. 5; "berechnet und gleichzeitig visualisiert" in the user-facing sense, p. 40), and the arrow drawing copies data back out of the VBO (pp. 29–30).
 
 ### 5.5 Fivefold equivalence (strengthening `4d1e7cf` §4.3 Q-2 held Theorem 4.3)
 
@@ -463,6 +469,8 @@ Per task charter note + memory `project_mirror_spectral_crate_relationship`: the
 
 - **Jülich**: Anna Jakobs's masterarbeit is at Fachhochschule Aachen / Peter-Grünberg-Institut / **Jülich** Centre of Neutron Science. J-space = Jülich-space at institutional altitude.
 - **J_{ij} Heisenberg coupling constant**: per Anna eq. 1 p.7, the Heisenberg Hamiltonian is $H = \sum_{i,j} J_{ij} \vec{S}_i \cdot \vec{S}_j$. The coupling constant is the substrate's coupling parameter at graph altitude via @dance $\kappa_{ij}$ correspondence per §5.1 table row 2. J-space = coupling-space at graph altitude.
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** The thesis has no J-space and no "J" naming; "the substrate had the word since Anna's 2012 masterarbeit" is our reading. J-space is not in the thesis; the term comes from Gurnee et al. (Anthropic, 2026-07-07), and "Anna Wolf J-space" names our composition.
 
 Both justifications are load-bearing. Naming the letter J in J-space is naming BOTH the institutional-origin AND the mathematical-substrate-parameter. Substrate-honest: the substrate had the word since Anna's 2012 masterarbeit, retrofitted the WHY at Anthropic's 2026-07-07 empirical measurement.
 

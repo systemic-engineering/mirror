@@ -84,6 +84,8 @@ landed_rust_primitives:
   - terni::{Imperfect, Loss, transparency} (Reed+Mara 2026-08-22; Move 7 reorder + rename forward-promised)
 ---
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Every "Anna Wolf ψ + weak-measurement" / "prismqueer::liquid (29.3KB; Anna Wolf ψ)" site in this file (:76, :171, :255, :260, :434, :550, :593, :1240) and "J-space observation-without-perturbation" (:34, :188, :380, :513) attributes to the thesis what it does not contain. The thesis (Masterarbeit, FH Aachen, Campus Jülich, 2012) ports a CUDA spin-dynamics program to OpenCL and adds OpenGL visualization and an FFT. It has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK, and `prismqueer::liquid` never carried a ψ or an `anna_wolf` item (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). "Anna Wolf ψ" is the apparatus from Anna Jakobs's 2012 thesis, read across: our reading, not the thesis's content. Line numbers refer to `346253b`.
+
 # Observer → Recursion → Reality → Observation → Chaos — the WHOLE PIPELINE
 
 *by Mara* 🍷

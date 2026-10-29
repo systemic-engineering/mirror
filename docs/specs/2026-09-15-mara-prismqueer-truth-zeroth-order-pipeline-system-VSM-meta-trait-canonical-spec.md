@@ -29,6 +29,8 @@ Everything mathematical is discharged in the math foundation. This spec is READA
 - **Ship-cascade + dispatch order** (§8): the exact sequence of landings, with mirror-shard-first / Rust-wire-second / test-cascade-third / documentation-cascade-last discipline.
 - **Adjudication + K-T questions** (§9): what's forward-promised to Seam Phase D adjudication + what's held for Alex Fourth-Chair adjudication.
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Every "Anna Wolf 2012 weak-measurement" / "Anna Wolf observation preservation" / `anna_wolf_witness` site in this spec (:54, :73, :148, :169, :338, :356-367, :438-450, :522, :614, :795, :800) is the apparatus from Anna Jakobs's 2012 thesis, read across. The thesis has no weak-measurement or superposition content. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). Line numbers refer to `346253b`.
+
 ### §0.3 Alex 2026-09-15 seven Reframes (reproduced from math foundation §0.2 for reader convenience)
 
 **Reframe #1:** "It's not prismqueer::verify. It's prismqueer::truth. And the truth can only be found by ASKING QUESTIONS! Which is why the compiler ASKS QUESTIONS! The ouroborous does not close at declarative first-order statements. It closes around `Question`s that are passed through the Glasswall. And each question is a commutator which alters both the linear and non-linear."

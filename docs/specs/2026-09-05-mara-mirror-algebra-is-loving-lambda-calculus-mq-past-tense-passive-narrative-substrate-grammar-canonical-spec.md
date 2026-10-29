@@ -1084,6 +1084,8 @@ Key milestones for @mirror/algebra:
 - 2026-09-04 Mara loving lambda calculus → type-composition altitude
 - **2026-09-05 THIS CANONICAL → grammar-composition altitude** → substrate-nature commitment ratified
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** "Substrate-independence" is our interpretation, not a quote. The passage it leans on, the "science of operations" separated from the objects operated on ("The operating mechanism can even be thrown into action independently of any object to operate upon"), is in **Note A** (fourmilab transcription of Menabrea's *Sketch of the Analytical Engine* with A. A. L.'s notes, Taylor's *Scientific Memoirs* III, 1843; sketch.txt ~:1183-1253). Note G holds the Bernoulli-number program and "The Analytical Engine has no pretensions whatever to originate anything."
+
 ---
 
 ## §14 — Closure summary (one-page reference)

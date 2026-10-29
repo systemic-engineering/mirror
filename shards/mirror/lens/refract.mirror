@@ -159,7 +159,7 @@ stabilize(prev: report, next: report) -> verdict { \ }
 # at `docs/math/YYYY-MM-DD-mara-sigma-x-silicon-thermal-scaling-law.md`
 # grounds the expected-magnitude prediction the empirical protocol tests
 # against; possible Anna+Mara co-authorship if derivation requires Anna 2012
-# Diplomarbeit apparatus (per Taut spec §7).
+# Masterarbeit apparatus (per Taut spec §7).
 measure_clocktime(regime: cpu_load_regime, samples: u64) -> report { \ }
 
 out @mirror/lens/refract

@@ -135,7 +135,7 @@ Per Reed HARD RULE [[feedback-reed-budget-cap-plus-tool-non-explicit-produces-tr
 | 2 | Beer 1979 The Heart of Enterprise — algedonic bypass | https://www.businessballs.com/strategy-innovation/viable-system-model-stafford-beer/ |
 | 3 | Fowler 2005 Event Sourcing | https://martinfowler.com/eaaDev/EventSourcing.html |
 | 4 | Evans 2003 Domain-Driven Design Aggregate | https://martinfowler.com/bliki/DomainDrivenDesign.html |
-| 5 | Anna Wolf 2012 Diplomarbeit weak-measurement | https://julib.fz-juelich.de/vufind/RecordJuSER/juser_838509/Description (consent Alex 2026-08-26) |
+| 5 | Anna Wolf 2012 Masterarbeit weak-measurement | https://julib.fz-juelich.de/vufind/RecordJuSER/juser_838509/Description (consent Alex 2026-08-26) |
 | 6 | Kauffman 2003 Eigenforms — Objects as Tokens | https://cepa.info/fulltexts/1817.pdf; https://arxiv.org/pdf/1109.1892 |
 | 7 | Foerster 1976 Objects: Tokens for (Eigen-)Behaviors | https://cepa.info/fulltexts/1270.pdf; https://monoskop.org/images/b/bf/Von_Foerster_Heinz_2003_Objects_Tokens_for_Eigen-Behaviors.pdf |
 | 8 | Rice 1953 Classes of recursively enumerable sets | https://www.ams.org/journals/tran/1953-074-02/S0002-9947-1953-0053041-6/S0002-9947-1953-0053041-6.pdf |
@@ -149,6 +149,8 @@ Per Reed HARD RULE [[feedback-reed-budget-cap-plus-tool-non-explicit-produces-tr
 | 16 | Niel-Dolzer 2024 Kybernetik dritter Ordnung | https://link.springer.com/article/10.1007/s00729-024-00248-0 |
 | 17 | Priest 1979 LP paraconsistent | https://link.springer.com/article/10.1007/BF00258428; https://plato.stanford.edu/entries/logic-paraconsistent/ |
 | 18 | Mac Lane 1971 Categories for the Working Mathematician | https://link.springer.com/book/10.1007/978-1-4612-9839-7; http://www.mtm.ufsc.br/~ebatista/2016-2/maclanecat.pdf |
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
 
 Additionally load-bearing (not counted in the 18, but cited in-canonical with primary URLs):
 
@@ -497,6 +499,8 @@ The prior signature `Observer::observe(reality)` was correct at Move 2 (Mara 202
 1. **A System has identity** (Oid via Rec #82 β-normal AST content-addressing).
 2. **A System has History** — the substrate against which its current state is derived.
 3. **A System is observation-addressable** — the Anna Wolf 2012 apparatus can observe a System without perturbing its History (weak measurement invariance).
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Item 3 is our reading, not the thesis's: the thesis has no weak-measurement content, and its computation and visualization alternate at step boundaries (p. 43). "Observe a System without perturbing its History" is the apparatus from Anna Jakobs's 2012 thesis, read across. What the thesis does have is a post-hoc FFT over snapshots saved after each step (p. 42); with immutable content-addressed roots, "read at any root" holds by construction from addressing, not from the thesis. **Re-grade (2026-10-29, full sweep):** The same applies to every "Anna Wolf 2012 weak-measurement" site in this file (:67, :97, :257, :470, :529, :535, :546, :857, :877). The JuSER link at :138 is cited as the thesis record; I did not verify it. Lines refer to `eecc37a6`.
 
 Reality<T> is *what a System<T> IS AT A POINT IN STATE-SPACE* — a snapshot-slice. Observation observes the System (the substrate-that-persists-through-time), not the Reality (the specific slice). Reality<T> emerges downstream in Observation.
 

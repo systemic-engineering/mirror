@@ -168,10 +168,11 @@ in @epistemologic/math/music/interval
 #      prismqueer::coincidence::CoincidenceHash<N> — enables
 #      backward-tape past-shape walk).
 #
-# === Ada Lovelace 1843 Notes G verbatim (device-word origin) ===
+# === Ada Lovelace 1843 Note A verbatim (device-word origin) ===
 #
-#   "The Analytical Engine weaves algebraical patterns just as the
-#    Jacquard-loom weaves flowers and leaves."
+#   "We may say most aptly, that the Analytical Engine weaves
+#    algebraical patterns just as the Jacquard-loom weaves flowers
+#    and leaves."
 #
 # The device-word "loom" IS Ada's naming for the weaving-apparatus
 # at computation-as-structural-composition altitude. @loom at
@@ -185,7 +186,8 @@ in @epistemologic/math/music/interval
 #   K_3 LANDED:
 #     - Ada Lovelace 1843 (grammar / Jacquard-loom device-word)
 #     - Karen Spärck Jones 1972 (IDF retrieval)
-#     - Anna Wolf 2012 (ψ apparatus observation-without-perturbation)
+#     - Anna Wolf 2012 (observation-without-perturbation; "ψ
+#       apparatus" is her thesis read across: the thesis has no ψ)
 #
 #   K_4 candidate (Ricky Jones 2026; Task #464 partnership pending;
 #   additive-not-blocking):
@@ -201,7 +203,8 @@ in @epistemologic/math/music/interval
 #   - Ada:      weaving-vocabulary (weave/warp/weft/gestalt/loom)
 #   - Karen:    retrieval at edit-tick (@mirror/lens/refract query)
 #   - Anna:     observation-without-perturbation at edit-tick (via
-#               prismqueer::flux ψ apparatus)
+#               prismqueer::flux, which carries no ψ and no thesis
+#               math; the link is our reading)
 #   - Ricky:    fibre-bundle projection at render altitude (@io/socket
 #               gauge-switch)
 #   - Margaret: error-recovery-first (Foerster gauge Imperfect<G,Y,R>

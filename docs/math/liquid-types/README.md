@@ -16,7 +16,7 @@ Composes with:
   of the doc-as-declaration machinery).
 - `docs/math/onto/README.md` (`d6a05ad` — the ontocybernetic
   answerability grounding).
-- `docs/specs/liquid-types-for-mirror.md` (2026-06-04 background survey
+- `docs/specs/liquid-types-for-mirror.md` (2026-05-19 background survey
   of Rondon-Kawaguchi-Jhala 2008 + LiquidHaskell + Flux).
 
 Status: **substrate reading**. Not a new primitive. A routing-composition
@@ -45,7 +45,7 @@ Three months of substrate work have been circling toward one shape:
   ("above: declaration; below: observation").
 - 2026-06-04: `boot/std/mirror/liquid.mirror` names the semantics —
   *"the separator appears when the compiler has something to say."*
-- 2026-06-04: `docs/specs/liquid-types-for-mirror.md` grounds the
+- 2026-05-19: `docs/specs/liquid-types-for-mirror.md` grounds the
   substrate's relation to Rondon-Kawaguchi-Jhala 2008.
 - 2026-07-04: canonical two-channel collapse formalization at `20c99a2`.
 - 2026-07-04: tokenizer emits Docblock AST nodes above `---` at

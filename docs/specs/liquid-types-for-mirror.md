@@ -618,8 +618,8 @@ The spectral analysis of L_P gives:
 
 ### 5.3 Spectral CSP Sparsification
 
-Recent work (Bafna, Bhatt, Khot, Minzer -- ICALP 2025, "A Theory of
-Spectral CSP Sparsification") directly connects spectral methods to
+Recent work (Khanna, Putterman, Sudan -- ICALP 2025, "A Theory of
+Spectral CSP Sparsification", arXiv 2504.16206) directly connects spectral methods to
 constraint satisfaction. Key results:
 
 1. **Spectral energy of a CSP.** For a CSP instance with constraints C
@@ -664,18 +664,22 @@ SpectralLiquidInference(program, qualifier_set Q, grammar_graph G):
 
   4. eigenvalues, eigenvectors = Dirac(L_P)
      -- compute eigendecomposition
-     -- already implemented in mirror/src/dirac.rs
+     -- not implemented in mirror (there is no mirror/src/dirac.rs);
+     -- prism's prismqueer::ffi wraps LAPACK dsyev, which mirror doesn't call
 
   5. if lambda_1 > epsilon:
-       -- spectral gap exists: properties are satisfiable
+       -- spectral gap exists: the property graph is connected
+       -- (connectivity, not satisfiability)
        loss_profile = eigenvectors[1:k]  -- top-k eigenvectors give the loss profile
        for each term t:
          t.verdict = project(loss_profile, t)
          -- the verdict is the projection of the spectral embedding onto t
      else:
-       -- spectral gap is zero: properties are structurally incompatible
-       partition = sign(eigenvectors[1])  -- Fiedler bisection
-       report_incompatible_properties(partition)
+       -- spectral gap is zero: the property graph is disconnected.
+       -- That says the properties fall into independent groups, not
+       -- that they are incompatible; incompatibility needs its own check.
+       components = kernel(L_P)  -- the zero eigenspace indexes the components
+       infer_per_component(components)
 
   6. return annotated_program
      -- each term now carries its verdict, inferred automatically
@@ -991,7 +995,7 @@ AND verify its properties. This would be the deepest possible integration.
 - Ben Yaacov, I., Berenstein, A., Henson, C.W., & Usvyatsov, A. (2008). Model Theory for Metric Structures. London Math Society Lecture Notes.
 
 ### Spectral CSP
-- Bafna, M., Bhatt, A., Khot, S., & Minzer, D. (2025). A Theory of Spectral CSP Sparsification. ICALP.
+- Khanna, S., Putterman, A., & Sudan, M. (2025). A Theory of Spectral CSP Sparsification. ICALP 2025, doi:10.4230/LIPIcs.ICALP.2025.107. arXiv:2504.16206.
 
 ### Typed Holes
 - Omar, C., Voysey, I., Chugh, R., & Hammer, M. (2019). Live Functional Programming with Typed Holes. POPL.

@@ -714,9 +714,9 @@ LapackBackend (CPU overhead beats GPU upload + dispatch). `n > 256`
 prefers the highest-tier available backend implementing the required
 capability (Metal on Apple, OpenCL on Linux/AMD, LAPACK as universal
 fallback). Thresholds are measured via `cargo bench`, written into
-build-time constants. Same discipline as Jakobs 2012 §7.4
-(Kompilierung und Ausführung) where kernel-vs-CPU cross-over is
-benchmarked per platform.
+build-time constants. Jakobs 2012 §8 (pp. 41–43) times the original
+CPU program against the OpenCL version; §7.4 is the Makefile. Per-
+platform cross-over thresholds are our discipline, not the thesis's.
 
 The build-side wiring (`cc::Build::new().compiler("gfortran")`, the
 LAPACK link directives) lives in `prism/core/build.rs` gated on
