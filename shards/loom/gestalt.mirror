@@ -44,8 +44,9 @@ requires socket_write_admissible(socket_ref, _, g.gestalt.subject)
 
 # Composes @gestalt annotation discipline at editor altitude.
 # Attaches annotation to loom_gestalt without perturbing the
-# document's spectral_sig (Anna Wolf ψ apparatus:
-# observation-without-perturbation).
+# document's spectral_sig (observation-without-perturbation; "Anna
+# Wolf ψ apparatus" is the apparatus from Anna Jakobs's 2012 thesis,
+# read across: the thesis has no ψ).
 annotate_gestalt(g: loom_gestalt, ann: annotation) -> loom_gestalt
 requires loom_edit_admissible(g.gestalt_state.observation)
 { \ }
