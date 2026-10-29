@@ -28,9 +28,10 @@ jobs:
       - name: the commit, as an input
         run: printf 'commit %s\ntree %s\n' "$(git rev-parse HEAD)" "$(git rev-parse 'HEAD^{tree}')" > commit.txt
 
-      # TODO pin by SHA once spectral-beam's action.yml is pushed to main.
+      # spectral-beam pinned by rev (main @ 155b4da, has action.yml; the
+      # action is accessible to the organization since 2026-10-29).
       - id: mirror
-        uses: systemic-engineering/spectral-beam@main
+        uses: systemic-engineering/spectral-beam@155b4daabbb7fb978b73121e52674b477b3e924d
         with:
           tool: .#mirror
           run: mirror --version && cp -L "$(command -v mirror)" {output}

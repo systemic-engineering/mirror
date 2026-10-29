@@ -3,7 +3,8 @@
 
   inputs = {
     # Originally pinned for flang 21.1.8 + flang-rt. prismqueer now compiles
-    # its Fortran with gfortran (prism flake at 7e6b00f), so flang is gone
+    # its Fortran with gfortran (since prism 7e6b00f; the prism rev itself is
+    # pinned only in rust/Cargo.lock, see packages.mirror), so flang is gone
     # from this shell. The pin stays, to keep a toolchain move out of the
     # prism bump.
     nixpkgs.url     = "github:NixOS/nixpkgs/fef9403a3e4d31b0a23f0bacebbec52c248fbb51";
@@ -47,8 +48,10 @@
             LAPACK_DIR = "${pkgs.lapack}";
             BLAS_DIR = "${pkgs.blas}";
 
-            # The suite carries two RED-by-design batteries (red_spec_claims,
-            # fire_d_measure); tests run in the devshell, not here.
+            # Tests run in the commit gate (`just pre-commit`, all five crates;
+            # the RED-by-design batteries are behind the `red-claims`
+            # feature). The fixed point gets its own `checks.fixpoint` output
+            # once T1 lands (handoff mirror-007), not a checkPhase.
             doCheck = false;
           };
           default = mirror;
