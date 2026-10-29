@@ -5,7 +5,34 @@
 
 #![allow(dead_code)]
 
-use engine::{Atom, Const, Fact, Facts, Literal, Program, Rule, Term};
+use engine::{
+    Atom, Budget, Const, Dark, Fact, Facts, Instance, Literal, Nat, NormalProgram, NormalRule, PositiveProgram,
+    PositiveRule, Predicate, RuleId, Sym, Term, Var,
+};
+
+pub fn sym(s: &str) -> Const {
+    Const::Sym(Sym::new(s).unwrap())
+}
+
+pub fn nat(n: u64) -> Const {
+    Const::Nat(Nat(n))
+}
+
+pub fn pred(s: &str) -> Predicate {
+    Predicate::new(s).unwrap()
+}
+
+pub fn var(s: &str) -> Var {
+    Var::new(s).unwrap()
+}
+
+pub fn rule_id(s: &str) -> RuleId {
+    RuleId::new(s).unwrap()
+}
+
+pub fn alt(s: &str) -> engine::Altitude {
+    engine::Altitude::new(s).unwrap()
+}
 
 /// Split at top-level commas (outside parentheses).
 fn split_top(s: &str) -> Vec<String> {
@@ -37,15 +64,15 @@ fn split_top(s: &str) -> Vec<String> {
 
 fn constant(s: &str) -> Const {
     if !s.is_empty() && s.bytes().all(|b| b.is_ascii_digit()) {
-        Const::Nat(s.parse().unwrap())
+        nat(s.parse().unwrap())
     } else {
-        Const::Sym(s.to_string())
+        sym(s)
     }
 }
 
 fn term(s: &str) -> Term {
     match s.strip_prefix('?') {
-        Some(v) => Term::Var(v.to_string()),
+        Some(v) => Term::Var(var(v)),
         None => Term::Const(constant(s)),
     }
 }
@@ -54,11 +81,10 @@ fn term(s: &str) -> Term {
 pub fn atom(s: &str) -> Atom {
     let s = s.trim();
     match s.find('(') {
-        None => Atom { pred: s.to_string(), args: vec![] },
+        None => Atom { pred: pred(s), args: vec![] },
         Some(open) => {
-            let pred = s[..open].trim().to_string();
             let inner = &s[open + 1..s.rfind(')').expect("closing paren")];
-            Atom { pred, args: split_top(inner).iter().map(|a| term(a)).collect() }
+            Atom { pred: pred(s[..open].trim()), args: split_top(inner).iter().map(|a| term(a)).collect() }
         }
     }
 }
@@ -73,14 +99,14 @@ pub fn fact(s: &str) -> Fact {
             .into_iter()
             .map(|t| match t {
                 Term::Const(c) => c,
-                Term::Var(v) => panic!("fact {s:?} has variable ?{v}"),
+                Term::Var(v) => panic!("fact {s:?} has variable ?{}", v.as_str()),
             })
             .collect(),
     }
 }
 
 /// `head :- b1, not b2` or `head` (k = 0).
-pub fn rule(id: &str, s: &str) -> Rule {
+pub fn normal_rule(id: &str, s: &str) -> NormalRule {
     let (head, body) = match s.split_once(":-") {
         Some((h, b)) => (h, b),
         None => (s, ""),
@@ -92,20 +118,66 @@ pub fn rule(id: &str, s: &str) -> Rule {
             None => Literal::Pos(atom(l)),
         })
         .collect();
-    Rule { id: id.to_string(), head: atom(head), body }
+    NormalRule { id: rule_id(id), head: atom(head), body }
 }
 
-pub fn program(rules: &[(&str, &str)]) -> Program {
-    Program {
-        rules: rules.iter().map(|(id, s)| rule(id, s)).collect(),
-        functional: vec![],
+/// A positive rule; panics on `not` (the type can't hold it).
+pub fn rule(id: &str, s: &str) -> PositiveRule {
+    let r = normal_rule(id, s);
+    PositiveRule {
+        id: r.id,
+        head: r.head,
+        body: r
+            .body
+            .into_iter()
+            .map(|l| match l {
+                Literal::Pos(a) => a,
+                Literal::Not(_) => panic!("{s:?}: negation in a positive rule"),
+            })
+            .collect(),
     }
+}
+
+pub fn try_program(rules: &[(&str, &str)]) -> Result<PositiveProgram, Dark> {
+    PositiveProgram::new(rules.iter().map(|(id, s)| rule(id, s)).collect(), vec![])
+}
+
+pub fn program(rules: &[(&str, &str)]) -> PositiveProgram {
+    try_program(rules).unwrap()
+}
+
+pub fn try_normal(rules: &[(&str, &str)]) -> Result<NormalProgram, Dark> {
+    NormalProgram::new(rules.iter().map(|(id, s)| normal_rule(id, s)).collect(), vec![])
+}
+
+pub fn normal(rules: &[(&str, &str)]) -> NormalProgram {
+    try_normal(rules).unwrap()
+}
+
+/// The same program over other rules (for permutations and unions).
+pub fn reprogram(p: &PositiveProgram, rules: Vec<PositiveRule>) -> PositiveProgram {
+    PositiveProgram::new(rules, p.functional().to_vec()).unwrap()
 }
 
 pub const TEST_ALTITUDE: &str = "@datalog/fact";
 
 pub fn facts(atoms: &[&str]) -> Facts {
-    Facts { altitude: TEST_ALTITUDE.to_string(), atoms: atoms.iter().map(|s| fact(s)).collect() }
+    Facts { altitude: alt(TEST_ALTITUDE), atoms: atoms.iter().map(|s| fact(s)).collect() }
+}
+
+/// `run_to_fixpoint` on `(p, f)`; the instance must build.
+pub fn fixpoint(p: &PositiveProgram, f: &Facts) -> engine::Run<engine::Fixed> {
+    engine::run_to_fixpoint(&Instance::new(p, f.clone()).expect("instance"))
+}
+
+/// `run_bounded` on `(p, f)` with budget `k ≥ 1`.
+pub fn bounded(p: &PositiveProgram, f: &Facts, k: u64) -> engine::Run<engine::Bounded> {
+    engine::run_bounded(&Instance::new(p, f.clone()).expect("instance"), Budget::new(k).unwrap())
+}
+
+/// `W` on `(p, f)`.
+pub fn wf(p: &NormalProgram, f: &Facts) -> engine::WellFounded {
+    engine::well_founded(&Instance::new(p, f.clone()).expect("instance"))
 }
 
 /// Deterministic LCG (Knuth MMIX constants). No `rand`.
@@ -136,9 +208,8 @@ pub fn shuffled<T: Clone>(v: &[T], rng: &mut Lcg) -> Vec<T> {
 }
 
 /// `fact → tick` for a run, joining the model with the deposits by address.
-pub fn ticks(run: &engine::Run) -> std::collections::BTreeMap<Fact, u64> {
-    let by_addr: std::collections::BTreeMap<_, _> =
-        run.deposits.iter().map(|d| (d.addr, d.tick)).collect();
+pub fn ticks<S>(run: &engine::Run<S>) -> std::collections::BTreeMap<Fact, u64> {
+    let by_addr: std::collections::BTreeMap<_, _> = run.deposits.iter().map(|d| (d.addr, d.tick.0)).collect();
     run.model
         .iter()
         .map(|(a, f)| (f.clone(), *by_addr.get(a).expect("every atom of M is deposited")))
