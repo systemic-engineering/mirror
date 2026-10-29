@@ -296,6 +296,84 @@ It assigns no value to any single reading. It relates frames and never picks one
 | vector rulers: lattice, no holonomy, plural while unweighted, collapsed by a weighting (a Choice) | PROVED |
 | D2, D6 decided: picking is temperament, the un-picked structure is the intonation | decided (Alex) |
 
+---
+
+## §11 A ruler is a prism; the distinction moves to the codomain
+
+**Alex:** "Isn't a `Ruler` a `Prism`, and then the whole distinction dissolves? A single-truth ruler settles to a single scalar value. A multi-truth ruler to a field."
+
+### §11.1 What prism's `Prism` is (read at the cache rev `7e6b00f`)
+
+`prismqueer/src/lib.rs` defines `trait Prism` with **three** operations, `focus`, `project`, `settle`, typed as a chain of beams (`Input → Focused → Projected → Refracted`). The final beam carries an `Imperfect`: `Success(out)`, `Partial(out, loss)` or `Failure(err, loss)`.
+- The **five** ops (`focus`, `project`, `split`, `shift`, `settle`) are mirror's shard-side declaration form (`prism @X { … }`), not the Rust trait.
+- The pinned rev `26ed54b` isn't in my local cache. Taut's inventory reports only line shifts between the two revs, so the trait shape is taken from `7e6b00f`.
+- One known tension: prism's docstring calls `project` "the lossy transformation", while fixpoint math §4.4 says only `settle` is non-injective (decision 12, owner prism-Reed). Below, all narrowing is placed in `settle`, which is consistent with mirror's math.
+
+### §11.2 The unification (PROVED as definitions line up)
+
+**Definition 11.1.** A **ruler** is a prism, i.e. a declared, signed `settle` (after `focus` and `project`), whose settled value is a **field** `Field<B, V>`: a value in V on each cell of a base B.
+- **Scalar:** `Field<Point, V>`, a field over one point (K₁, the decree).
+- **Intonation:** `Field<Γ-graph, G>` with G a group: a transport per line, i.e. a connection.
+- **Lattice family ruler:** `Field<B, L>` with L a meet-semilattice.
+- **Vector ruler:** `Field<Discrete(k), L>`, k criteria with no lines between them (no transports: the criteria are incommensurable axes).
+
+Every family specified so far settles to one of these (Budget, Resolution, Authority: a point or a lattice field; Choice: a point, picked from held alternatives; Equivalence: a partition, a lattice value; Intonation: a group field). So "a ruler is a prism" holds for everything in spec §1 and §6. **Fifty dissolves on the name.** An intonation *settles*: it fixes which transports hold, out of all possible connections, and that narrows **possibilities**, not readings. Scarlet's "it doesn't narrow to a value" and Mara's "it is a ruler" are both true. The definition of a ruler moves from "narrows to a value" to "settles, to a field".
+
+### §11.3 What does **not** dissolve: the codomain's algebra (PROVED)
+
+The single/multi distinction relocates to the settled field. There are four cases, by base and value algebra:
+
+1. **A field on a point.** Nothing to collapse.
+2. **A lattice-valued field on any base.** The meet `∧ : L^B → L` is a lattice homomorphism, so a **lawful collapse to a point exists**.
+   - If several exist (for a vector ruler: `min` over criteria, or any single projection), choosing one is a **Choice**, a temperament act.
+   - This is exactly §8.2: single truth is always lawfully available here.
+3. **A group-valued flat field** (trivial holonomy on every loop). Its gauge class is a single point (kintsugi Prop 3.5: flat on a connected graph ⇒ gauge-trivial), so it collapses **losslessly up to gauge**. The gauge-dependent transports (who translates how) are lost, and they are bookable to a ruler (§10.3). **"Temperament = a flat field"** holds in this sense: equal temperament is the flat field closest to the just one.
+4. **A group-valued curved field** (some holonomy ≠ identity). **No lawful collapse exists.** Every monoid homomorphism from the group of such fields `G^E` into a meet-semilattice is constant at the top (Prop 10.4 applied to `G^E`). The only way down is `temper`: a declared settle onto flat fields or a point, whose erasure is the curvature.
+
+So Alex's "the whole distinction dissolves" is **NARROWED**:
+- the distinction between *kinds of ruler* dissolves: one trait;
+- the distinction between *kinds of settled value* does not: curved group-fields (case 4) are the multi-truth that is never collapsed, by a theorem.
+
+**"A scalar is a field over a single point" (PROVED, definitional).** The real parameters are then:
+- the base: a point, or a graph with b₁ ≥ 0;
+- the value algebra: lattice or group;
+- for groups, the flatness.
+
+### §11.4 `temper` versus prism's `settle` (PROVED, Hodge)
+
+For abelian real G and a graph without 2-cells, the 1-cochains split orthogonally into gradient ⊕ harmonic (Lim, *Hodge Laplacians on Graphs*: edge flows converge to the harmonic projection `P_{H¹} u₀`).
+- prism's spectral `settle` (`spectral/settle.rs`) runs the Laplacian flow and reports a `Tail { moving, faded, opaque }` against a `Noise` resolution. **Its scope today is vertices only** (`settle.rs:17`: "Cycles (`H¹`) need the edge Laplacian"). The edge version of the same flow, the Hodge flow, **keeps** the harmonic part (the kernel) and fades the gradient part (Lim).
+- `temper` does the **complement**: it keeps the gradient part (a flat field, potentials) and returns the harmonic part as the erasure (Prop 10.6).
+- So `temper` and the edge-Laplacian settle are complementary orthogonal projections. A curved field equals its tempered flat field plus the curvature the edge flow would keep. Nothing is lost between them, and **what temper erases is exactly what an edge-Laplacian settle keeps** (abelian real case). prism doesn't have that settle yet. When it lands, it is the measuring dual of `temper`.
+- For non-abelian G there is no orthogonal split, and the erasure is the holonomy words (OPEN: a canonical form).
+
+### §11.5 Against everything already specified
+
+- **Taut/Seam families:** the lattice families are exactly the prisms whose settled value is lattice-valued (cases 1–2). Choice settles to a point picked from held alternatives. The held, un-picked alternatives (an intonation over the choice space, or a Front) are case 2 or 4, depending on whether the alternatives carry invertible transports. **PROVED** by matching the definitions in spec §1.
+- **`mirror-settle` `Loop` / `Holonomy` / `Temperament`:** `Loop` and `Holonomy` measure case 4's curvature. `Temperament { kernel, ruler }` is `temper` for a ratio-valued field. Consistent.
+- **Coupling `RulerFree`:** the gauge class of the coupling's field (§10.3). It is a point in case 3 (`Absorbable`) and non-trivial in case 4 (`Classes`). Consistent.
+- **Prop 10.6:** restated as §11.4. Consistent.
+- **D-decisions:** D2/D6 (picking is temperament) are unchanged: picking is the settle from case 2 or 4 to case 1. D1, D3, D4, D5 and D7 are untouched.
+
+### §11.6 READING: a spin field on a lattice
+
+In physics, a spin configuration on a lattice is a field over a graph base. A lattice gauge field is a connection on links, with plaquette holonomy: Wilson's 1974 construction quantizes "a gauge field theory on a discrete lattice … preserving exact gauge invariance", and Wilson loops are its holonomies (Wilson, *Confinement of quarks*, Phys. Rev. D 10, 2445; Wikipedia, *Wilson loop*; via Kagi). Reed relates this shape to the spin field in Anna Jakobs's thesis. That is READING, about the shape only, not a claim the thesis makes, and I haven't read the thesis.
+
+### §11.7 Ledger additions
+
+| claim | status |
+|---|---|
+| prism's Rust `Prism` has three ops; the five are mirror's declaration form | PROVED (read, `7e6b00f`) |
+| every specified ruler is a prism settling to a field | PROVED (definitions) |
+| "Fifty" (is an intonation a ruler?) | dissolved: a ruler settles, possibly to a field |
+| lattice-valued fields collapse lawfully (meet); choosing among collapses is a Choice | PROVED |
+| flat group-fields collapse losslessly up to gauge | PROVED |
+| curved group-fields have no lawful collapse (Prop 10.4 on `G^E`) | PROVED |
+| "the whole distinction dissolves" | NARROWED: one trait; the codomain's algebra and curvature remain |
+| `temper` and an edge-Laplacian settle are complementary Hodge projections (abelian real) | PROVED; prism's `settle` is vertex-only today |
+| canonical non-abelian erasure | OPEN |
+| spin fields / lattice gauge fields as the same shape | READING (cited) |
+
 ## Ledger
 
 | claim | status |
@@ -325,6 +403,9 @@ It assigns no value to any single reading. It relates frames and never picks one
 | the Anna Jakobs link | READING (thesis not read) |
 
 ## Sources (Kagi, this session)
+
+- K. G. Wilson, *Confinement of quarks*, Phys. Rev. D 10 (1974) 2445, https://link.aps.org/doi/10.1103/PhysRevD.10.2445; Wikipedia, *Wilson loop*. **[abstract and snippet]**
+- L.-H. Lim, *Hodge Laplacians on Graphs*, SIAM Review 2020, https://www.stat.uchicago.edu/~lekheng/work/psapm.pdf (edge flow converges to `P_{H¹} u₀`). **[snippet; also read in the 10-10 session]**
 
 - Wikipedia, *Rule of recognition*, https://en.wikipedia.org/wiki/Rule_of_Recognition; Legal Theory Lexicon 105, https://legaltheorylexicon.com/2026/04/legal-theory-lexicon-105-the-rule-of-recognition/ (H. L. A. Hart, *The Concept of Law*, 1961). **[snippets]**
 - E. Ostrom, design principles ("multiple layers of nested enterprises"), via https://beyondostrom.blog.rosalux.de/files/2013/05/Design-Principles-and-Threats-to-Sustainable-Organizations-That-Manage-Commons.pdf; *Beyond Markets and States: Polycentric Governance of Complex Economic Systems*, https://web.pdx.edu/~nwallace/EHP/OstromPolyGov.pdf. **[snippets]**
