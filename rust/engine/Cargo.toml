@@ -1,0 +1,23 @@
+[package]
+# `engine` — mirror's evaluator core E (docs/specs/mirror-fixpoint-parser.md
+# §4, §4.1). The floor that runs rule programs: semi-naive positive Datalog
+# over a finite domain, deposits with the tick out of the address, Ford's
+# functionality as a reported finding, and the well-founded wrapper W.
+#
+# Admitted by docs/audits/2026-10-29-seam-engine-core-scope.md (§1–§3).
+# The name is a placeholder (Alex names primitives).
+#
+# One dependency: blake3 (the address function H, spec §5.0).
+# No serde, ever (audit §3.5). No I/O, no threads, no unsafe, no clock,
+# no randomness. Deterministic ordering (BTreeMap/BTreeSet only).
+# tests/e7_no_serde.rs reads this file and holds it to that.
+#
+# Not a workspace member (same shape as fractal, matrix, roomba, spectral).
+name = "engine"
+version = "0.1.0"
+edition = "2021"
+description = "mirror's evaluator core E: semi-naive Datalog + well-founded wrapper"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+blake3 = "1.8"
