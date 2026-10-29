@@ -1,161 +1,204 @@
 # The certificate: a compilation that explains itself (spec)
 
-*2026-10-29. Mara. Status: **Red**. Serves the loop's definition of done (`docs/loop/CHARTER.draft.md`). Builds on: the engine contract (fixpoint spec §4.1–§4.2, "E"), the tick-shape theorem (`docs/math/2026-10-29-mara-engine-frequency-and-kleinos.md` Prop 2.1, "freq"), the erasure record (fixpoint §6), holes (fixpoint §5.1), the vocabulary (fixpoint §1.1: clear / opaque / dark), and the ruler envelope (`mirror-ruler.md`). Labels: PROVED, CONJECTURE, OPEN, READING.*
+*2026-10-29. Mara. Status: **Red**. Second version: folds Seam's checker audit (`docs/audits/2026-10-29-seam-checker.md`, script `tests/checker/oracles/certificate_crowbar.py`; four wrong certificates passed v1's checks). Changes are marked *[C §n]* with the audit section. Serves the loop's definition of done (`docs/loop/CHARTER.draft.md`). Builds on:*
+- *the engine contract (fixpoint spec §4.1–§4.2, "E");*
+- *the tick-shape theorem (`docs/math/2026-10-29-mara-engine-frequency-and-kleinos.md` Prop 2.1, "freq");*
+- *the erasure record (fixpoint §6) and holes (fixpoint §5.1);*
+- *the vocabulary (fixpoint §1.1: clear / opaque / dark);*
+- *the ruler envelope (`mirror-ruler.md`).*
+
+*Labels: PROVED, CONJECTURE, OPEN, READING.*
 
 **Alex:** "the compiler can explain its own compilation at every step for any arbitrary shard." And: "What is an explanation if not a (non-)linear trace through the past?"
 
 ---
 
-## §0 The definition, in five lines
+## §0 The definition, in five lines (v2)
 
-1. A **certificate** is a content-addressed fragment, printed as mirror-text, beside a result (never inside its address).
-2. It holds the result's **past cone** as a partial order:
-   - **layers**: the deposits in Foata normal form;
-   - **derivations**: every first-tick rule instance, with its premises' addresses;
-   - **erasures**: what was narrowed, and by which ruler;
-   - **holes**: the questions left open.
-3. "Explained" means two checks pass:
-   - **soundness**: every atom has a well-founded derivation from the facts;
-   - **closure**: one more round derives nothing new.
+1. A **certificate** is a content-addressed fragment, printed as mirror-text, that sits beside a result and never inside its address.
+2. It holds the result's past cone as a partial order:
+   - **layers**: Foata, i.e. the ticks;
+   - **all first-tick derivations**;
+   - **W's whole context sequence**, from the initial context on;
+   - **erasures** and **holes**.
 
-   Together they prove the result is *the* least model, not just *a* model.
-4. Any log is one **punctuation** (a linear extension) of this order. Choosing one is a ruler. The certificate carries none.
-5. An **independent checker** replays the certificate in **any** linear extension and must rebuild the identical root. Dark at 255 is certified by the derivations of the violating atoms plus the declining rule; Dark at 2 by the location where no light came back.
+   It never holds the program, the facts or the verdict as truth. Those are re-derived.
+3. "Explained" means the **checker**, from the **source** alone, re-derives P, F, well-formedness, the model, the layers, every declaration check, N and the **verdict**, and the certificate agrees with each. The derivation-level checks are soundness (S), closure (C) and per-layer completeness (check 8).
+4. A log is a punctuation of the order, and therefore a ruler. Order-freedom is a **structural** property: acyclic, premises in earlier layers, the model addressed from the sorted set, negatives judged against fixed contexts. It is not sampled.
+5. The checker is independent:
+   - Python at `tests/checker/`, stdlib + pinned `blake3`;
+   - no repo imports, no process, no JSON;
+   - written by neither the engine's author nor the auditor;
+   - verified against §5.0 known-answer vectors written by a third party;
+   - pinned by tree address; when over budget it says **UNKNOWN**, never pass.
+
+**What changed from v1:**
+- (a) v1 read P, F and the verdict from the certificate. v2 re-derives them from the source.
+- (b) v1 trusted the period-2 witness for W. v2 checks every γ transition from the start.
+- (c) v1 had no completeness check. v2 adds check 8.
+- (d) v1 ran functional checks only when Dark was claimed. v2 runs them on every result.
+- (e) v1 certified N by `render(N, ε)`. v2 recomputes N.
+- (f) v1 sampled order-freedom with K. v2 makes it structural, and K is a determinism test only.
 
 ---
 
 ## §1 The past cone is a partial order; ticks are its Foata form (PROVED)
 
-- **Derivation order.** For an atom a with a derivation `(rule r, premises p₁ … p_k)`, draw edges `pᵢ → a`. Restricted to **first-tick derivations** (all premises at ticks < tick(a)), this is a DAG.
-- **Ticks are the depth (PROVED, from freq Prop 2.1).** Every atom first derived at tick t ≥ 1 has a first-tick derivation with a premise at t − 1 and none later. So `tick(a) = 1 + max tick(premises)` over its first-tick derivations. That makes tick(a) the longest-path depth of a in the first-tick DAG, with facts at depth 0.
-- **That is the Foata normal form.** The layers are antichains (atoms at one tick don't depend on each other through first-tick derivations, since their premises are strictly earlier). Every atom at layer t depends on some atom at layer t − 1. Cartier and Foata (1969) introduced traces and this normal form; see the trace-monoid literature, e.g. Wikipedia, *Trace monoid*, and the Stuttgart *Cartier-Foata-Garside Monoids* notes, Thm 10.4.1, "the classical Cartier-Foata normal form" (via Kagi). The normal form is **unique** for a given order, so the layers are canonical, not a choice.
-- **A linear log is a punctuation (READING, with a PROVED core).** Every linear extension of the order is a valid replay order. Picking one discards the independence between atoms in the same layer. Picking is non-injective on orders, so it is a choice, i.e. a ruler (Watzlawick's punctuation, as in the manipulation essay). The certificate stores the order, not a linear extension. A tool that prints a log returns `Shaped<Log, _>` naming its punctuation ruler.
+- **Derivation order.** For an atom a with a derivation `(rule r, premises p₁ … p_k)`, draw edges `pᵢ → a`. Restricted to **first-tick derivations** (all positive premises at ticks < tick(a)), this is a DAG.
+- **Ticks are the depth (PROVED, from freq Prop 2.1).** `tick(a) = 1 + max tick(positive premises)` over its first-tick derivations, i.e. the longest-path depth with facts at 0. A tick is also the naive stage `min{n : a ∈ T_Pⁿ(F)}`, intrinsic to (P, F) (Seam verdict 2).
+- **Pinned conventions** *[C §verdict 4]*:
+  - **No positive premises.** The depth of an atom derived by a rule with no positive premise (`a.` as a rule, or `r :- not s`) is `1 + max ∅ = 1`: it fires in round 1, as the engine already does ("a rule with no positive body fires once, in round 1"). Facts are depth 0.
+  - **W's layers.** True atoms take their layers from the **final** `under = γ(over_K)` run. Undefined atoms take theirs from the final `over = γ(under_K)` run and are marked as `over`-layers. Negative premises in either run are judged against that run's **fixed** context (`over_K` or `under_K`).
+- **Foata.** Layers are antichains, and every atom at layer t depends on some atom at t − 1. This is the unique Cartier–Foata normal form (Cartier & Foata 1969; Wikipedia, *Trace monoid*; the Stuttgart *Cartier-Foata-Garside Monoids* notes, Thm 10.4.1; via Kagi), so the layers are canonical.
+- **A linear log is a punctuation** (PROVED core: picking one extension is non-injective on orders; READING: Watzlawick). The certificate stores the order. A tool printing a log returns `Shaped<Log, _>` naming its punctuation ruler.
 
-The same structure appears as prism's `Progression` and the Voice's beats (READING; Reed's identification).
+## §2 What the certificate carries, and what it never carries
 
-## §2 What the certificate must carry
-
-### §2.1 Which derivations: all first-tick ones (PROVED to be choice-free)
+### §2.1 Which derivations: all first-tick ones (PROVED choice-free)
 
 | option | verdict |
 |---|---|
-| one derivation per atom | **refused as the default.** Picking one among several first-tick derivations is a Choice (a ruler). The certificate would then explain *a* reason, not *the* reasons |
-| **all first-tick derivations** | **required.** The set is determined by the model and the ticks alone, so it needs no ruler. It is finite: at most the rule instances that fire at that tick. Each is well-founded (premises strictly earlier) |
-| all derivations, including later-tick ones | **optional**, as `--explain=all`. This is how-provenance proper: Green, Karvounarakis & Tannen, *Provenance Semirings* (PODS 2007, "datalog and semirings of formal power series", via Kagi). For recursive programs the polynomial can be an **infinite power series** through cycles, so it is not required. Its finite truncations are OPEN as a spec item |
+| one derivation per atom | refused: picking is a Choice (a ruler) |
+| **all first-tick derivations** | **required**: determined by the model and ticks, finite, well-founded. **Checked by check 8** *[C §1.2]* |
+| all derivations | optional (`--explain=all`): how-provenance (Green, Karvounarakis & Tannen, PODS 2007, power series for recursive programs). Finite truncation OPEN |
 
-**Why "first-tick" is the right cut (PROVED).** A derivation with a premise at the same or a later tick can be circular (`p` from `q`, `q` from `p`) and explains nothing. First-tick derivations are exactly the ones that are well-founded with respect to the computation actually run.
+### §2.2 Never carried as truth *[C §1.3, §1.6]*
 
-### §2.2 "Explained at every step" (PROVED: least-model certificate)
+- **P and F.** The checker re-derives them from the source: its own reader, and for compile its own PEG → Horn translation and byte → fact encoding. It compares their addresses with the header's. The header is a claim, never an input. (Seam case 4: a spurious fact passes against the certificate's facts and fails against the source's.)
+- **The verdict and exit code.** The checker derives them: `clear` / `opaque` / `dark` at 2 or 255 (fixpoint §1.1). The record's verdict is compared, never read. (Seam case 3: a `clear` hiding a functional violation.)
+- **N.** For compile, the checker recomputes N with its own `strip` and `nf` from the certified parse items. `render(N, ε) = bytes` is then an **additional** check, never the certificate of N. (Seam §1.5: `N = ∅` with ε = the whole file round-trips.)
+- **Erasures under a ruler.** The ruler's content is a positive program (sealed rulers, D3 lean), so the checker evaluates it and compares the erasure, rather than trusting `shaped_by` + erasure.
 
-For the engine's least model M over program P and facts F:
-- **(S) soundness:** every non-fact atom in M has at least one certified first-tick derivation. So M ⊆ lfp(P, F) (induction on tick).
-- **(C) closure:** one naive round over M derives nothing outside M, i.e. `T_P(M) ⊆ M`. So M is a pre-fixpoint, and lfp ⊆ M (Knaster–Tarski).
-- **Together:** M = lfp. Without (C), a certificate shows only that M is a sound *subset* (the engine could have stopped early). Without (S), only that M is *closed* (it could contain junk).
+### §2.3 Under negation (W) *[C §1.1]*
 
-This is a **certifying algorithm** in the sense of McConnell, Mehlhorn, Näher & Schweitzer (*Certifying algorithms*, Computer Science Review 2011: "an algorithm that produces with each output a certificate or witness that the particular output has not been compromised by a bug", via Kagi). Checking (C) costs one round. Checking (S) is linear in the certificate.
+- The certificate carries **every** round context `under₀ = F, over₀, under₁, over₁, …` up to consecutive equality.
+- The checker verifies **every transition** `over_k = γ(under_k)` and `under_{k+1} = γ(over_k)` from the start. That is 2 · rounds γ-runs, a recomputation.
+- **Leastness follows from the iteration.** The period-2 property at the end holds automatically and is **not** evidence. It is true of every fixpoint of γ², stable models included: Seam case 1, vector 04 with "q, r true, nothing undefined", passes the witness and fails the iteration.
+- True atoms carry their first-tick derivations in the final under-run. Undefined atoms carry theirs in the final over-run (§1 conventions).
+- Why-not for false queried atoms is optional (head-bound only; existential variables OPEN).
 
-**For compile (the whole pipeline, every step):**
+### §2.4 Holes, erasures, Dark *[C §1.4]*
 
-| stage | what certifies it |
-|---|---|
-| read (PEG in E) | the E certificate of the parse items (S and C above), plus Ford functionality checked on `m` |
-| strip, normalize, settle | the erasure record ε (fixpoint §6, already required): `render(N, ε)` reproduces the bytes |
-| crystallize | self-certifying: the Merkle address is recomputed by the checker (fixpoint §5.0) |
-| graph, identify, interface | functions of N, recomputed by the checker |
-| narrowing anywhere | `shaped_by` plus the family erasure (`mirror-ruler.md`) |
+- **Holes:** `hole <question> at <path>`, plus the undefined atoms in the start cone. They are part of the explanation (Opaque).
+- **Erasures:** `shaped_by` plus the family erasure, re-evaluated by the checker (§2.2).
+- **Dark at exit 2** (no light):
+  - the certificate holds a location (line:col for the reader; or the engine `Dark` variant and its arguments) and no layers;
+  - the checker re-reads with **its own reader**, never the compiler's, and re-checks engine `Dark` directly from the program text (the unsafe variable doesn't occur in a positive literal, an arity mismatch, a declaration position out of range);
+  - it accepts iff the claimed location is **a** genuine error;
+  - **The ordering ruler for "the" location** (several errors are several valid Dark reports): `@mirror/dark-order`, a declared Choice ruler. Its content:
+    - reader errors by least byte offset;
+    - then engine checks in the engine's declared order (arity, then safety, then declarations), each within by sorted rule id or predicate.
 
-### §2.3 Under negation (W)
-
-- **True atoms:** first-tick derivations from the last γ round, with each negative premise `not q` justified by the context set S of that round, given by address. The certificate carries the round contexts' addresses (`under_k`, `over_k`), so the checker can rerun γ.
-- **Undefined atoms:** the period-2 witness (freq F6): `γ(under) = over` and `γ(over) = under`, checked by the checker with two γ runs.
-- **False atoms** (queried): why-not, i.e. for each rule instance with that head, the failing literal. This is a query over the final model, finite for head-bound variables (oracle v0 limit). It is **optional at level 1** (`--explain=why-not`). For existential body variables it is OPEN, as the oracles note.
-
-### §2.4 Holes, erasures, Dark
-
-- **Holes:** each `\` occurrence as `hole <question> at <path>`, and each undefined atom in the start cone (fixpoint §4). A hole is part of the explanation: the certificate says where the compiler doesn't know, and that is the explanation (Opaque).
-- **Erasures:** `shaped_by` plus the family erasure, per ruler (`mirror-ruler.md` R2).
-- **Dark at exit 2** (no light): the certificate holds the location (line:col, or the engine `Dark` variant and its arguments) and **no layers**. Nothing was derived, so there is nothing to replay. The checker's job is only to confirm the location reproduces the Dark (re-reading the bytes up to that point fails the same way).
-- **Dark at exit 255** (declined): the full certificate of the model, plus the declining rule (by address, or surface text until it has one) and the **derivations of the violating atoms**. For vector 05 that is the derivations of `owner(doc, alex)` and `owner(doc, reed)`, each from its `claim` fact. The decline is explained by the past cone of what was declined.
+    The record's `shaped_by` for a Dark at 2 stays `none` (no rule declined the light). The canonical location is a punctuation, named in the certificate header as `dark-order <addr>`.
+- **The converse:** the checker re-runs every well-formedness check on **every** input. A program that should be Dark, for which a model was printed, fails.
+- **Dark at exit 255** (declined): the full model certificate, plus the declining rule, plus the derivations of the violating atoms. The checker evaluates **every** `functional` declaration on **every** result (over `true` under W, matching E), so a missing decline is caught too.
 
 ## §3 Encoding and address
 
 A fragment at altitude `@mirror/certificate`, children ordered:
 
 ```text
-fragment @mirror/certificate
-  0 header       result <addr>   program <addr>   facts <addr>   engine <addr of E's shard / build>
-  1 layers       fragment: one child per tick, each a sorted list of atom addresses
-  2 derivations  fragment: sorted by (head addr, rule id, premise addrs); each = (head, rule, premises)
-  3 contexts     (W only) the round contexts by address
-  4 erasures     fragment: (ruler addr, family erasure) sorted by ruler addr
-  5 holes        fragment: (question, occurrence) sorted
-  6 dark         absent | (exit 2, location) | (exit 255, rule, violating atoms)
+0 header       result <addr>  program <addr, claimed>  facts <addr, claimed>  engine <addr>  dark-order <addr | none>
+1 layers       one child per tick: sorted atom addresses (W: under-layers, then over-layers)
+2 derivations  sorted by (head, rule id, premise addrs)
+3 contexts     (W) the whole sequence under₀, over₀, under₁, … by address
+4 erasures     (ruler addr, family erasure), sorted
+5 holes        (question, occurrence), sorted
+6 dark         absent | (2, location) | (255, rule, violating atoms)
 ```
 
-- **Address:** fixpoint §5.0's fragment rule. The certificate's address depends only on its content. Two runs that derive the same model the same way have the same certificate.
-- **Not in the result's address:** the certificate sits beside the result, like the erasure record and witnesses (fixpoint §5).
-- **Mirror-text** is the default printing. `--explain` prints it after the §1.1 record.
-- **Size:** linear in the number of first-tick rule instances. For parse items that is the engine's run size, so `--explain` is opt-in, and the certificate is cached by the result's address.
+The address follows the fixpoint §5.0 fragment rule. The certificate sits beside the result, never in its address. It is printed as mirror-text after the §1.1 record with `--explain`, and cached by the result's address.
 
 ## §4 The checker
 
-**The property (PROVED).** Replaying the certificate's derivations in **any** linear extension of the derivation order rebuilds the identical model, and hence the identical root. Each step adds a head whose premises are already present, so the final set is the union of the heads plus the facts. Its address is the store-merge fragment of a sorted set, which is order-free.
+### §4.1 Checks *[C §1, §3]*
 
-**What the checker checks:**
-1. every derivation is a valid instance of the named rule (its own unification);
-2. (S): every non-fact model atom has ≥ 1 derivation with strictly earlier premises;
-3. (C): one naive round over M adds nothing;
-4. the layers equal the longest-path depths of the derivation DAG (Foata);
-5. the root, interface and graph recomputed from the replay equal the record's;
-6. for W: the contexts reproduce `under`/`over` and the period-2 witness;
-7. for Dark at 255: each violating atom is derivable, and the declining rule is violated by them.
+1. **Re-derive P and F** from the source. Compare with the header's addresses.
+2. **Well-formedness** on every input: arity, safety, declaration positions (and Ford WF for grammars).
+3. **(S) soundness:** every derivation is a valid instance of its rule (own unification); every non-fact model atom has at least one derivation with positive premises in strictly earlier layers.
+4. **Layers** equal the longest-path depths (§1 conventions).
+5. **(C) closure:** one naive round over M adds nothing. For a budget-truncated run this is false by design, and the result must be shaped by a `Count` ruler, with check 8 plus "no layer > k" in place of (C).
+6. **W:** every transition of the context sequence from the start (§2.3).
+7. **Every `functional` declaration** on every result. The checker **derives the verdict and exit** and compares them with the record's.
+8. **Per-layer completeness** *[C §1.2]:* for every atom a at layer t, the set of rule instances with head a, positive premises in layers < t, and negatives true under the run's context, **equals** the certificate's set for a.
+9. **Compile:** N by the checker's own strip/nf; then `render(N, ε) = bytes`; root, interface, graph and uuid by its own encoder; ruler erasures by evaluating the ruler.
+10. **Dark:** at 2, the location is reproduced by the checker's own reader or checks; at 255, the rule is genuinely violated by the derived atoms.
 
-**Independence (Seam audits):**
-- the checker is a separate crate (`rust/checker`), **not depending on `engine`**;
-- it has its own unification, its own naive round, and its own §5.0 encoder (like E1's naive evaluator, which is independent of the semi-naive core);
-- it reads only the certificate, the program and the facts;
-- it is diverse in algorithm (naive, not semi-naive).
+### §4.2 Order-freedom, structurally *[C §3]*
 
-Seam audits that it imports nothing from `engine` or `ruler`, that it checks both (S) and (C), and that the address recomputation doesn't share code with the compiler's encoder. CONJECTURE: a diverse checker plus DDC on E (fixpoint §3) is enough for "explains itself" not to collapse into "the compiler vouches for itself".
+Replaying in any linear extension rebuilds the root (PROVED: the result is `F ∪ heads`, addressed from the sorted set). The **structural** conditions that cover every extension:
+- the derivation graph is acyclic, with premises in strictly earlier layers (checks 3, 4);
+- the model address is computed from the sorted set by the checker's own encoder;
+- W's negative premises are judged against the fixed round context, never the replay's current set.
 
-**Order-freedom test:** the checker replays in K random linear extensions (fixed seed) plus the reverse-topological-stable one, and all must agree. This generalises the 720-orders test of pact vector 01.
+Replaying in K random extensions plus the reverse one remains a **determinism test of the checker's own implementation** (K = 100). It is **not** part of "done". The charter's "order-free" means the three conditions above.
 
-## §5 Level 2: kintsugi explains its gluing
+### §4.3 Independence and admissible shape *[C §2, §4]*
 
-A level-2 certificate references level-1 certificates by address (Merkle), so explanation is recursive. Per finding:
+- **Shape** (Seam ADMIT-NARROWED): `tests/checker/checker.py <source> <certificate> <record>`. Python stdlib plus `blake3`, pinned in the script's inline metadata and run with `uv run`. It prints mirror-text `pass` | `fail <check> <detail>` | `unreadable <location>` and exits 0 / 1 / 2.
+- **It may not:**
+  - import repo modules or other oracles;
+  - call the `mirror` binary or any process;
+  - use the network;
+  - use `json` or any serializer (it reads mirror-text with its own line reader);
+  - read any file but its three arguments;
+  - sample;
+  - take P, F or the verdict from the certificate.
+- **Author:** neither the engine's author (Reed) nor the auditor (Seam). **Mara-lean: Mara writes it** (the spec's author, so it reads the spec as intended). **Decision for Alex.**
+- **Known-answer vectors for fixpoint §5.0:** byte-level examples (input → encoded bytes → BLAKE3 digest) for an atom, a fragment, a lens, `τ` with and without a grammar address, and a ruler (`mirror-ruler.md` §1.1). They are written from the spec text by someone who wrote **neither the engine nor the checker**. **Mara-lean: Taut** (grep-first, read-only on both). **Decision for Alex.** Both implementations must match them. A disagreement is a spec defect, resolved by Mara and logged.
+- **Semantic vectors:** `tests/pact/oracles.md` and the adversarial set (§5), never derived from either implementation's output.
+- **Budget:** a shard the checker can't finish within the loop's budget ruler is **UNKNOWN**, never pass.
+- **Staging:** level 1 starts with **pact-text** certificates (the reader is small). The compile parts (PEG → Horn, strip/nf) arrive with T1, each as its own commit under Seam's checker audit.
+- **`rust/checker`:** refused as the trust root. It is admissible later only as a second, faster checker, after the Python checker is frozen and measured too slow (a comma for Alex).
+- **Frozen:** the charter pins the checker tree, this spec's commit and the vectors. The fix procedure is Seam's checker audit §5 (red fixture independent of the compiler, Seam amends, the checker's author fixes, Alex signs the new pin, re-measure, re-open every "done" claimed under a false-accepting pin).
 
-| finding | its certificate |
-|---|---|
-| line comma | the two restriction outputs (addresses), each pointing into its shard's compile certificate (the interface part), and the relation `R` that failed |
-| gap | the `in @X` occurrence, and the book's address showing no claimant of X (absence is checked against the book, which is itself certified as the set of `out`s) |
-| claim | the two declaring shards' certificates (the `out @X` lines) |
-| `among` | a cycle basis of Σ and the union-find witness (components per `Kᵢ` and of Σ), so the checker recomputes `b₁(Σ) − Σ b₁(Kᵢ)` |
-| twist | the mend family and the gauge-solve failure: the constraint that propagated to a contradiction, or the cycle with non-trivial holonomy |
-| kept comma | its question address and the approval or `LeaveOpen` record |
+## §5 Red tests: the adversarial set is the ground truth *[C §6]*
 
-The level-2 checker property is the same: replay in any order of the gluing's dependencies rebuilds the identical `run` address. **OPEN:** whether the level-2 order (lines, then cycles) has a canonical Foata form of its own, or inherits one.
+Each is a certificate the checker must **reject**, landing as a fixture with the check it exercises. Cases 1–4 are computed in `tests/checker/oracles/certificate_crowbar.out`.
 
-## §6 Red tests (sketches)
+| CT | adversarial certificate | caught by |
+|---|---|---|
+| CT-A1 | a stable model with a period-2 witness (vector 04, "q, r true") | 6 (full context sequence) |
+| CT-A2 | a missing first-tick derivation (the diamond, d via c omitted) | 8 |
+| CT-A3 | `clear` hiding a functional violation (vector 05 shape) | 7 |
+| CT-A4 | a spurious fact in the certificate (`edge(a, z)`) | 1 |
+| CT-A5 | a Dark location that is readable | 10 |
+| CT-A6 | an unsafe program with a model | 2 |
+| CT-A7 | `N = ∅`, ε = the whole file | 9 |
+| CT-A8 | a layer off by one | 4 |
+| CT-A9 | a circular derivation pair | 3 |
+| CT-A10 | a budget-truncated run claiming the fixed point | 5 + 8 |
+| CT-A11 | a correct certificate whose model address used a different sort order | 9 / encoder (known-answer vectors) |
 
-- **CT1 (vector 01):** `--explain` gives layers `[facts | path depth 1 | 2 | 3]`, every `path` atom with all its first-tick derivations; the checker replays in 100 random linear extensions plus the reverse one, and all give the same model address.
-- **CT2 (closure matters):** a certificate with the last layer removed passes (S) and fails (C); one with a spurious atom passes (C) and fails (S).
-- **CT3 (no single-derivation default):** an atom with two first-tick derivations (diamond `a→b, a→c, b→d, c→d` where `d` has two rules) carries both; a certificate with only one fails the checker's "all first-tick derivations" rule.
-- **CT4 (W):** vector 04: `r` true with `not s` justified by the context; `p, q, t` undefined with the period-2 witness checked by two γ runs.
-- **CT5 (Dark 255):** vector 05: the certificate holds both `owner` derivations and `shaped_by functional owner(1) -> 2`; the checker confirms the violation.
-- **CT6 (Dark 2):** an unreadable fixture: a certificate with only a location; re-reading reproduces the same location.
-- **CT7 (independence):** the checker crate has no `engine` dependency (`cargo tree`); a deliberately wrong derivation, injected by mutating the engine in a test build, is caught by the checker.
-- **CT8 (compile, every step):** for `mirror.mirror`, the certificate's parse part checks, `render(N, ε)` reproduces the bytes, and the recomputed root equals the record's.
+Positive tests (must **pass**):
+- CT1: vector 01, plus the determinism test (K = 100 extensions);
+- CT4: vector 04 with its full context sequence;
+- CT5: vector 05 as Dark at 255;
+- CT6: an unreadable fixture as Dark at 2, located by `@mirror/dark-order`;
+- CT8: `mirror.mirror` end to end (with T1).
+
+## §6 Level 2: kintsugi explains its gluing
+
+Unchanged from v1 in structure. Level-2 certificates reference level-1 certificates by address. The same rule holds: the checker re-derives each finding from the compiled interfaces and the book, never reading a finding as truth. Per finding:
+- line comma: both restriction outputs, and the relation R;
+- gap: the occurrence, and the certified book;
+- claim: both declarers;
+- `among`: a cycle basis, plus union-find;
+- twist: the gauge-solve contradiction, or the holonomy cycle;
+- kept comma: the approval or `LeaveOpen` record.
+
+The level-2 canonical order is OPEN.
 
 ## §7 Ledger
 
 | claim | status |
 |---|---|
-| ticks = Foata normal form of the first-tick derivation order | PROVED (freq Prop 2.1 + the depth argument) |
-| a linear log is a punctuation, i.e. a ruler | PROVED core (non-injective on orders); READING (Watzlawick) |
-| all first-tick derivations are choice-free and finite | PROVED |
-| soundness + closure ⇔ M = lfp | PROVED (Knaster–Tarski) |
-| replay in any linear extension rebuilds the root | PROVED |
-| full provenance (power series) for recursive programs | OPTIONAL; finite truncation OPEN |
-| why-not with existential variables | OPEN |
-| a diverse checker + DDC suffices for self-explanation | CONJECTURE |
-| level-2 canonical order | OPEN |
+| ticks = Foata of the first-tick order (with the pinned conventions) | PROVED |
+| a linear log is a punctuation | PROVED core; READING (Watzlawick) |
+| all first-tick derivations are choice-free; completeness checkable (check 8) | PROVED |
+| (S) + (C) ⇔ M = lfp(P, F), **relative to P and F re-derived from source** | PROVED |
+| the period-2 witness certifies W | **REFUTED** (Seam case 1); the full transition sequence does (PROVED) |
+| `render(N, ε)` certifies N | **REFUTED** (Seam §1.5); recomputing N does |
+| replay in any extension rebuilds the root | PROVED; covered by the structural conditions, so sampling isn't needed |
+| a diverse checker + DDC suffices | NARROWED: plus known-answer vectors, a different author, a different language |
+| why-not with existential variables; full provenance truncation; level-2 order | OPEN |
