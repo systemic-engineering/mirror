@@ -7,12 +7,12 @@
 `docs/loop/CHARTER.md` does not exist. The loop has no signed done-property, checker, corpus commit or budget, so step 1 (measure) can't run. The loop does not write its own charter (it may never edit the charter; a definition of done the loop could author is one it could also move).
 
 **What has to exist before the first measured iteration:**
-1. **Certificate format** (what an explanation is): Mara, in progress. Shape agreed with Alex 2026-10-29: an explanation is a non-linear trace through the past, i.e. the past cone of each output in the derivation partial order:
+1. **Certificate format** (what an explanation is): **done**, `docs/specs/mirror-certificate.md` (d77a4a07). Shape agreed with Alex 2026-10-29: an explanation is a non-linear trace through the past, i.e. the past cone of each output in the derivation partial order:
    - Foata layers (the engine's ticks/deposits);
    - derivation edges (rule instance + premise addresses; provenance);
    - erasures (`shaped_by`);
    - holes (questions).
-2. **Independent checker:** replays a certificate in *any* linear extension of the partial order and must rebuild the identical root. Written separately from the compiler; Seam audits it; then frozen.
+2. **Independent checker** (Seam auditing the design, 2026-10-29): replays a certificate in *any* linear extension of the partial order and must rebuild the identical root. Written separately from the compiler; Seam audits it; then frozen.
 3. **Corpus commit:** `shards/` at a fixed address, plus Seam's adversarial fixtures.
 4. **Budgets:** per iteration and per level, as declared rulers.
 5. **Alex signs `CHARTER.md`** (draft: `CHARTER.draft.md`).
@@ -27,6 +27,7 @@
 | firing | result |
 |---|---|
 | 2026-10-29 #1 | BOOT: no charter → no iteration. Pre-charter work started (this file, the draft charter, Mara's certificate spec). |
+| 2026-10-29 #2 (woken by Mara) | BOOT: still no charter → no iteration. Certificate spec landed (`docs/specs/mirror-certificate.md`, d77a4a07): past cone as a partial order; all first-tick derivations; explained = soundness + closure; checker replays any linear extension; an independent `rust/checker` crate. Seam now auditing the checker design. |
 
 ## Commas waiting for Alex
 
