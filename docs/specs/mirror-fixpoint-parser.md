@@ -19,9 +19,11 @@
 
 > **Amended 2026-10-29 (Alex, ratified: "yes … excitiiiing!"): `mirror compile` compiles a single shard; `mirror kintsugi` does kintsugi.** Compile computes **local sections**: one shard in, one crystal out. It reads that shard's bytes and its format grammar, nothing else, and it can only report **holes** ("I don't know here"). Gluing compiled shards, and reporting **commas** ("you two disagree"), is `mirror kintsugi`: `docs/specs/mirror-kintsugi.md`. Math: `docs/math/2026-10-29-mara-compile-kintsugi-local-sections-and-gluing.md`. Every change is marked *[10-29]*. The same pass pins the byte encoding and settles six ambiguities the T1 builder found (`9dbcb13`), marked *[T1]*.
 
+> **Amended again 2026-10-29 after Seam's crowbar** (`docs/audits/2026-10-29-seam-crowbar-compile-kintsugi.md`) **and Alex's seven defaults** (relayed by Reed; adopted as defaults, revisable once the compiler reports real cases). Marked *[Seam n]* (his §12 fold item) and *[A n]* (Alex's default n, listed in `mirror-kintsugi.md` §10).
+
 ## §1 What `mirror compile <file>` does
 
-*[10-29]* **One shard.** `compile` reads the bytes of one file and the grammar of its format (`@mirror` by default; §9), and nothing else: no other shard, no `in @X` target, no path lookup (decision 13: identity by content, not path). Its output is a function of those two inputs, so it is cacheable by `(addr(format grammar), source bytes)`, and its result is addressed by `root`. What the shard needs from other shards is recorded in its **interface** (§1.3), and checked by `mirror kintsugi`.
+*[10-29]* **One shard.** `compile` reads the bytes of one file and the grammar of its format (`@mirror` by default; §9), and nothing else: no other shard, no `in @X` target, **no path** (decision 13: identity by content, not path). *[Seam 8; A2]* Its inputs are exactly **`(addr(format grammar), start, bytes)`**: the start rule is a caller-named input (§1.2′), and the path is not an input at all, because a shard with no `out` gets a `name?` hole instead of a name from its path (§2 item 6). The cache key is that triple, and the result is addressed by `root`. What the shard needs from other shards is recorded in its **interface** (§1.3), and checked by `mirror kintsugi`.
 
 One pipeline, each stage one function, each stage's output content-addressed:
 
@@ -46,6 +48,7 @@ Per `docs/specs/kintsugi-ci-v0.1.md` §1.4 (mirror-text is the default; JSON onl
 ```text
 verdict    success
 file       "mirror.mirror"
+start      <the start rule the parse used, e.g. @mirror/grammar.shard>
 root       <addr(N), 64 hex, BLAKE3>
 source     <addr of the source lens, 64 hex>
 erasure    <addr(ε), 64 hex>
@@ -72,20 +75,33 @@ line       <line:col from ε; a source coordinate, for people, never identity>
 undeclared @tool/git
 at         <path in N of the first referring code line>
 line       <line:col from ε>
+
+free       verdict
+at         <path in N>
 ```
 
-`verdict` is `success` (no holes, no undefined atoms, no undeclared references), `partial` (holes or undefined atoms, all named), `fail` *[10-29]* (`undeclared > 0`: an implicit gluing; Alex 2026-07-23, "That needs to be an explicit boundary. Not soft."; DECISION §12 row 20) or `dark` (the input could not be read at all).
+`free` records list bare names the shard uses and doesn't declare (§1.3). Compile can't bind them, so they are not findings at compile. Kintsugi binds them.
 
-**Exit codes** *[T1; reconciled with `strict-and-total-classification.md` §"Implementation" step 5 and `kintsugi-ci-v0.1.md` §1.1 item 5]*:
+`verdict` is the oriented ternary plus dark:
+- `success`: no holes, no undefined atoms, no Dark lines;
+- `partial`: holes, undefined atoms or Dark lines, all named. *[Alex 10-29, second round]* An **undeclared reference is a Dark line**: it points into what compile can't see (nothing looked). A hole is Opaque (a question asked). Success lines plus a Dark line compose to `partial`;
+- `fail`: a pact or property the shard states about itself evaluates false (the verdict chain that runs after stage 5);
+- `dark`: the input could not be read at all.
 
-| verdict | exit | with `--strict` |
-|---|---|---|
-| `success` | 0 | 0 |
-| `partial` | 0 | 1 |
-| `fail` | 1 | 1 |
-| `dark` | 2 | 2 |
+**Exit codes** *[A5; Seam 10]*: one table for compile, kintsugi and `mirror love` (which already maps Green → 0, Yellow → 1, Red → 255, `rust/src/main.rs`, the block after `fn cmd_love`):
 
-Holes are honest, so `partial` exits 0 (kintsugi-ci: "0 on `partial` (unless `fail-on: partial`)"); `--strict` is that `fail-on`. `dark` exits 2, as `strict-and-total` already specifies for unrecognised bytes. T1.1's "exits 0" asks for `verdict success` and is consistent with this table. The landed `rust/src/compile.rs` exits 0 on `fail`; this table replaces it.
+| verdict | exit |
+|---|---|
+| `success` | 0 |
+| `partial` | 1 |
+| `fail` (red) | 255 |
+| `dark` | 2 |
+
+- Partial, red and dark are three different codes, so CI can tell an honest hole from a disagreement.
+- **Tolerance is a declared ruler, not a flag.** What a gate accepts (lean: partial yes; red and dark no) is an `@ruler` declared in `mirror.spec` (`mirror-kintsugi.md` §4). `--strict` is retired: it existed to make partial non-zero, which it now is.
+- T1.1's "exits 0" asks for `verdict success` and is consistent with this table.
+- Docs that assume partial = 0 and change with this table: `docs/specs/kintsugi-ci-v0.1.md:119` ("0 on `partial` (unless `fail-on: partial`)"; `fail-on` becomes the gate ruler), `docs/specs/compiler-surface-plan.md` (~914, "non-strict: Partial → exit 0"), `docs/specs/strict-and-total-classification.md` (step 5: dark keeps exit 2; `--strict` retired). Those files get their own edit with this pass's pickup (§14).
+- The landed `rust/src/compile.rs` exits 0 on `fail`; this table replaces it.
 
 `--out @data/json` prints the same fields as JSON through the JSON grammar's printer (§9). That is an `@io` crossing.
 
@@ -99,6 +115,7 @@ Holes are honest, so `partial` exits 0 (kintsugi-ci: "0 on `partial` (unless `fa
 - `mirror compile --stage 1 <file>` reads with `P₁ = E(N₀)`, where `N₀` is the normal form of `mirror.mirror` as read by `P₀` (cached by `root`; recomputed when `mirror.mirror`'s bytes change).
 - **Plain `mirror compile <file>` is `--stage 1`.** It is the parser the substrate trusts once the engine exists. Before `E` exists, plain compile is red: it does not silently fall back to the seed.
 - On any file, `mirror.mirror` included, the parser reads the file under its format grammar (`@mirror` unless `--in <format>` names another, §9) and prints one §1.1 record. Nothing is special about `mirror.mirror` except that it *is* the `@mirror` grammar.
+- **Start** *[Seam 8, 9; Alex 10-29 second round]*: `--start <@grammar.rule>` names it. Without it, the format's **default start** is used, pinned per format by this spec: for `@mirror`, the exported rule `shard` (`mirror.mirror` must export a rule of that name); for `@data/json`, `value`; for `@data/mirror-text`, `records`. The record's `start` field says which was used. A format with no pinned default and no `--start` reads as `partial` with the hole "start?".
 - Consequence for T1.4: comparing plain against `--stage 1` compares a thing with itself. T1.4 compares **`--stage 0` against `--stage 1`** (amended below).
 
 ### §1.3 The interface, and the one lint compile owns *[10-29]*
@@ -107,10 +124,12 @@ Holes are honest, so `partial` exits 0 (kintsugi-ci: "0 on `partial` (unless `fa
 
 | part | content | addressed by |
 |---|---|---|
-| `name` | the shard's `out @X` (after reversed R3 inserts it, decision 13) | the name |
+| `name` | the shard's `out @X`, or the hole `name?` when it has none *[A2]* | the name |
 | `in` | the `in @X` lines, sorted | the names |
-| `export` | each exported declaration: `(name, kind, addr)` with `kind ∈ {carrier, action, pact, bilateral, prism, grammar}`; `addr` = address of the declaration's normal form. For an action: its signature **and** its `requires` clauses, not its body | Merkle, so a change deep inside an exported type changes the export's `addr` |
-| `uses` | per imported `@X`: each name the code lines use, with its **use kind** (`carrier` when it appears in a type position; `action/k` when applied to `k` arguments; `pact` in `requires`) | names and kinds |
+| `export` | each exported declaration: `(name, kind, arity, addr)` with `kind ∈ {carrier, action, pact, bilateral, prism, grammar, rule, keyword}` *[Seam 9]* (`rule`: a grammar rule, a start candidate; `keyword`: an exported token, sigil or operator such as `out in`, `out @`, `out #`); `addr` = address of the declaration's normal form. For an action: its signature **and** its `requires` clauses, not its body | Merkle |
+| `uses` | *[Seam 8]* per **qualified** `@X`: each name the code lines use as `@X.name`, with its **use kind** (`carrier` in a type position; `action/k` applied to `k` arguments; `pact` in `requires`) | names and kinds |
+| `free` | *[Seam 8]* the **bare** names the code lines use and the shard doesn't declare (`ref`, `verdict`, …), with use kinds. Compile can't tell which in-target binds them; kintsugi does | names and kinds |
+| `undeclared` | *[Seam 8]* the `@X` with code-line references and no `in @X`. Part of the interface, so `interface` changes when one appears, and kintsugi can key it as a pseudo-line | names |
 | `requires` | the `requires` clauses the shard states about imported names (pacts on another shard's behaviour) | addresses |
 
 Carriers and actions are different kinds, and the restriction to a line keeps the kind (the June insight §4.3(b): "a B that imports A's carriers is a different section from a B that imports A's actions").
@@ -121,11 +140,13 @@ Carriers and actions are different kinds, and the restriction to a line keeps th
 undeclared(S, X) :- references(S, X), not imports(S, X), not declares(S, X).
 ```
 
-- `declares(S, X)` reads `N`, so the `out` that reversed R3 inserts counts: a shard may name itself.
+- `declares(S, X)` reads the `out @X` / `grammar @X` / `prism @X` in `N`. Nothing is inserted from the path *[A2]*, so a shard without `out` that names itself is `undeclared` on itself and has a `name?` hole: one finding per cause.
+- **Comments are what `μ_mirror` says they are** *[Seam 12]*: the comment tokens come from the grammar, never from a hard-coded list in the lint or its oracle. At `346253b` the corpus uses `#`, `//` (2 files) and `--` (32 files) as line comments; the oracle `tests/kintsugi/oracles/golden_k0.py` uses exactly these three, and `mirror.mirror` must declare the same set or the fixture changes with it.
+- **Unit: `(S, X)` pairs** *[Seam 12]*. The `undeclared` field counts distinct pairs, not occurrences and not shards. At `346253b` under the three comment tokens: **44 pairs in 33 shards** (`golden_k0.shards.out`).
 - **Exact match.** `in @kintsugi` does not cover `@kintsugi/roomba` (DECISION §12 row 21, lean exact): `in` imports *a shard* (Alex 2026-07-23), and a prefix rule would let a change to `@kintsugi/roomba` escape every line that should re-check it (math Prop. 4.2, stalk completeness).
 - **Prose is reported, not failed.** References inside comments are counted in a separate field only with `--prose` (`prose_refs <n>`), never in `verdict`. Counting prose would force cycles (`@sheaf` → `@psychohistory` → `@sheaf`, Taut 2026-10-29 §2.3).
 - This lint is `@kintsugi/fracture/inport` (`shards/kintsugi/fracture/inport.mirror`, Alex's name: "inport = `in`-port"). The substrate already had the word; compile is where its `detect` runs, because it is decidable from one shard's bytes (that shard's own §5 proof).
-- The converse rule, an `in @X` with no shard `X`, needs the shard set and belongs to kintsugi (`unresolved`, `mirror-kintsugi.md` §3).
+- The converse rule, an `in @X` with no shard `X`, needs the shard set and belongs to kintsugi (a **gap**, `mirror-kintsugi.md` §3).
 
 
 ---
@@ -142,13 +163,13 @@ This spec does not write `mirror.mirror`. It states what the file must contain f
 6. **The meaning declaration `μ`, in exactly three places** (math §2.2):
    - which rules produce **trivia** (layout always; comments per the decision in §12, item 2);
    - which positions **bind** variables (pact variables `?x`, `select |v|`, action parameters): these are α-renamed;
-   - which **rewrite rules** the normalizer applies (R1, R2, R4 of `docs/math/2026-08-10-mara-beta-normal-ast-content-addressing-math-foundation.md` §1.2). *[Seam]* R3 is **reversed**: it inserts `out τ_path(path)` when absent and keeps it when present, never elides. The R5 exemption tests **content** (what the shard declares), never the path. Path-dependent elision gives identical bytes different roots and different exports equal roots (math Prop. 3.8).
+   - which **rewrite rules** the normalizer applies (R1, R2, R4 of `docs/math/2026-08-10-mara-beta-normal-ast-content-addressing-math-foundation.md` §1.2). ~~*[Seam]* R3 is **reversed**: it inserts `out τ_path(path)` when absent and keeps it when present, never elides.~~ *[A2, 10-29; Seam 8]* **R3 is removed**: it neither elides nor inserts. A shard without `out` compiles to `partial` with the hole `name?`, so compile never reads the path (inserting from the path made the path a hidden input, Seam's §7.1). The R5 exemption tests **content** (what the shard declares), never the path. Path-dependent elision gives identical bytes different roots and different exports equal roots (math Prop. 3.8).
    - only **decidable** free moves (math §2.2 note).
    - *[Seam]* `mirror.mirror`'s own name `@mirror` is the one identity root that can't carry its own address. It is a ruler signed by Alex. Every other format grammar is referenced as `(name, addr(grammar))`.
 7. **`split` as syntax.** The verb exists in the grammar (math §4.2–4.3: choice needs it). Its semantics on the spectral triple live in prismqueer.
 8. **Ruler positions.** `settle`'s `by:` and every threshold or bin position accept an `@ruler` reference (§10). Until `@ruler` lands, a bare number in a ruler position reads as `Opaque` ("whose ruler?"), mirror-005's rule.
 9. **Holes.** `\` is an atom, valid wherever a body or value is expected, and never reduced (math §3.4). Each hole has a **question** and an **occurrence** (§5.1).
-10. *[T1]* **The start rule is declared by name, never by position.** Decision 3 says declaration order isn't meaning, so a first-rule-is-start convention would make T1.3 (declarations reordered) fail by construction. The grammar names its start rule in `μ`, e.g. `start shard`; the start rule is part of `N` (it decides the language) and so of `root`. A grammar with no start declaration compiles to `partial` with one hole whose question is "start?". The keyword's spelling is Alex's (DECISION §12 row 17; lean `start`).
+10. *[T1; Alex 10-29 second round; Seam 9]* **The start rule is named, never positional, and it is what the grammar exports.** No new keyword: a grammar's entry points are its exported rules (`out <rule>`), and the caller names one (`@mirror/grammar.shard`). The closure derives every rule at every position at once, so the start is the question an observer puts to it. **Start candidates = exported names whose declaration is a rule** (kind `rule`); an exported keyword or sigil (`out in`, `out @`, `out #` in `boot/`) is kind `keyword` and never a start. Order stays out of meaning, so T1.3 holds. The start is an input to compile (§1), not part of the grammar's `root`.
 
 ---
 
@@ -256,6 +277,7 @@ This writes native git objects. The namespaced `@mirror/store/git` wire (`.git/m
 ## §8 `uuid_spectral` from compile
 
 - `dark` = `addr(N)[0..80)`. Identity comparisons read `dark` only.
+- *[10-29, Alex: "add spectral UUID on the `Fragment`"]* **Every fragment carries a `uuid_spectral`**, not only the root: `dark` from its own `addr`, `active` from the spectrum of its own sub-DAG `Γ(f)` (10-29 math §11). It is derived, cached by `addr`, and stored nowhere that identity reads. Its use is rerere's **similar** offer (`mirror-convergence.md` §4); until the `active` ruler is signed, every fragment's `active` is 0 and only exact offers exist.
 - *[Seam]* **Store and merge on `addr` (256 bits), never on the uuid.** An 80-bit truncation doesn't compose: `dark(a ⊔ b)` can't be computed from `dark(a)` and `dark(b)`. The uuid is derived at the edge.
 - *[Seam]* `uuid_spectral` sets no RFC 9562 version or variant bits, so it is printed as 32 hex digits, never in the 8-4-4-4-12 form a validator might re-stamp (DECISION §12, item 11).
 - *[Seam]* `EMPTY := uuid(compile(empty shard))`, a value compile produces. It replaces `BLAKE3("")[0..10)`.
@@ -281,7 +303,8 @@ spectral's `|> graph` writes weights `1`; Mara's spike wrote `1.0`. Same graph, 
 - It is **not** free if `μ` gives a number more than its value: a declared **precision** (`1.0` asserts a tenth; a measurement reading), or a **type** read off the spelling (`1` an integer, `1.0` a real, in a typed field). Then `1 ≡ 1.0` merges two meanings, which is a `settle` and needs an `@ruler`.
 - **`f64` is not the number type**: under IEEE-754 both literals are the same double, but so are decimals that differ in ℚ beyond double precision (e.g. `9007199254740993` and `9007199254740992`); using `f64` would make the identification free for the wrong reason (spec §9: "never `f64`"). RFC 8785 (JCS) canonicalises numbers through IEEE-754 doubles and ECMAScript's serialiser, so its canonical form identifies decimals that differ beyond double precision. It is prior art for the shape, not for the number type.
 - **Canonical form if ℚ is chosen:** the shortest decimal that denotes the value: no exponent, no leading `+`, no trailing zeros after the point, no point when the value is an integer, `-0` → `0`. This is a bijection between finite decimals and canonical strings, so Reed's proposal ("integral numbers normalize to integers") is the integer case of it.
-- **Until decided: `Opaque`**, as Reed proposed: a graph compiled from `1.0` and one from `1` get different roots and the record says why (`number unnormalized`), never a silent coercion.
+- **Default adopted (Alex 10-29, [A6]):** `μ` marks each number position `exact` (data: ℚ, `1 ≡ 1.0`, the spelling goes to the erasure record, so `source` differs and `root` doesn't) or typed (`int`, `f64`, or a ruler: the type is kept and printers read it, so an `f64` field prints as a float and `arity 1.0` at an `int` position is a hole). Unmarked positions are `exact`. The number rule never applies inside an `@`-ref atom (dates and versions in refs are names, Seam §8.3).
+- ~~**Until decided: `Opaque`**~~ (superseded by the default above), as Reed proposed: a graph compiled from `1.0` and one from `1` get different roots and the record says why (`number unnormalized`), never a silent coercion.
 - **Owner: Alex** (DECISION §12 row 18): which number type `μ_json` and `μ_mirror-text` declare for weights. Mara-lean: exact value (ℚ) for data positions; precision, where it matters, is declared as its own field or as an `@ruler`, never inferred from a trailing zero.
 - Shifting a value into JSON is partial (no `\`, no `@`-refs). What can't be carried is logged in `ε`, and the output marks the gap.
 - **No serde on the compile path.** The `json` reader and printer are `E(G_json)` and `print_json`. `pact.rs`'s `serde_json` input parser is replaced by `E(G_pact-json)` with the same vectors as oracle.
@@ -329,14 +352,15 @@ Rulers to declare once `@ruler` exists (math §9): the commutator thresholds `1e
 | 9′ | **new [Seam]:** DDC on `E`'s source (two floors, bit-identical `E`) plus a semantics oracle independent of `mirror.mirror` | Alex + Seam | yes | Prop. 6.4 |
 | 10 | `SpectralCoordinate<5>`: one definition of three; the bit split. ~~`L₀ + L₁` vs `L₀`~~ **void [Seam]:** `L₀` already carries `b₁`, so `b₁` becomes an explicit integer field | Alex | fragmentation's Laplacian definition, with `b₁` exact | §7.4 |
 | 11 | the `active` `@ruler`: system-wide, signed by every issuer. **[Seam] plus:** no RFC 9562 form (print 32 hex) or spend 6 bits; `EMPTY` from compile; merge on `addr`, never on the uuid | Alex + every issuer | 80 dark bits, no hyphenated form | §7.4 items 5–7 |
-| 13 | **new [Seam]:** reverse R3 (insert, don't elide); R5 by content, not path | Alex | yes | Prop. 3.8 |
+| 13 | **new [Seam]:** reverse R3 (insert, don't elide); R5 by content, not path. **Amended [A2, 10-29]:** R3 removed; no `out` = hole `name?` | Alex | default adopted | Prop. 3.8 |
 | 14 | **new [Seam]:** `τ = (name, addr(format grammar))`; the root name `@mirror` is the one signed ruler of identity | Alex | yes | §2.2 note |
 | 15 | **new [Seam]:** `undefined` counts only the start atom's dependency cone; `wf` reported separately | — (spec) | yes | §5.1 |
 | 16 | *[10-29]* **Ratified (Alex 2026-10-29, "yes … excitiiiing!"):** `mirror compile` compiles one shard (local sections, holes); `mirror kintsugi` glues (commas). `mirror-kintsugi.md` | Alex | — | 10-29 math §0 |
-| 17 | *[T1]* the start rule is declared by name in `μ`; the keyword's spelling | Alex | `start <rule>` | §2 item 10 |
-| 18 | *[10-29]* number type of `μ_json` / `μ_mirror-text`: exact value (ℚ, `1 ≡ 1.0` free) or value + precision/type (`1 ≢ 1.0`). `Opaque` until decided | Alex | exact value in data positions | §9.1; 10-29 math §7 |
+| 17 | *[T1]* the start rule. **Decided (Alex 10-29):** what the grammar exports (`out <rule>`), named by the caller; default per format pinned in §1.2′ | Alex | decided | §2 item 10 |
+| 18 | *[10-29]* number type. **Default [A6]:** `μ` declares a number type per position: data positions `exact` (ℚ; `1 ≡ 1.0`; spelling to erasure), typed positions keep their type (an `f64` field prints as a float; `int` positions make `arity 1.0` a hole). Unmarked = `exact` | Alex | default adopted | §9.1; 10-29 math §7 |
 | 19 | *[T1]* byte encoding (`u64` big-endian lengths, `τ` layout, stored payloads, child width) | — (spec) | as §5.0, §7 | Prop. 1.1 |
-| 20 | *[10-29]* `undeclared > 0` makes compile `fail` (exit 1), not `partial` | Alex | fail ("Not soft", 2026-07-23) | §1.3 |
+| 20 | *[10-29]* undeclared. **Decided (Alex 10-29):** Dark at the line, `partial` for the document. **Exits [A5]:** success 0, partial 1, red 255, dark 2; gate tolerance is a ruler in `mirror.spec` | Alex | decided / default | §1.1, §1.3 |
+| 22 | *[Seam 8]* compile's cache key `(addr(grammar), start, bytes)`; default start per format pinned (§1.2′; `@mirror` → `shard`) | — (spec) | as §1, §1.2′ | — |
 | 21 | *[10-29]* `in @X` covers exactly `@X`, not `@X/…` | Alex | exact (stalk completeness) | 10-29 math Prop. 4.2 |
 | 12 | prismqueer `lib.rs` docstring "project — the lossy transformation" vs. §7b″ "project is emission" | prism-Reed | fix the docstring | §3.3 |
 
@@ -350,7 +374,7 @@ Each test is written red first, against the binary (`mirror compile …`), the w
 `mirror compile mirror.mirror`:
 1. exits 0 and prints a record with `verdict success`, a non-empty crystal DAG (`crystals > 0`) and a `root`;
 2. a second run prints the same `root`;
-3. `tests/fixpoint/mirror.reformatted.mirror` (same file with layout changed and declarations reordered; generated by a fixture script, checked in) prints the same `root`. This holds at a different path only because R3 is reversed and R5 is content-based (decision 13): `mirror.mirror` declares `out @mirror` explicitly;
+3. `tests/fixpoint/mirror.reformatted.mirror` (same file with layout changed and declarations reordered; generated by a fixture script, checked in) prints the same `root`. This holds at a different path because compile never reads the path and R5 is content-based (decision 13 as amended): `mirror.mirror` declares `out @mirror` explicitly;
 4. the stage-1 parser (`mirror compile --stage 1 mirror.mirror`, i.e. `E(N₀)` reading the file) prints the same `root` as the seed (`mirror compile --stage 0 mirror.mirror`) (stage 2). *[T1]* Plain `compile` is `--stage 1` (§1.2′), so comparing plain with `--stage 1` would be vacuous;
 5. `git cat-file -t <git>` prints `tree`, and walking that tree (`@` entry plus numbered entries, recursively) reproduces the fragments: the walk's re-encoding hashes to `root`.
 
@@ -381,7 +405,7 @@ Each test is written red first, against the binary (`mirror compile …`), the w
 
 **T8. Normalizer confluence and path independence.** Enumerate the critical pairs of R1, R2, R4 and reversed R3 over `shards/`, and check every pair joins (math Prop. 3.7). This **includes R1 against R3** (UNTESTED; Seam). Any non-joining pair is reported as a `\` against the rule set. *[Seam]* Path vectors:
 - identical bytes at `shards/prism.mirror` and `shards/x/prism.mirror` get the same root;
-- a shard without `out` at `shards/a.mirror` and at `shards/b.mirror` gets different roots, because reversed R3 inserts the export.
+- ~~a shard without `out` at `shards/a.mirror` and at `shards/b.mirror` gets different roots, because reversed R3 inserts the export.~~ *[A2]* a shard without `out` at `shards/a.mirror` and at `shards/b.mirror` gets the **same** root, `verdict partial`, and one `name?` hole.
 
 **T9. The graph builder.** Fixture `f(x, x)` with a shared `x`: `Γ` has one `x` vertex and two parallel edges, and `b₁ = 1`. A fixture with `r` reusing `c` at depth 1 and depth 2 has `b₁` equal to its reuse count (math Lemma 7.7). The per-occurrence expansion of the same fixture has `b₁ = 0`. That case is the negative control. *[Seam]* `b₁` computed from `L₀` (`tr/2 − n + mult₀`) equals the combinatorial count. A hub fixture (many rules sharing `Var(0)` and one literal) shows how much of `b₁` comes from trivial atoms. That case is informational, not pass/fail.
 
@@ -408,8 +432,10 @@ Each test is written red first, against the binary (`mirror compile …`), the w
 **T17. One shard, its interface, its lint** *[10-29]*.
 - a) `mirror compile a.mirror` in a directory where `a.mirror`'s `in @b` target does not exist prints the same record as in a directory where it does: compile reads no other shard (run under a sandbox that denies reads outside `a.mirror` and the grammar).
 - b) Changing an action's **body** in `a.mirror` changes `root` and leaves `interface` unchanged; changing its signature or a `requires` changes both.
-- c) A code line `x = @tool/git.commit()` with no `in @tool/git`: `verdict fail`, exit 1, `undeclared 1`, one `undeclared @tool/git` record. The same reference in a comment: `verdict success`, `undeclared 0`. With `in @tool` only (prefix): still `undeclared 1` (row 21).
-- d) **Corpus fixture.** `tests/kintsugi/undeclared/expected.mirror-text` lists `(S, X)` for every shard under `shards/` at the fixture commit, produced by an oracle independent of the compiler (a line scanner with exactly §1.3's rule). Mara's oracle run on `346253b` gives 20 shards under the prefix rule and 35 under the exact rule; Taut's 27 (2026-10-29 §2.3) used a different lexical rule (string literals and self-references counted). The test pins the rule, not the number. `mirror compile` summed over the fixture equals the oracle.
+- c) A code line `x = @tool/git.commit()` with no `in @tool/git`: `verdict partial` (a Dark line), exit 1, `undeclared 1`, one `undeclared @tool/git` record, and `@tool/git` in the interface's `undeclared` part (so `interface` differs from the same shard with the `in` line added). The same reference in a comment: `verdict success`, `undeclared 0`. With `in @tool` only (prefix): still `undeclared 1` (row 21).
+- d) **Corpus fixture** *[Seam 12, 13]*. The undeclared `(S, X)` **pairs** under `shards/` at `346253b`, produced by `tests/kintsugi/oracles/golden_k0.py` (independent of the compiler; comment tokens `#`, `//`, `--`, the ones the grammar must declare): **44 pairs in 33 shards** (`golden_k0.shards.out`). The earlier 35 (Mara, `#` only) and 27 (Taut) used other lexical rules. The test pins the rule and the unit; it is part of kintsugi's golden test K0 (`mirror-kintsugi.md` §9).
+- e) *[Seam 13]* The same bytes **without `out`** at two paths: equal `root`, `verdict partial`, one `name?` hole. (T17a's sandbox can't catch a path dependence, because the path is not a read.)
+- f) A grammar exporting rules `a` and `b`: `--start @g.a` and `--start @g.b` on the same bytes give two records with different `start`, each cached under its own key; an exported keyword is never accepted as `--start`.
 
 **T16. Re-hash on read.** Corrupting one git object under `refs/mirror/root/<addr>` (via a replacement object) makes the load dark; it never yields a different `N`.
 
@@ -420,3 +446,5 @@ Each test is written red first, against the binary (`mirror compile …`), the w
 The order for the builder: T1 red, the seed (decision 9), `E`'s core with the PEG clauses, `mirror.mirror`, then T2's swap assertion green, then T1 green (T2 gates T1). T3–T7 next, because they pin meaning. T8–T13 after that. T14 waits for `@ruler`; T15 belongs to prism.
 
 *[10-29]* T17 (one shard, interface, lint) lands with T7, since both are records compile prints. Gluing (`mirror kintsugi`, K1–K9) starts after T17 is green: kintsugi consumes interfaces. Its own order is `mirror-kintsugi.md` §9. The §5.0 bytes and §7 widths are pinned now, so T1.5's final re-hash can be written against them.
+
+*[10-29, second pass]* v0 of kintsugi is a full run (`mirror-kintsugi.md` §0), so compile's cache is an optimisation v0 doesn't need; its key is pinned anyway (§1). T17d is re-pinned (pairs, three comment tokens), and T17 gains e (path) and f (start). Before the gate runs on the new exit table, the three docs listed under §1.1's exit codes get their edit.
