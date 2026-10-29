@@ -166,14 +166,29 @@ resolution  offered exact <addr>
 
 ---
 
-## §8 Open
+## §8 Decided and open
 
-**For Alex:**
-- Should a `name?` mend's suggestion come from the path at all, or from the shard's own first declaration?
-- Is an approval a signed commit trailer, a splinter, or both (lean: both)?
-- The advance ruler's vocabulary: which mend classes may be auto-approved.
+**Decided (Alex 2026-10-29, third round).** These supersede the matching leans in this spec, in `mirror-kintsugi.md` §10 and in compile §12; fold the body text in the next pass.
+1. **`twist`** is the name for the record of mends whose holonomy doesn't close. `among` stays the topology count.
+2. **The first job of convergence** is folding each `keywords.mirror` into its parent shard. One candidate per fold; it dissolves the K0a duplicate claims (`@mirror/spec`, `@song`).
+3. **`in @X` covers exactly `@X`**, not `@X/…` (row 21).
+4. **A gap is where convergence goes Dark.** `in @X` with no X anywhere has no candidate mend, so the loop stops and asks "where is X?": Dark, exit 2. Not a red failure, and not something a gate ruler tolerates.
+5. **Frozen is part of the relationship, not of a shard.** The line between two voices is the emergent third: a comma lives in the relationship, and the relationship says what each side may write. A comma against a shard the running voice doesn't own is **offered to its owner**, never mended. Prism (pinned rev), crystals signed by another identity and `@std` are owned elsewhere; `boot/` is not (it is being migrated). The ownership map is the voice cover (`peer/colony`). This is where math Prop. 3.3′ (a single-line comma against a frozen side is an H¹ class) enters the record: such a comma's `resolution` is `offered @<owner>`.
+6. **`name?`: the human picks.** The mend offers both the path-derived name and the first declaration's name; neither is applied without a choice.
+7. **An approval is both** a signed commit trailer (`Approved-by:`) and a splinter in the store.
+8. **Advance rulers are `@kintsugi/fracture` species where the compiler learns its own auto-resolutions.** Each species already carries detection (`focus/project/split/shift/settle`), a mend (`resolve_*` returning a morphism scored by `dissonance`) and, in most species, `@kintsugi/consent`. The learning loop:
+   - commas get resolved with human approval, and rerere records each resolution;
+   - when a class keeps being mended the same way (same fracture species, same morphism, approved each time), the compiler **proposes** promoting it to an auto-resolution in that species;
+   - **the human signs the promotion** (the guard, one level up: the compiler never promotes itself);
+   - a class is proposable only if every mend in it has exactly one candidate, is reversible, touches only the shard's own declarations, and changes no other shard's verdict except turning a Dark line visible (so: `inport` with a unique X qualifies; naming an `out` and collapsing claims don't);
+   - **demotion is automatic**: one reverted auto-mend returns the class to "offer and wait";
+   - every auto-mend cites its species and the signed promotion (`Approved-by: ruler <addr>`), and every write it made stays listed for review.
 
-**For Taut:** the flux scout (what a held superposition of candidates is in prism's `Liquid<T>`, and whether `split` already realises it).
+**Drift found while deciding 8:** `shards/kintsugi/fracture/out_derivable.mirror` mends in the opposite direction from decision 2 of `mirror-kintsugi.md` §10. It removes an `out @X` derivable from the path, which under the `name?` rule would create holes. Retire or invert it; propose it as the first convergence job after the `keywords.mirror` fold.
+
+**Still open for Alex:** names for b₁-as-bugs and b₁-as-tasks; whether the voice cover gets its own words or carries prism's musical names (held lightly).
+
+**For Taut (answered 2026-10-29, scout `26ed4c9` on `taut/sheaf-cohomology-scout`):** `Liquid<T>` never existed in code, and the held superposition exists only in math and script (the least model of the PEG-as-Datalog chart). Spectral restriction is non-mutating by addressing but **not lossless**: every filter except `ring` is a `settle` (declared ruler, erasure logged). v1's restriction is `split` = `(P x, (1−P) x)` then `settle` keeping the band. prism's `spectral::settle` + `Tail` already has that shape; the band projector is asked of prism-Reed in handoff `prism-004`. Decision 8 of compile §12 (choice as `split` + `settle`) is **still open** (prism-Reed).
 
 **For Mara (next):** the grammar-spectrum math behind v1's frequency restriction.
 
