@@ -17,14 +17,14 @@
 
 mod common;
 
-use common::{fact, program, shuffled, Lcg};
-use engine::{Dark, Facts, Outcome, Program, Status, WellFounded};
+use common::{alt, fact, fixpoint, normal, program, rule_id, shuffled, try_normal, var, wf, Lcg};
+use engine::{Dark, Facts, NormalProgram, Outcome, Round, Status, WellFounded};
 use std::collections::BTreeSet;
 
 const PACT: &str = "@pact/fact";
 
 fn pact_facts(atoms: &[&str]) -> Facts {
-    Facts { altitude: PACT.into(), atoms: atoms.iter().map(|s| fact(s)).collect() }
+    Facts { altitude: alt(PACT), atoms: atoms.iter().map(|s| fact(s)).collect() }
 }
 
 /// The derived atoms of a status set: the set minus the input facts.
@@ -37,15 +37,15 @@ fn set(atoms: &[&str]) -> BTreeSet<engine::Fact> {
     atoms.iter().map(|s| fact(s)).collect()
 }
 
-fn w(p: &Program, f: &Facts) -> WellFounded {
-    engine::well_founded(p, f, 1 << 16).unwrap()
+fn w(p: &NormalProgram, f: &Facts) -> WellFounded {
+    wf(p, f)
 }
 
 // ── Vector 01: determinism ───────────────────────────────────────────────
 
-fn v01() -> (Program, Facts) {
+fn v01() -> (NormalProgram, Facts) {
     (
-        program(&[
+        normal(&[
             ("path-base", "path(?x, ?y) :- edge(?x, ?y)"),
             ("path-step", "path(?x, ?z) :- path(?x, ?y), edge(?y, ?z)"),
         ]),
@@ -74,7 +74,7 @@ fn e5_vector_01_nine_paths_true_clear() {
 
 #[test]
 fn e5_vector_03_send_false_clear() {
-    let p = program(&[
+    let p = normal(&[
         ("ready", "ready(?a) :- application(?a), answered(?a, alex, yes)"),
         ("send", "send(?a) :- ready(?a), pdf_stands_alone(?a), dates_only(?a), not reader_tracking(?a)"),
     ]);
@@ -93,9 +93,9 @@ fn e5_vector_03_send_false_clear() {
 
 // ── Vector 04: negation cycle ────────────────────────────────────────────
 
-fn v04() -> (Program, Facts) {
+fn v04() -> (NormalProgram, Facts) {
     (
-        program(&[("p", "p :- not q"), ("q", "q :- not p"), ("r", "r :- not s"), ("t", "t :- p")]),
+        normal(&[("p", "p :- not q"), ("q", "q :- not p"), ("r", "r :- not s"), ("t", "t :- p")]),
         pact_facts(&[]),
     )
 }
@@ -122,7 +122,7 @@ fn e6_vectors_01_and_04_identical_under_permutation() {
     for (name, (p, f)) in [("01", v01()), ("04", v04())] {
         let base = w(&p, &f);
         for k in 0..64 {
-            let p2 = Program { rules: shuffled(&p.rules, &mut rng), functional: p.functional.clone() };
+            let p2 = NormalProgram::new(shuffled(p.rules(), &mut rng), p.functional().to_vec()).unwrap();
             let f2 = Facts { altitude: f.altitude.clone(), atoms: shuffled(&f.atoms, &mut rng) };
             assert_eq!(w(&p2, &f2), base, "vector {name} permutation {k}");
         }
@@ -135,13 +135,13 @@ fn e6_vectors_01_and_04_identical_under_permutation() {
 fn prop_5_5_d_is_retracted_at_round_1_and_nothing_is_deleted() {
     // b :- not a.  c :- not b.  d :- not c.   fact a.
     // over₀ = {a, c, d}; under₁ = {a, c}; over₁ = {a, c}: d retracted.
-    let p = program(&[("b", "b :- not a"), ("c", "c :- not b"), ("d", "d :- not c")]);
+    let p = normal(&[("b", "b :- not a"), ("c", "c :- not b"), ("d", "d :- not c")]);
     let f = pact_facts(&["a"]);
     let r = w(&p, &f);
     assert_eq!(r.retractions.len(), 1, "{:?}", r.retractions);
     assert_eq!(r.retractions[0].fact, fact("d"));
-    assert_eq!(r.retractions[0].round, 1);
-    assert_eq!(r.retractions[0].addr, engine::addr(PACT, &fact("d")));
+    assert_eq!(r.retractions[0].round, Round(1));
+    assert_eq!(r.retractions[0].addr, engine::addr(&alt(PACT), &fact("d")));
     assert_eq!(derived(&r.true_atoms, &f), set(&["c"]));
     assert_eq!(r.status(&fact("d")), Status::False);
     assert_eq!(r.status(&fact("b")), Status::False);
@@ -151,7 +151,7 @@ fn prop_5_5_d_is_retracted_at_round_1_and_nothing_is_deleted() {
 #[test]
 fn a_longer_alternating_chain_settles_with_one_retraction_per_round() {
     // a. b :- not a. c :- not b. d :- not c. e :- not d. g :- not e.
-    let p = program(&[
+    let p = normal(&[
         ("b", "b :- not a"),
         ("c", "c :- not b"),
         ("d", "d :- not c"),
@@ -163,23 +163,27 @@ fn a_longer_alternating_chain_settles_with_one_retraction_per_round() {
     assert_eq!(derived(&r.true_atoms, &f), set(&["c", "e"]));
     assert!(r.undefined.is_empty());
     let retracted: Vec<_> = r.retractions.iter().map(|x| (x.fact.clone(), x.round)).collect();
-    assert_eq!(retracted, vec![(fact("d"), 1), (fact("g"), 2)]);
+    assert_eq!(retracted, vec![(fact("d"), Round(1)), (fact("g"), Round(2))]);
 }
 
 // ── Safety in W ──────────────────────────────────────────────────────────
 
 #[test]
 fn an_unsafe_negative_literal_is_dark_naming_the_variable() {
-    let p = program(&[("bad", "p(?x) :- e(?x), not q(?y)")]);
+    // Now found when the program is built (§4.2), not when W runs.
     assert_eq!(
-        engine::well_founded(&p, &pact_facts(&["e(a)"]), 64),
-        Err(Dark::Unsafe { rule: "bad".into(), var: "y".into() })
+        try_normal(&[("bad", "p(?x) :- e(?x), not q(?y)")]),
+        Err(Dark::Unsafe { rule: rule_id("bad"), var: var("y") })
     );
 }
 
 #[test]
 fn a_positive_program_through_w_agrees_with_the_core() {
     let (p, f) = v01();
-    let core = engine::run(&p, &f, 1 << 16).unwrap();
+    let positive = program(&[
+        ("path-base", "path(?x, ?y) :- edge(?x, ?y)"),
+        ("path-step", "path(?x, ?z) :- path(?x, ?y), edge(?y, ?z)"),
+    ]);
+    let core = fixpoint(&positive, &f);
     assert_eq!(w(&p, &f).true_atoms, core.model);
 }

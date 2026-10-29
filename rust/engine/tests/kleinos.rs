@@ -2,9 +2,8 @@
 //! `docs/math/2026-10-29-mara-engine-frequency-and-kleinos.md` §2).
 //!
 //! Composition is rule union: `L = lfp(P₁ ∪ P₂, F₁ ∪ F₂)`,
-//! `E₃ = L ∖ (L₁ ∪ L₂)` as a set of addresses. `lfp` here is `engine::run`
-//! with a budget well past `|B| − |F| + 1` (asserted `Fixed`), standing in
-//! for §4.2's `run_to_fixpoint` until that lands.
+//! `E₃ = L ∖ (L₁ ∪ L₂)` as a set of addresses. `lfp` is
+//! `run_to_fixpoint` (§4.2), whose stop is `Fixed` by type.
 //!
 //! K-E5 (no Fiedler law) is math only: a recorded counterexample, not a
 //! test. F-E1 (frequency) needs §4.3's `Frequency` API, which is outside
@@ -12,33 +11,38 @@
 
 mod common;
 
-use common::{fact, facts, program, Lcg, TEST_ALTITUDE};
-use engine::{Addr, Atom, Const, Fact, Facts, Literal, Program, Rule, Status, Stop, Term};
+use common::{alt, fact, facts, fixpoint, normal, pred, program, rule_id, sym, var, wf, Lcg, TEST_ALTITUDE};
+use engine::{
+    Addr, Atom, Const, Fact, Facts, Fixed, Literal, NormalProgram, NormalRule, PositiveProgram, PositiveRule, Status, Term,
+    Var,
+};
 use std::collections::{BTreeMap, BTreeSet};
+
+type Side = (PositiveProgram, Facts);
 
 // ── lfp, union, E₃ ───────────────────────────────────────────────────────
 
-fn lfp(p: &Program, f: &Facts) -> engine::Run {
-    let run = engine::run(p, f, 1 << 20).expect("safe positive program");
-    assert!(matches!(run.stop, Stop::Fixed(_)), "lfp must reach its fixed point");
-    run
+/// `run_to_fixpoint`: its stop is `Fixed` by type.
+fn lfp(p: &PositiveProgram, f: &Facts) -> engine::Run<Fixed> {
+    fixpoint(p, f)
 }
 
-fn union(a: &(Program, Facts), b: &(Program, Facts)) -> (Program, Facts) {
-    let mut p = a.0.clone();
-    p.rules.extend(b.0.rules.iter().cloned());
-    p.functional.extend(b.0.functional.iter().cloned());
+fn union(a: &Side, b: &Side) -> Side {
+    let mut rules = a.0.rules().to_vec();
+    rules.extend(b.0.rules().iter().cloned());
+    let mut decls = a.0.functional().to_vec();
+    decls.extend(b.0.functional().iter().cloned());
     let mut f = a.1.clone();
     f.atoms.extend(b.1.atoms.iter().cloned());
-    (p, f)
+    (PositiveProgram::new(rules, decls).expect("shared signature"), f)
 }
 
-fn keys(run: &engine::Run) -> BTreeSet<Addr> {
+fn keys(run: &engine::Run<Fixed>) -> BTreeSet<Addr> {
     run.model.keys().copied().collect()
 }
 
 /// `(L₁, L₂, L, E₃)`.
-fn compose(a: &(Program, Facts), b: &(Program, Facts)) -> (BTreeSet<Addr>, BTreeSet<Addr>, BTreeSet<Addr>, BTreeSet<Addr>) {
+fn compose(a: &Side, b: &Side) -> (BTreeSet<Addr>, BTreeSet<Addr>, BTreeSet<Addr>, BTreeSet<Addr>) {
     let l1 = keys(&lfp(&a.0, &a.1));
     let l2 = keys(&lfp(&b.0, &b.1));
     let (p, f) = union(a, b);
@@ -48,26 +52,21 @@ fn compose(a: &(Program, Facts), b: &(Program, Facts)) -> (BTreeSet<Addr>, BTree
 }
 
 fn addrs(atoms: &[&str]) -> BTreeSet<Addr> {
-    atoms.iter().map(|s| engine::addr(TEST_ALTITUDE, &fact(s))).collect()
+    atoms.iter().map(|s| engine::addr(&alt(TEST_ALTITUDE), &fact(s))).collect()
 }
 
 /// Prop. 2.4's crossing edge: a body predicate of a rule of one side that
 /// the other side heads by a rule or holds facts of.
-fn crosses(a: &(Program, Facts), b: &(Program, Facts)) -> bool {
-    let one_way = |x: &(Program, Facts), y: &(Program, Facts)| {
+fn crosses(a: &Side, b: &Side) -> bool {
+    let one_way = |x: &Side, y: &Side| {
         let produced: BTreeSet<&str> = y
             .0
-            .rules
+            .rules()
             .iter()
             .map(|r| r.head.pred.as_str())
             .chain(y.1.atoms.iter().map(|f| f.pred.as_str()))
             .collect();
-        x.0.rules.iter().any(|r| {
-            r.body.iter().any(|l| {
-                let (Literal::Pos(at) | Literal::Not(at)) = l;
-                produced.contains(at.pred.as_str())
-            })
-        })
+        x.0.rules().iter().any(|r| r.body.iter().any(|at| produced.contains(at.pred.as_str())))
     };
     one_way(a, b) || one_way(b, a)
 }
@@ -78,11 +77,11 @@ struct Gen(Lcg);
 
 impl Gen {
     fn constant(&mut self) -> Const {
-        Const::Sym(format!("c{}", self.0.below(3)))
+        sym(&format!("c{}", self.0.below(3)))
     }
 
     /// One side over predicates `q0..q4` at the shared `arity`.
-    fn side(&mut self, arity: &[usize]) -> (Program, Facts) {
+    fn side(&mut self, arity: &[usize]) -> Side {
         let vars = ["X", "Y", "Z"];
         let n = arity.len() as u64;
         let mut rules = Vec::new();
@@ -99,40 +98,40 @@ impl Gen {
                             if !bound.contains(&v) {
                                 bound.push(v);
                             }
-                            Term::Var(v.into())
+                            Term::Var(var(v))
                         } else {
                             Term::Const(self.constant())
                         }
                     })
                     .collect();
-                body.push(Literal::Pos(Atom { pred: format!("q{p}"), args }));
+                body.push(Atom { pred: pred(&format!("q{p}")), args });
             }
             let args = (0..arity[h])
                 .map(|_| {
                     if !bound.is_empty() && self.0.chance(5, 6) {
-                        Term::Var(bound[self.0.below(bound.len() as u64) as usize].into())
+                        Term::Var(var(bound[self.0.below(bound.len() as u64) as usize]))
                     } else {
                         Term::Const(self.constant())
                     }
                 })
                 .collect();
-            rules.push(Rule { id: format!("r{k}"), head: Atom { pred: format!("q{h}"), args }, body });
+            rules.push(PositiveRule { id: rule_id(&format!("r{k}")), head: Atom { pred: pred(&format!("q{h}")), args }, body });
         }
         let mut atoms = Vec::new();
         for _ in 0..self.0.below(5) {
             let p = self.0.below(n) as usize;
-            atoms.push(Fact { pred: format!("q{p}"), args: (0..arity[p]).map(|_| self.constant()).collect() });
+            atoms.push(Fact { pred: pred(&format!("q{p}")), args: (0..arity[p]).map(|_| self.constant()).collect() });
         }
-        (Program { rules, functional: vec![] }, Facts { altitude: TEST_ALTITUDE.into(), atoms })
+        (PositiveProgram::new(rules, vec![]).expect("safe by construction"), Facts { altitude: alt(TEST_ALTITUDE), atoms })
     }
 
-    fn pair(&mut self) -> ((Program, Facts), (Program, Facts)) {
+    fn pair(&mut self) -> (Side, Side) {
         let arity: Vec<usize> = (0..5).map(|_| 1 + self.0.below(2) as usize).collect();
         (self.side(&arity), self.side(&arity))
     }
 }
 
-fn pairs() -> Vec<((Program, Facts), (Program, Facts))> {
+fn pairs() -> Vec<(Side, Side)> {
     let mut g = Gen(Lcg(0x6b6c_6569_6e6f_7321)); // "kleinos!"
     (0..500).map(|_| g.pair()).collect()
 }
@@ -230,19 +229,38 @@ fn k_e4_composing_a_program_with_itself_changes_nothing() {
 
 /// Atoms true in the part and not true in the glue (math §2.6, read as
 /// Prop. 2.6 states it: "a true atom of a part is false in the glue").
-fn retracted_by_glue(part: &(Program, Facts), glue: &(Program, Facts)) -> BTreeSet<Fact> {
-    let wp = engine::well_founded(&part.0, &part.1, 1 << 16).unwrap();
-    let wg = engine::well_founded(&glue.0, &glue.1, 1 << 16).unwrap();
+fn retracted_by_glue(part: &(NormalProgram, Facts), glue: &(NormalProgram, Facts)) -> BTreeSet<Fact> {
+    let wp = wf(&part.0, &part.1);
+    let wg = wf(&glue.0, &glue.1);
     wp.true_atoms.values().filter(|a| wg.status(a) != Status::True).cloned().collect()
+}
+
+fn normal_union(a: &(NormalProgram, Facts), b: &(NormalProgram, Facts)) -> (NormalProgram, Facts) {
+    let mut rules = a.0.rules().to_vec();
+    rules.extend(b.0.rules().iter().cloned());
+    let mut f = a.1.clone();
+    f.atoms.extend(b.1.atoms.iter().cloned());
+    (NormalProgram::new(rules, vec![]).expect("shared signature"), f)
+}
+
+/// A positive side, read as a normal program for `W`.
+fn as_normal(s: &Side) -> (NormalProgram, Facts) {
+    let rules = s
+        .0
+        .rules()
+        .iter()
+        .map(|r| NormalRule { id: r.id.clone(), head: r.head.clone(), body: r.body.iter().cloned().map(Literal::Pos).collect() })
+        .collect();
+    (NormalProgram::new(rules, vec![]).unwrap(), s.1.clone())
 }
 
 #[test]
 fn k_e6_a_true_atom_of_a_part_is_false_in_the_glue() {
-    let p1 = (program(&[("p", "p :- not q")]), facts(&[]));
-    let p2 = (program(&[("q", "q")]), facts(&[]));
-    let glue = union(&p1, &p2);
-    let w1 = engine::well_founded(&p1.0, &p1.1, 1 << 16).unwrap();
-    let wg = engine::well_founded(&glue.0, &glue.1, 1 << 16).unwrap();
+    let p1 = (normal(&[("p", "p :- not q")]), facts(&[]));
+    let p2 = (normal(&[("q", "q")]), facts(&[]));
+    let glue = normal_union(&p1, &p2);
+    let w1 = wf(&p1.0, &p1.1);
+    let wg = wf(&glue.0, &glue.1);
     assert_eq!(w1.status(&fact("p")), Status::True);
     assert_eq!(wg.status(&fact("p")), Status::False);
     assert_eq!(wg.status(&fact("q")), Status::True);
@@ -252,16 +270,17 @@ fn k_e6_a_true_atom_of_a_part_is_false_in_the_glue() {
 #[test]
 fn k_e6_on_positive_pairs_no_part_is_retracted() {
     for (i, (a, b)) in pairs().iter().enumerate().take(200) {
-        let glue = union(a, b);
-        assert!(retracted_by_glue(a, &glue).is_empty(), "pair {i}");
-        assert!(retracted_by_glue(b, &glue).is_empty(), "pair {i}");
+        let (a, b) = (as_normal(a), as_normal(b));
+        let glue = normal_union(&a, &b);
+        assert!(retracted_by_glue(&a, &glue).is_empty(), "pair {i}");
+        assert!(retracted_by_glue(&b, &glue).is_empty(), "pair {i}");
     }
 }
 
 // ── K-E7 the tick's shape ────────────────────────────────────────────────
 
 /// Every grounding of `body[i..]` inside `model`, as variable bindings.
-fn groundings(body: &[&Atom], model: &BTreeMap<Fact, u64>, env: &mut BTreeMap<String, Const>, out: &mut Vec<BTreeMap<String, Const>>) {
+fn groundings(body: &[&Atom], model: &BTreeMap<Fact, u64>, env: &mut BTreeMap<Var, Const>, out: &mut Vec<BTreeMap<Var, Const>>) {
     let Some((a, rest)) = body.split_first() else {
         out.push(env.clone());
         return;
@@ -288,7 +307,7 @@ fn groundings(body: &[&Atom], model: &BTreeMap<Fact, u64>, env: &mut BTreeMap<St
     }
 }
 
-fn ground(a: &Atom, env: &BTreeMap<String, Const>) -> Fact {
+fn ground(a: &Atom, env: &BTreeMap<Var, Const>) -> Fact {
     Fact {
         pred: a.pred.clone(),
         args: a
@@ -304,19 +323,12 @@ fn ground(a: &Atom, env: &BTreeMap<String, Const>) -> Fact {
 
 /// Prop. 2.1: each atom at tick t ≥ 1 has a rule instance whose premises
 /// all sit at ticks ≤ t − 1, at least one at exactly t − 1.
-fn tick_shape(p: &Program, f: &Facts, label: &str) {
+fn tick_shape(p: &PositiveProgram, f: &Facts, label: &str) {
     let run = lfp(p, f);
     let ticks = common::ticks(&run);
     for (atom, &t) in ticks.iter().filter(|(_, &t)| t >= 1) {
-        let found = p.rules.iter().any(|r| {
-            let body: Vec<&Atom> = r
-                .body
-                .iter()
-                .map(|l| match l {
-                    Literal::Pos(a) => a,
-                    Literal::Not(_) => unreachable!("positive programs only"),
-                })
-                .collect();
+        let found = p.rules().iter().any(|r| {
+            let body: Vec<&Atom> = r.body.iter().collect();
             let mut subs = Vec::new();
             groundings(&body, &ticks, &mut BTreeMap::new(), &mut subs);
             subs.iter().any(|s| {

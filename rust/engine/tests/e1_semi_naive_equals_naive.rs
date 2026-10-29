@@ -11,7 +11,7 @@
 
 mod common;
 
-use common::{facts, program, ticks, Lcg, TEST_ALTITUDE};
+use common::{alt, facts, fixpoint, nat, pred, program, rule_id, sym, ticks, var, Lcg, TEST_ALTITUDE};
 use std::collections::{BTreeMap, BTreeSet};
 
 // ── The independent naive evaluator ──────────────────────────────────────
@@ -122,51 +122,48 @@ fn naive(rules: &[NRule], f: &BTreeSet<G>) -> BTreeMap<G, u64> {
 
 fn to_const(c: &C) -> engine::Const {
     match c {
-        C::S(s) => engine::Const::Sym(s.clone()),
-        C::N(n) => engine::Const::Nat(*n),
+        C::S(s) => sym(s),
+        C::N(n) => nat(*n),
     }
 }
 
 fn to_term(t: &T) -> engine::Term {
     match t {
-        T::V(x) => engine::Term::Var(x.clone()),
+        T::V(x) => engine::Term::Var(var(x)),
         T::K(c) => engine::Term::Const(to_const(c)),
     }
 }
 
 fn to_atom((p, args): &(String, Vec<T>)) -> engine::Atom {
-    engine::Atom { pred: p.clone(), args: args.iter().map(to_term).collect() }
+    engine::Atom { pred: pred(p), args: args.iter().map(to_term).collect() }
 }
 
 fn to_fact((p, args): &G) -> engine::Fact {
-    engine::Fact { pred: p.clone(), args: args.iter().map(to_const).collect() }
+    engine::Fact { pred: pred(p), args: args.iter().map(to_const).collect() }
 }
 
-fn to_program(rules: &[NRule]) -> engine::Program {
-    engine::Program {
-        rules: rules
+fn to_program(rules: &[NRule]) -> Result<engine::PositiveProgram, engine::Dark> {
+    engine::PositiveProgram::new(
+        rules
             .iter()
             .enumerate()
-            .map(|(i, r)| engine::Rule {
-                id: format!("r{i}"),
+            .map(|(i, r)| engine::PositiveRule {
+                id: rule_id(&format!("r{i}")),
                 head: to_atom(&r.head),
-                body: r.body.iter().map(|b| engine::Literal::Pos(to_atom(b))).collect(),
+                body: r.body.iter().map(to_atom).collect(),
             })
             .collect(),
-        functional: vec![],
-    }
+        vec![],
+    )
 }
 
 /// Run both and compare `M` and the tick of every atom.
 fn agree(rules: &[NRule], f: &BTreeSet<G>, label: &str) {
     let expected: BTreeMap<engine::Fact, u64> =
         naive(rules, f).iter().map(|(a, t)| (to_fact(a), *t)).collect();
-    let store = engine::Facts {
-        altitude: TEST_ALTITUDE.to_string(),
-        atoms: f.iter().map(to_fact).collect(),
-    };
-    let run = engine::run(&to_program(rules), &store, 1 << 20)
-        .unwrap_or_else(|d| panic!("{label}: safe positive program went dark: {d:?}"));
+    let store = engine::Facts { altitude: alt(TEST_ALTITUDE), atoms: f.iter().map(to_fact).collect() };
+    let program = to_program(rules).unwrap_or_else(|d| panic!("{label}: safe positive program went dark: {d:?}"));
+    let run = fixpoint(&program, &store);
     assert_eq!(run.deposits.len(), run.model.len(), "{label}: one deposit per atom of M");
     let got = ticks(&run);
     assert_eq!(got, expected, "{label}: semi-naive ≠ naive\nrules: {rules:#?}\nfacts: {f:?}");
@@ -222,7 +219,7 @@ fn e1_fixture_helpers_agree_with_naive_types() {
         ("path-base", "path(?x, ?y) :- edge(?x, ?y)"),
         ("path-step", "path(?x, ?z) :- path(?x, ?y), edge(?y, ?z)"),
     ]);
-    let run = engine::run(&p, &facts(&["edge(a, b)", "edge(b, c)"]), 64).unwrap();
+    let run = fixpoint(&p, &facts(&["edge(a, b)", "edge(b, c)"]));
     let got: BTreeSet<_> = run.model.values().cloned().collect();
     let want: BTreeSet<_> = ["edge(a, b)", "edge(b, c)", "path(a, b)", "path(b, c)", "path(a, c)"]
         .iter()

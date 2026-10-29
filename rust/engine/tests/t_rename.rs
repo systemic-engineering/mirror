@@ -6,8 +6,8 @@
 
 mod common;
 
-use common::{facts, program, ticks};
-use engine::{Atom, Const, Fact, Facts, Literal, Program, Rule, Term};
+use common::{facts, fixpoint, pred, program, reprogram, rule_id, var, ticks};
+use engine::{Atom, Const, Fact, Facts, PositiveProgram, PositiveRule, Sym, Term};
 use std::collections::BTreeMap;
 
 struct Renaming(BTreeMap<String, String>);
@@ -29,61 +29,53 @@ impl Renaming {
     }
     fn c(&self, c: &Const) -> Const {
         match c {
-            Const::Sym(s) => Const::Sym(self.name(s)),
+            Const::Sym(s) => Const::Sym(Sym::new(&self.name(s.as_str())).unwrap()),
             other => other.clone(),
         }
     }
     fn atom(&self, a: &Atom) -> Atom {
         Atom {
-            pred: self.name(&a.pred),
+            pred: pred(&self.name(a.pred.as_str())),
             args: a
                 .args
                 .iter()
                 .map(|t| match t {
-                    Term::Var(v) => Term::Var(self.name(v)),
+                    Term::Var(v) => Term::Var(var(&self.name(v.as_str()))),
                     Term::Const(c) => Term::Const(self.c(c)),
                 })
                 .collect(),
         }
     }
     fn fact(&self, f: &Fact) -> Fact {
-        Fact { pred: self.name(&f.pred), args: f.args.iter().map(|c| self.c(c)).collect() }
+        Fact { pred: pred(&self.name(f.pred.as_str())), args: f.args.iter().map(|c| self.c(c)).collect() }
     }
-    fn program(&self, p: &Program) -> Program {
-        Program {
-            rules: p
-                .rules
+    fn program(&self, p: &PositiveProgram) -> PositiveProgram {
+        reprogram(
+            p,
+            p.rules()
                 .iter()
-                .map(|r| Rule {
-                    id: self.name(&r.id),
+                .map(|r| PositiveRule {
+                    id: rule_id(&self.name(r.id.as_str())),
                     head: self.atom(&r.head),
-                    body: r
-                        .body
-                        .iter()
-                        .map(|l| match l {
-                            Literal::Pos(a) => Literal::Pos(self.atom(a)),
-                            Literal::Not(a) => Literal::Not(self.atom(a)),
-                        })
-                        .collect(),
+                    body: r.body.iter().map(|a| self.atom(a)).collect(),
                 })
                 .collect(),
-            functional: p.functional.clone(),
-        }
+        )
     }
     fn facts(&self, f: &Facts) -> Facts {
         Facts { altitude: f.altitude.clone(), atoms: f.atoms.iter().map(|a| self.fact(a)).collect() }
     }
 }
 
-fn commutes(p: &Program, f: &Facts, rn: &Renaming) {
-    let before = engine::run(p, f, 1 << 16).unwrap();
-    let after = engine::run(&rn.program(p), &rn.facts(f), 1 << 16).unwrap();
+fn commutes(p: &PositiveProgram, f: &Facts, rn: &Renaming) {
+    let before = fixpoint(p, f);
+    let after = fixpoint(&rn.program(p), &rn.facts(f));
     let renamed: BTreeMap<Fact, u64> = ticks(&before).iter().map(|(k, t)| (rn.fact(k), *t)).collect();
     assert_eq!(ticks(&after), renamed);
     assert_eq!(after.stop, before.stop);
 }
 
-fn admin_program() -> (Program, Facts) {
+fn admin_program() -> (PositiveProgram, Facts) {
     (
         program(&[
             ("Admin", "Admin(?x) :- user(?x), role(?x, root)"),

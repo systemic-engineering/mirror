@@ -10,8 +10,8 @@
 
 mod common;
 
-use common::{fact, facts, program, shuffled, ticks, Lcg, TEST_ALTITUDE};
-use engine::{Const, Fact, Facts, Program};
+use common::{alt, fact, facts, fixpoint, nat, pred, program, reprogram, shuffled, sym, ticks, Lcg, TEST_ALTITUDE};
+use engine::{Addr, Const, Fact, Facts, Fixed, PositiveProgram, Tick};
 use std::collections::BTreeSet;
 
 #[test]
@@ -24,14 +24,14 @@ fn e3_one_atom_at_tick_1_and_at_tick_3_has_one_address() {
         ("p", "p(?x, ?y) :- r(?x, ?y)"),
     ]);
     let pab = fact("p(a, b)");
-    let a = engine::run(&short, &f, 64).unwrap();
-    let b = engine::run(&long, &f, 64).unwrap();
+    let a = fixpoint(&short, &f);
+    let b = fixpoint(&long, &f);
     assert_eq!(ticks(&a)[&pab], 1);
     assert_eq!(ticks(&b)[&pab], 3);
     let addr_a = a.model.iter().find(|(_, x)| **x == pab).unwrap().0;
     let addr_b = b.model.iter().find(|(_, x)| **x == pab).unwrap().0;
     assert_eq!(addr_a, addr_b);
-    assert_eq!(*addr_a, engine::addr(TEST_ALTITUDE, &pab));
+    assert_eq!(*addr_a, engine::addr(&alt(TEST_ALTITUDE), &pab));
 }
 
 #[test]
@@ -43,42 +43,43 @@ fn e3_rederivation_deposits_nothing_new() {
         ("s", "s(?x, ?y) :- q(?x, ?y)"),
         ("p-long", "p(?x, ?y) :- s(?x, ?y)"),
     ]);
-    let run = engine::run(&p, &facts(&["e(a, b)"]), 64).unwrap();
-    let pab = engine::addr(TEST_ALTITUDE, &fact("p(a, b)"));
+    let run = fixpoint(&p, &facts(&["e(a, b)"]));
+    let pab = engine::addr(&alt(TEST_ALTITUDE), &fact("p(a, b)"));
     let deps: Vec<_> = run.deposits.iter().filter(|d| d.addr == pab).collect();
     assert_eq!(deps.len(), 1);
-    assert_eq!(deps[0].tick, 1);
-    assert_eq!(run.stop, engine::Stop::Fixed(3));
+    assert_eq!(deps[0].tick, Tick(1));
+    assert_eq!(run.stop, Fixed(Tick(3)));
     let distinct: BTreeSet<_> = run.deposits.iter().map(|d| d.addr).collect();
     assert_eq!(distinct.len(), run.deposits.len(), "one deposit per atom");
 }
 
 #[test]
 fn e3_addr_is_injective_on_distinct_atoms() {
+    let ones = Addr::from_hex(&"01".repeat(32)).unwrap();
     let atoms = vec![
-        Fact { pred: "p".into(), args: vec![Const::Sym("ab".into())] },
-        Fact { pred: "p".into(), args: vec![Const::Sym("a".into()), Const::Sym("b".into())] },
-        Fact { pred: "pa".into(), args: vec![Const::Sym("b".into())] },
-        Fact { pred: "p".into(), args: vec![Const::Sym("1".into())] },
-        Fact { pred: "p".into(), args: vec![Const::Nat(1)] },
-        Fact { pred: "p".into(), args: vec![Const::Addr([1; 32])] },
-        Fact { pred: "p".into(), args: vec![Const::Sym(String::new())] },
-        Fact { pred: "p".into(), args: vec![] },
-        Fact { pred: "p".into(), args: vec![Const::Nat(0)] },
-        Fact { pred: "p".into(), args: vec![Const::Nat(0), Const::Nat(0)] },
+        Fact { pred: pred("p"), args: vec![sym("ab")] },
+        Fact { pred: pred("p"), args: vec![sym("a"), sym("b")] },
+        Fact { pred: pred("pa"), args: vec![sym("b")] },
+        Fact { pred: pred("p"), args: vec![sym("1")] },
+        Fact { pred: pred("p"), args: vec![nat(1)] },
+        Fact { pred: pred("p"), args: vec![Const::Addr(ones)] },
+        Fact { pred: pred("p"), args: vec![sym("")] },
+        Fact { pred: pred("p"), args: vec![] },
+        Fact { pred: pred("p"), args: vec![nat(0)] },
+        Fact { pred: pred("p"), args: vec![nat(0), nat(0)] },
     ];
     let mut seen = BTreeSet::new();
-    for alt in ["@datalog/fact", "@pact/fact", "@parse/item"] {
+    for tau in ["@datalog/fact", "@pact/fact", "@parse/item"] {
         for a in &atoms {
-            assert!(seen.insert(engine::addr(alt, a)), "collision at {alt}: {a:?}");
+            assert!(seen.insert(engine::addr(&alt(tau), a)), "collision at {tau}: {a:?}");
         }
     }
     // Equality under re-derivation: the function is a function.
-    assert_eq!(engine::addr("@pact/fact", &atoms[0]), engine::addr("@pact/fact", &atoms[0]));
+    assert_eq!(engine::addr(&alt("@pact/fact"), &atoms[0]), engine::addr(&alt("@pact/fact"), &atoms[0]));
 }
 
 /// Fixtures with recursion, mutual recursion and repeated variables.
-fn fixtures() -> Vec<(Program, Facts)> {
+fn fixtures() -> Vec<(PositiveProgram, Facts)> {
     vec![
         (
             program(&[
@@ -102,15 +103,15 @@ fn fixtures() -> Vec<(Program, Facts)> {
 
 /// The byte record E6 compares: model address, then every (addr, fact
 /// rendering) in address order, then every (tick, addr) deposit.
-fn record(run: &engine::Run) -> Vec<u8> {
-    let mut out = run.model_addr.to_vec();
+fn record(run: &engine::Run<Fixed>) -> Vec<u8> {
+    let mut out = run.model_addr.as_bytes().to_vec();
     for (a, f) in &run.model {
-        out.extend_from_slice(a);
+        out.extend_from_slice(a.as_bytes());
         out.extend_from_slice(format!("{f:?}").as_bytes());
     }
     for d in &run.deposits {
-        out.extend_from_slice(&d.tick.to_be_bytes());
-        out.extend_from_slice(&d.addr);
+        out.extend_from_slice(&d.tick.0.to_be_bytes());
+        out.extend_from_slice(d.addr.as_bytes());
     }
     out
 }
@@ -119,11 +120,11 @@ fn record(run: &engine::Run) -> Vec<u8> {
 fn e3_e6_permutations_of_rules_and_facts_change_nothing() {
     let mut rng = Lcg(0x7065_726d_7574_6521);
     for (i, (p, f)) in fixtures().into_iter().enumerate() {
-        let base = engine::run(&p, &f, 1 << 16).unwrap();
+        let base = fixpoint(&p, &f);
         for k in 0..64 {
-            let p2 = Program { rules: shuffled(&p.rules, &mut rng), functional: p.functional.clone() };
+            let p2 = reprogram(&p, shuffled(p.rules(), &mut rng));
             let f2 = Facts { altitude: f.altitude.clone(), atoms: shuffled(&f.atoms, &mut rng) };
-            let r = engine::run(&p2, &f2, 1 << 16).unwrap();
+            let r = fixpoint(&p2, &f2);
             assert_eq!(r.model_addr, base.model_addr, "fixture {i} permutation {k}");
             assert_eq!(ticks(&r), ticks(&base), "fixture {i} permutation {k}");
             assert_eq!(record(&r), record(&base), "fixture {i} permutation {k}: E6 bytes");
@@ -133,7 +134,7 @@ fn e3_e6_permutations_of_rules_and_facts_change_nothing() {
 
 #[test]
 fn e3_duplicate_facts_are_one_atom() {
-    let run = engine::run(&program(&[]), &facts(&["e(a, b)", "e(a, b)"]), 8).unwrap();
+    let run = fixpoint(&program(&[]), &facts(&["e(a, b)", "e(a, b)"]));
     assert_eq!(run.model.len(), 1);
     assert_eq!(run.deposits.len(), 1);
 }
@@ -142,16 +143,14 @@ fn e3_duplicate_facts_are_one_atom() {
 fn e3_model_address_ignores_ticks() {
     // Same M, reached at different ticks: same model address.
     let f = facts(&["e(a, b)"]);
-    let a = engine::run(&program(&[("p", "p(?x, ?y) :- e(?x, ?y)")]), &f, 64).unwrap();
-    let b = engine::run(
+    let a = fixpoint(&program(&[("p", "p(?x, ?y) :- e(?x, ?y)")]), &f);
+    let b = fixpoint(
         &program(&[("q", "q(?x, ?y) :- e(?x, ?y)"), ("p", "p(?x, ?y) :- q(?x, ?y)"), ("q2", "q(?x, ?y) :- p(?x, ?y)")]),
         &facts(&["e(a, b)", "q(a, b)"]),
-        64,
-    )
-    .unwrap();
+    );
     // a: {e, p}; b: {e, q, p}. Different models, different addresses...
     assert_ne!(a.model_addr, b.model_addr);
     // ...and the same model reached at tick 0 instead of tick 1 has one address.
-    let c = engine::run(&program(&[]), &facts(&["e(a, b)", "p(a, b)"]), 64).unwrap();
+    let c = fixpoint(&program(&[]), &facts(&["e(a, b)", "p(a, b)"]));
     assert_eq!(a.model_addr, c.model_addr);
 }
