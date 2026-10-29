@@ -1,0 +1,35 @@
+R7 counterexample (first use of foreign X.r by shard i):
+  case A (Q1.u1 refs Q2.u2): among 0 -> 1 (delta 1); star(i) after edit = ['Q2', 'W', 'X']
+  case B (it does not): among 0 -> 0 (delta 0); star(i) after edit = ['Q2', 'W', 'X']
+  star data (K_j for j in star(i) + i) identical in both cases: True
+  => the update is not a function of star data: R7 is not star-local.
+  rule 'delta = [d ~ r in Sigma]' holds 2876/2876 random R7 edits (global connectivity, not star data)
+
+K3 counterexample (private edit joining two components of K_i, Sigma disconnected):
+  b0(Sigma) = 2, b0(K_i) = 2, line graph connected (i uses X.n): fractured = 1
+  add i.b -> i.a (joins K_i's components {a,n} and {b}): among 0 -> 0 (spec: +1)
+  random joins: +1 in 351/1284 overall; 144/144 when Sigma connected
+  true rule for a private edge (d, r): delta = [d ~ r in Sigma] - [d ~ r in K_i]
+
+Mutual reference A.a -> B.b, B.b -> A.a:
+  multigraph reading (Prop 1.4 holds): among = 1
+  simple-graph reading: the edge {a,b} lies in K_A and K_B (Prop 1.4 fails); Euler count = 0
+
+Q1: one line comma in the frozen-vertex (affine) model, F2:
+  both shards editable: dim H^1(G;F_var) = 0; defect class [w] = 0
+  X frozen (published / other repo), Y editable: dim H^1(G;F_var) = 1; defect class [w] != 0
+  both frozen: dim H^1(G;F_var) = 2; defect class [w] != 0
+  => on a single edge (no cycle, owned by one pair) the defect is a non-zero H^1 class
+     as soon as a vertex stalk cannot reach it. Prop 3.3 is a theorem about given sections;
+     'a line comma is not H^1' is a choice of coefficient sheaf.
+
+Q5: mend family on a TREE of lines (no cycles, so every holonomy is trivial):
+  g = (swap on Y1-X, id on Y2-X); gauge-equivalent to identity: False
+  => non-trivial non-abelian H^1 with no cycle: X would have to export f as g to Y1
+     and as f to Y2. Prop 3.5(c) needs G constant (restrictions G(S) -> G(e) iso);
+     the interface mend sheaf is not constant, so 'holonomy trivial on all cycles'
+     does not imply 'glues'.
+
+Absent export: Y `in @X`, uses X.f, X does not declare f:
+  K_Y n K_X = empty => Def 1.3 classes the line as UNUSED (a question, verdict partial),
+  while spec K5 expects `comma line ... exports absent` (verdict comma). Same line, two verdicts.
