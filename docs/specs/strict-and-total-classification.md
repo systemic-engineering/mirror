@@ -1,5 +1,10 @@
 # `--strict` and `total_classification` — the silence dies
 
+> **Amended 2026-10-29 (Mara; Alex's default 5, relayed by Reed).** The thesis stands: unrecognised bytes are never absorbed silently. What changes is the exit contract. One table for compile, kintsugi and `mirror love`: success 0, partial 1, red 255, dark 2 (`docs/specs/mirror-fixpoint-parser.md` §1.1).
+> - A file that can't be read at all is `dark` (exit 2), as step 5 below already says.
+> - A dark *region* inside an otherwise readable file (an undeclared reference, an unbound name) makes the document `partial`, which now exits 1 without any flag.
+> - `--strict` is retired. What a gate tolerates (partial? dark lines?) is a ruler declared in `mirror.spec` (`docs/specs/mirror-kintsugi.md` §4), so "`mirror craft --strict boot` returns zero dark regions" becomes "the release ruler refuses dark lines".
+
 *2026-05-20. Reed.*
 
 Status: **Red** (the silent absorption mode runs today; the property is

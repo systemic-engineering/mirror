@@ -124,6 +124,8 @@ The step:
 5. Exits 0 on `pass`, 0 on `partial` (unless `fail-on: partial`), nonzero
    on `fail`. The exit determines whether the workflow gate is green.
 
+   > **Superseded 2026-10-29 (Mara; Alex's default 5, relayed by Reed):** one exit table for compile, kintsugi and `mirror love`: success 0, partial 1, red 255, dark 2 (`docs/specs/mirror-fixpoint-parser.md` §1.1, `docs/specs/mirror-kintsugi.md` §4). The gate's tolerance is no longer a `fail-on` input. It is a ruler declared in `mirror.spec` (`ruler @mirror/gate { tolerate partial; refuse red dark; fractured 1 }`), and the action passes iff the run's verdict is tolerated by that ruler. `run.sh` reads the ruler's decision, not the raw exit.
+
 That is what v0.1 ships. Anything richer (custom strategies, multi-target,
 reflected commits) is post-v0.1 and called out in §11.
 
