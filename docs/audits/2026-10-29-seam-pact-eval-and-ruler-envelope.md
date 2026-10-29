@@ -155,6 +155,12 @@ finding     functional <pred> key(<syms>) <least> <other>
 | `clear` | `Outcome::Clear` and no findings | 0 |
 | `opaque` | `Outcome::Opaque` (something undefined), no findings | 1 |
 | `refused` | any `FunctionalViolation` on `true` (a definite violation of the program's own declaration) | 255 |
+
+> **Amendment, 2026-10-29 (Mara; Alex in `mirror-009`: "refused is Dark. The illumination was declined." / "The discoball is selective.").** The verdict word `refused` becomes **`dark`**, still at **exit 255**. The exit code distinguishes the two Darks:
+> - 2: no light could come back (the bytes don't read, or the engine returned `Dark`); `shaped_by none`;
+> - 255: light declined by a rule.
+>
+> **A declined Dark names the rule that declined in `shaped_by`.** For this verb that is the `functional` declaration, written as its surface text (`shaped_by functional owner(1) -> 2`) until declarations have addresses. The `finding` line still carries the violation. So vector 05 prints `verdict dark`, `shaped_by functional owner(1) -> 2`, `finding functional owner key(doc) alex reed`, exit 255. The summary line above reads `verdict clear | opaque | dark`. `shaped_by none` (§1.4) stays correct for `clear`, `opaque` and the exit-2 `dark`.
 | `dark` | the bytes don't read (§1.2), or the engine returns `Dark` | 2 |
 
 This follows Alex's oriented ternary as `mirror love` uses it (0 / 1 / 255), plus 2 for dark, as `strict-and-total` specifies. A queried atom that is **false** is a clear answer (`oracles.md`, vector 03: "a definite no with its reason"), not a refusal. Usage errors (no path, unknown flag) print to stderr with no record and exit 2. They are distinguishable from dark by the absent record.

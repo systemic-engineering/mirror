@@ -55,11 +55,11 @@ Transitive closure over a graph with a cycle (`b → c → b`). Nine `path` fact
 - **Vector 05 is now the functional violation** (below), asked for by Seam's pact-eval audit (`docs/audits/2026-10-29-seam-pact-eval-and-ruler-envelope.md` §1.5 item 4, "Mara picks the number"). The dark vector moves to **07**. Vector 06 (semiring provenance) keeps its number.
 - **The `.json` vectors don't come over to `reed/ship`.** Their pact content is transcribed by hand into `.pact-text` fixtures by the builder, each citing its source blob at `5babfbad`. If transcription and oracle disagree, the oracle is right, and corrections are dated here.
 - **The binary prints mirror-text** (audit §1.4), not this file's canonical JSON. The *statuses* are what the vectors pin, and they don't depend on the format. `because` (why-not) is out of the first slice.
-- **Verdicts** gain `refused` (exit 255): a definite violation of the program's own `functional` declaration among its **true** atoms. The ternary as `mirror love` uses it is 0 / 1 / 255, plus 2 for `dark`.
+- **Verdicts** gain ~~`refused`~~ a declined `dark` (exit 255): a definite violation of the program's own `functional` declaration among its **true** atoms. *[Correction, same day, Alex in `mirror-009`: "refused is Dark. The illumination was declined."]* One vocabulary: `clear` 0, `opaque` 1, `dark` 2 (no light could come back) or 255 (declined by a rule, named in `shaped_by`).
 
 ## Vector 05: functional violation on `true`
 
-A program declares a key it then breaks. The violation is among **true** atoms, so it is definite: verdict `refused`, exit 255. Not `opaque` (nothing is undefined), not `dark` (the program reads and evaluates).
+A program declares a key it then breaks. The violation is among **true** atoms, so it is definite: verdict `dark`, declined, exit 255, with `shaped_by functional owner(1) -> 2` (the declaration that declined, as surface text until declarations have addresses). Not `opaque` (nothing is undefined), and not the exit-2 `dark` (the program reads and evaluates).
 
 Pact (normative content; the surface is a rendering):
 
@@ -78,7 +78,7 @@ Expected statuses:
 - `undefined`: none;
 - `false`: none queried;
 - findings: one, `functional owner key(doc) alex reed` (each extra value is paired with the least value in constant order, fixpoint spec §4.1);
-- outcome `refused`, exit 255.
+- verdict `dark`, exit 255, `shaped_by functional owner(1) -> 2`.
 
 Why this is not a reason to read `owner` as undefined or false: the declaration is the program's own clause about itself (meaning side). The facts violate it, and the evaluator reports the violation as a finding on the definite (`true`) model, never by retracting an atom (engine §4.1: "findings on `true`").
 

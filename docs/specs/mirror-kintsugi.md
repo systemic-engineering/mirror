@@ -53,7 +53,8 @@ Seam's FAILS split into two kinds:
 ### §2.1 Summary record
 
 ```text
-verdict     fail
+verdict     dark
+shaped_by   @mirror/gate
 target      "mirror.spec"
 shards      410
 lines       2311
@@ -76,18 +77,18 @@ run         <addr of this run's record fragment, 64 hex>
 | field | meaning | owner | verdict |
 |---|---|---|---|
 | `shards`, `lines` | compiled shards; used lines (`U(Y, X) ≠ ∅`) | kintsugi | — |
-| `unused` | `in @X` with `U(Y, X) = ∅`: questions | kintsugi | partial |
-| `holes` | `\` occurrences, summed from compile | compile | partial |
-| `names` | shards with a `name?` hole (no `out`) | compile | partial |
-| `dark` | undeclared `(S, X)` **pairs** (Dark lines), summed from compile | compile | partial |
-| `unbound` | free bare names no in-target exports (Dark: no speaker) | kintsugi | partial |
-| `opaque` | ambiguous bindings (two in-targets export the name) and `in @X` to a claimed-twice name: "which one?" | kintsugi | partial |
-| `gaps` | `in @X` with no shard X: the kintsugi-altitude hole | kintsugi | partial |
-| `claims` | names claimed by more than one shard (the book is not a function) | kintsugi | red |
-| `commas` | line commas: kind/arity mismatch or `exports absent` | kintsugi | red |
-| `twists` | mend families accepted line by line that are not gauge-trivial (math Def 3.7; name provisional) | kintsugi | red |
+| `unused` | `in @X` with `U(Y, X) = ∅`: questions | kintsugi | opaque |
+| `holes` | `\` occurrences, summed from compile | compile | opaque |
+| `names` | shards with a `name?` hole (no `out`) | compile | opaque |
+| `dark` | undeclared `(S, X)` **pairs** (Dark lines), summed from compile | compile | opaque |
+| `unbound` | free bare names no in-target exports (Dark: no speaker) | kintsugi | opaque |
+| `opaque` | ambiguous bindings (two in-targets export the name) and `in @X` to a claimed-twice name: "which one?" | kintsugi | opaque |
+| `gaps` | `in @X` with no shard X: the kintsugi-altitude hole | kintsugi | dark 2, no light (Alex 10-29, third round: "where is X?") |
+| `claims` | names claimed by more than one shard (the book is not a function) | kintsugi | dark 255, by rule (declined by the book-is-a-function rule via the gate) |
+| `commas` | line commas: kind/arity mismatch or `exports absent` | kintsugi | opaque; kept as a field (dark 255 only if the gate declines commas) |
+| `twists` | mend families accepted line by line that are not gauge-trivial (math Def 3.7; name provisional) | kintsugi | opaque; kept as a field |
 | `among` | the topology count `b₁(Σ) − Σᵢ b₁(Kᵢ)`: where a comma *could* live | kintsugi | — (reported) |
-| `fractured`, `expected` | `b₀(𝒩) = b₀(G)`, and the count the spec's ruler declares | kintsugi | red iff they differ |
+| `fractured`, `expected` | `b₀(𝒩) = b₀(G)`, and the count the spec's ruler declares | kintsugi | dark 255, by the gate ruler, iff they differ |
 
 `reglued` and `cached` join the summary **after v0**.
 
@@ -177,28 +178,34 @@ comma(S, X, n)    :- uses_kind(S, X, n, k), not matches(X, n, k).               
 
 ## §4 Verdict, exit codes, and the gate ruler
 
-| verdict | when | exit |
-|---|---|---|
-| `success` | no finding with a verdict column in §2.1 | 0 |
-| `partial` | only holes, `name?`, Dark (undeclared, unbound), Opaque, gaps, unused lines | 1 |
-| `fail` | any claim, line comma, twist, or `fractured ≠ expected` | 255 |
-| `dark` | any shard dark | 2 |
+*[Alex 2026-10-29, `mirror-009`: "refused is Dark. The illumination was declined." / "The discoball is selective."]* One vocabulary across all verbs: `clear`, `opaque`, `dark`. The two Darks are told apart by the exit code (compile §1.1).
 
-The same table as compile §1.1 and `mirror love` (Alex default 5). Partial, fail and dark are three codes. *[T1 (b)]* The record word is `fail`, as in compile; "red" is only the traffic-light reading, and the §2.1 verdict column below uses it in that sense.
+| verdict | when | exit | `shaped_by` |
+|---|---|---|---|
+| `clear` | no finding with a verdict column in §2.1 | 0 | the rulers that shaped it, or `none` |
+| `opaque` | holes, `name?`, Dark lines (undeclared, unbound), Opaque bindings, unused lines, **and kept commas and twists** | 1 | the rulers that shaped it, or `none` |
+| `dark` (declined) | **a declared rule turns the run away**: a claim (the book-is-a-function rule, Alex default 1), `fractured ≠ expected` (the gate ruler's declared count), or any finding the gate ruler declines | 255 | **the rule(s) that declined**, non-empty |
+| `dark` (no light) | any shard unreadable, an engine `Dark`, or a **gap** (`in @X` with no X anywhere: "where is X?"; Alex 10-29, third round) | 2 | `none` |
+
+**Where commas land.** A line comma or a twist is a disagreement between two voices, not a rule turning the run away. Each lands as a **field** (`commas`, `twists`) with its records listed and kept. The verdict is at most `opaque`: "a question, not a red build" (Convergence CI; ruler spec §6, I4: the gate carries kept commas past, unread). A comma makes the run `dark` (255) only if the gate ruler explicitly declines commas, and then `shaped_by` names the gate ruler.
+
+**Law (the selective Dark).** Every `dark` at exit 255 names in `shaped_by` the rule or rules that declined (surface text until declarations have addresses). Every `dark` at exit 2 has `shaped_by none`.
+
+*[T1 (b), superseded]* ~~The record word is `fail`~~. The §2.1 verdict column below reads: "opaque" for the opaque rows; "dark 255, by rule" where it said "red".
 
 **The gate is a ruler, declared in `mirror.spec`** and approved by a human like any ruler (compile §10):
 
 ```text
 ruler @mirror/gate {
-  tolerate   partial
-  refuse     fail  dark
-  fractured  1
+  tolerate   opaque              # holes, Dark lines, kept commas and twists ride alongside
+  decline    claims              # the book must be a function (Alex default 1)
+  fractured  1                   # any other count: declined
 }
 ```
 
-- `mirror kintsugi mirror.spec` reads the ruler, and the gate passes iff the run's verdict is tolerated and `fractured` equals the declared count.
-- Lean: tolerate partial (honest holes, Dark lines and gaps don't block commits); refuse red and dark. Whether gaps belong in the tolerated set is the ruler's to say, field by field.
-- With `boot/` in the target, today's 20 claims make the run red. That is the first convergence work (convergence §3), not a reason to soften the ruler.
+- `mirror kintsugi mirror.spec` reads the ruler. The gate passes iff the verdict is `clear` or a tolerated `opaque`. When the ruler declines (a claim, a `fractured` deviation), the run is `dark` at exit 255 with `shaped_by @mirror/gate`. A `dark` at exit 2 (no light) never passes, and no ruler can tolerate it.
+- Lean: tolerate opaque (honest holes, Dark lines and kept commas don't block commits); decline claims and a `fractured` deviation. Gaps are `dark` at exit 2 and no ruler tolerates them (Alex, third round). Whether commas belong in the tolerated set is the ruler's to say (`decline commas` is expressible).
+- With `boot/` in the target, today's 20 claims make the run `dark` (255, declined by `@mirror/gate`). That is the first convergence work (convergence §3), not a reason to soften the ruler.
 
 ---
 
@@ -312,10 +319,10 @@ Against the binary, the way `rust/tests/pact_vectors.rs` drives `mirror pact eva
 - g) *[Seam 13]* **Bare name bound by two imports**: `opaque`, candidates listed.
 
 **K4. The rules.**
-- `in @bogus` → `gap`, `partial`, exit 1.
+- `in @bogus` → `gap`, `dark`, exit 2, `shaped_by none`.
 - The same file under `mirror compile` alone → no `gap` (compile can't know).
-- Two shards with `out @x` → `claim @x`, `fail`, exit 255; a third shard's `in @x` → `opaque`.
-- A bare name exported by no in-target → `unbound`, `partial`.
+- Two shards with `out @x` → `claim @x`, `dark`, exit 255, `shaped_by @mirror/gate` (the book-is-a-function rule); a third shard's `in @x` → `opaque`.
+- A bare name exported by no in-target → `unbound`, `opaque`.
 
 **K5. Line commas (kinds and arity).**
 - Y uses `X.f` as `action/2`, X exports a carrier → `comma line`, `exports carrier/0`.
@@ -326,7 +333,7 @@ Against the binary, the way `rust/tests/pact_vectors.rs` drives `mirror pact eva
 **K6. Mends and twists.**
 - Record a mend at one occurrence: offered at the other occurrence of the same question, applied only where approved.
 - *[Seam 5]* A renaming mend on a **kind** mismatch leaves the line a comma.
-- *[Seam 5]* **Tree twist:** `Y₁ — X — Y₂`, both using `X.f`, consumers frozen, mends (swap f↔g, id): every line glues under its mend, there are no cycles, and the result is `twist 1`, `red`.
+- *[Seam 5]* **Tree twist:** `Y₁ — X — Y₂`, both using `X.f`, consumers frozen, mends (swap f↔g, id): every line glues under its mend, there are no cycles, and the result is `twist 1`, kept as a field, verdict `opaque` (or `dark` 255 with `shaped_by @mirror/gate` if the gate ruler declines twists).
 - **Cycle twist:** three shards in a cycle of lines, renaming mends whose composite isn't the identity: `twist 1`.
 - **Repair:** adding a second export name at X makes the tree twist 0.
 
@@ -335,7 +342,7 @@ Against the binary, the way `rust/tests/pact_vectors.rs` drives `mirror pact eva
 **After v0:**
 - **K3. Incremental (port of 10-10 T29).** *[Seam 3, 13]* Each fixture states b₀(Σ). Assert `Δ among = [d∼r in Σ] − [d∼r in Kᵢ]` (a private edge inside a component: 0; joining two components of Kᵢ: +1 iff joined in Σ). R7: `Δ = [d∼r in Σ]`, with Seam's identical-star pair (Δ 1 vs 0). **Positive control** in the same harness: an edit that changes a line's restriction reports `reglued ≥ 1` and the new verdict. Only next to it is "`reglued 0` for a body no interface exposes" meaningful.
 - **K7′ (replaces K7).** An edit **without** revert, chosen to change a line verdict: the incremental `run` equals a from-scratch run on the edited set. (K7's edit-and-revert passes with a cache that never invalidates.)
-- **K8. Stalk completeness.** X re-exports `T = {a: @Z.U}`, Y uses T only; change U in Z → Y's line re-glues. A shard with an undeclared reference reaches kintsugi as `partial` (Alex's decision), and the test asserts that its lines are **not** served from cache (or are keyed as pseudo-lines on X's κ).
+- **K8. Stalk completeness.** X re-exports `T = {a: @Z.U}`, Y uses T only; change U in Z → Y's line re-glues. A shard with an undeclared reference reaches kintsugi as `opaque` (Alex's decision), and the test asserts that its lines are **not** served from cache (or are keyed as pseudo-lines on X's κ).
 - **K10.** Changing the rule set (the relation `R`) re-glues every line.
 
 **Order:** K0a, K1, K4, K2, K5, K6, K0b, K9; after v0: K3, K7′, K8, K10.
@@ -348,7 +355,7 @@ Against the binary, the way `rust/tests/pact_vectors.rs` drives `mirror pact eva
 - **Comma kind:** one word, comma, and the kind says who owns it. `comma line` is owned by a pair. *(The second-round "`comma among` = mends whose holonomy doesn't close" is superseded by default 3 below: that record is `twist`, and `among` is the topology count.)*
 - **`gap`:** the kintsugi-altitude hole (formerly `unresolved`). A hole is inside a shard; a gap is between shards.
 - **Numbers:** exact values; spelling to erasure. Refined by default 6.
-- **Undeclared:** Dark at the line, partial for the document. A hole is Opaque (a question asked); undeclared is Dark (nothing looked).
+- **Undeclared:** Dark at the line, opaque (formerly "partial") for the document. A hole is Opaque (a question asked); undeclared is Dark (nothing looked).
 - **Start rule:** what the grammar exports, named by the caller (compile §2 item 10).
 - **`fixed`:** a rule declared `fixed` is already at its fixed point, `x = COORD(x)`. `settle` is the act, `fixed` the result.
 - **Voice cover:** `peer/colony`, held lightly.
@@ -359,7 +366,7 @@ Against the binary, the way `rust/tests/pact_vectors.rs` drives `mirror pact eva
 2. A shard with no `out` gets a `name?` hole, not a name from its path, so compile reads only its own bytes.
 3. `among` stays the topology count. The record of mends whose gauge doesn't close is provisionally named **`twist`** (a shear: invisible from any single line). Alex's naming call is still open; it doesn't block v0.
 4. No new comma kinds. Unbound bare name → Dark (no speaker). Ambiguous bare name → Opaque, "which one?". Duplicate claim → default 1. `observed` waits for the Voice.
-5. Exits follow the ternary as `mirror love` implements it: success 0, partial 1, fail/red 255, dark 2. The gate is a declared ruler in `mirror.spec` (lean: partial yes; comma, fail and dark no). `fractured`: the spec declares the expected count, and a deviation fails.
+5. Exits follow the ternary as `mirror love` implements it: success 0, partial 1, fail/red 255, dark 2. *[Superseded by Alex 2026-10-29, `mirror-009`: clear 0, opaque 1, dark 2 (no light), dark 255 (declined, `shaped_by` names the rule); §4.]* The gate is a declared ruler in `mirror.spec` (lean: partial yes; comma, fail and dark no). `fractured`: the spec declares the expected count, and a deviation fails.
 6. Numbers: μ marks data positions (exact, `1 ≡ 1.0`, spelling to erasure) and typed positions (the type is kept: an `f64` field prints as a float). Unmarked = exact.
 7. Kinds and arity now, types later. Full type checking needs a type system mirror doesn't have yet.
 

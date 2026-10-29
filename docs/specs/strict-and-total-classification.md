@@ -4,6 +4,8 @@
 > - A file that can't be read at all is `dark` (exit 2), as step 5 below already says.
 > - A dark *region* inside an otherwise readable file (an undeclared reference, an unbound name) makes the document `partial`, which now exits 1 without any flag.
 > - `--strict` is retired. What a gate tolerates (partial? dark lines?) is a ruler declared in `mirror.spec` (`docs/specs/mirror-kintsugi.md` §4), so "`mirror craft --strict boot` returns zero dark regions" becomes "the release ruler refuses dark lines".
+>
+> **Vocabulary, 2026-10-29 (Alex, `mirror-009`):** the document verdicts are `clear` (0), `opaque` (1, formerly "partial"), and `dark`. `dark` exits 2 when no light could come back (the file can't be read, or the engine returned `Dark`; `shaped_by none`), and 255 when a rule declined the light (`shaped_by` names the rule). A Dark *line* inside a readable file still makes the document `opaque`, not `dark`.
 
 *2026-05-20. Reed.*
 

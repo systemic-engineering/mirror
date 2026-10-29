@@ -893,6 +893,8 @@ nix develop -c cargo test -- cli_compile  # PASS
 **File:** `src/cli.rs`
 
 > **Superseded 2026-10-29 (Mara; Alex's default 5):** partial now exits 1 without any flag, red 255, dark 2 (`docs/specs/mirror-fixpoint-parser.md` §1.1). `--strict` is retired; a gate's tolerance is a ruler in `mirror.spec` (`docs/specs/mirror-kintsugi.md` §4). The test below, including its "non-strict: Partial → exit 0" assertion, is historical.
+>
+> **Vocabulary, 2026-10-29 (Alex, `mirror-009`):** one set of words for every verb: `clear` (0), `opaque` (1), `dark` (2: no light could come back; 255: light declined by a rule, which `shaped_by` names). "Partial" is now `opaque`; "red"/"fail" is `dark` at 255.
 
 ```rust
 #[test]
