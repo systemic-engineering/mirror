@@ -186,6 +186,7 @@ This spec does not write `mirror.mirror`. It states what the file must contain f
   - **DDC on `E`'s source:** build `E` from its shard with two independent floors and require bit-identical `E` artefacts (Wheeler);
   - **a semantics oracle independent of `mirror.mirror`:** `tests/fixpoint/semantics/`, user grammars and inputs with known verdicts (Prop. 2.4's shear, `!`/`&` vectors, Ford's examples, Seam's `E_long`/`E_troj` vectors);
   - the **seed witness** (`boot/std/mirror/grammar.mirror` through `E`, or a seed in another language) stays as a cheaper check on `addr(N₀)`.
+- **In nix terms** *[handoff mirror-007, 2026-10-29]*: the floor that runs `E` (`packages.mirror`: rustc, prism at the `Cargo.lock` rev, the nixpkgs pin) is the one declared trusted input, like nixpkgs' `bootstrap-tools`; `checks.fixpoint` checks stage 2 against it, and T11a's DDC (two independent floors, bit-identical `E`) is its own check. Nix reproduces the floor; it doesn't justify it, and the trust root stays `E`, not the seed.
 - **Iteration.** Stage 2 is required at `k = 1`. Reaching a fixed point only at `k > 1` is a **failed** stage 2, because one extra step would launder a seed misreading *[Seam]*. `mirror compile --fixpoint` may iterate as a diagnostic up to a declared `k_max` (a ruler; `halts.mirror` clause b). It stops on **consecutive** equality and reports `fixed at k` / `cycle(p)` / `dark` (math Prop. 1.9, §6.3).
 
 ---
