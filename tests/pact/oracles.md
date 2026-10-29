@@ -30,7 +30,7 @@ Canonical JSON: keys sorted, no insignificant whitespace, every list of atoms so
 {"false":[…],"outcome":"clear"|"opaque","true":[…],"undefined":[…]}
 ```
 
-- `outcome` is `clear` iff `undefined` is empty; otherwise `opaque`. (`dark` is reserved for a pact that can't be evaluated at all, e.g. a function symbol or an unsafe variable; vector 05, not yet written.)
+- `outcome` is `clear` iff `undefined` is empty; otherwise `opaque`. (`dark` is reserved for a pact that can't be evaluated at all, e.g. a function symbol or an unsafe variable; ~~vector 05~~ vector 07, not yet written.)
 - A false atom carries `because`: one entry per rule whose head unifies with it, in rule-id order. Each entry lists the body literals that are not true under that grounding, in body order, each with its `status` (`false`, `undefined` or `absent`) and, for intensional atoms, its own `because`. A negative literal `not x` fails when `x` is true; its status is reported as `false` with `x`'s derivation left out of v 0.
 - v 0 limit: why-not trees are specified only for rules whose body variables are all bound by the head. Existential body variables need a choice of grounding and are left for a later version.
 
@@ -47,3 +47,41 @@ Transitive closure over a graph with a cycle (`b → c → b`). Nine `path` fact
 ## Vector 04: negation cycle
 
 `p ← not q`, `q ← not p`: no stratification exists. Well-founded model: `p`, `q` undefined; `t ← p` inherits undefined; `r ← not s` is true because `s` has no rules. Outcome `opaque`. Negation-as-failure (Prolog) would loop or pick one; stratified Datalog would reject the program; stable models would give two answers. The well-founded model gives one.
+
+---
+
+## Correction, 2026-10-29 (Mara): numbering, and the binary's record
+
+- **Vector 05 is now the functional violation** (below), asked for by Seam's pact-eval audit (`docs/audits/2026-10-29-seam-pact-eval-and-ruler-envelope.md` §1.5 item 4, "Mara picks the number"). The dark vector moves to **07**. Vector 06 (semiring provenance) keeps its number.
+- **The `.json` vectors don't come over to `reed/ship`.** Their pact content is transcribed by hand into `.pact-text` fixtures by the builder, each citing its source blob at `5babfbad`. If transcription and oracle disagree, the oracle is right, and corrections are dated here.
+- **The binary prints mirror-text** (audit §1.4), not this file's canonical JSON. The *statuses* are what the vectors pin, and they don't depend on the format. `because` (why-not) is out of the first slice.
+- **Verdicts** gain `refused` (exit 255): a definite violation of the program's own `functional` declaration among its **true** atoms. The ternary as `mirror love` uses it is 0 / 1 / 255, plus 2 for `dark`.
+
+## Vector 05: functional violation on `true`
+
+A program declares a key it then breaks. The violation is among **true** atoms, so it is definite: verdict `refused`, exit 255. Not `opaque` (nothing is undefined), not `dark` (the program reads and evaluates).
+
+Pact (normative content; the surface is a rendering):
+
+```text
+rule  owner  owner(?d, ?p) requires claim(?d, ?p)
+fact  claim(doc, alex)
+fact  claim(doc, reed)
+functional owner(1) -> 2
+```
+
+- `functional owner(1) -> 2`: at most one second argument per first argument (1-based positions, fixpoint spec §4.1).
+- Facts: `claim(doc, alex)`, `claim(doc, reed)`.
+
+Expected statuses:
+- `true`: `owner(doc, alex)`, `owner(doc, reed)` (intensional atoms, sorted by text);
+- `undefined`: none;
+- `false`: none queried;
+- findings: one, `functional owner key(doc) alex reed` (each extra value is paired with the least value in constant order, fixpoint spec §4.1);
+- outcome `refused`, exit 255.
+
+Why this is not a reason to read `owner` as undefined or false: the declaration is the program's own clause about itself (meaning side). The facts violate it, and the evaluator reports the violation as a finding on the definite (`true`) model, never by retracting an atom (engine §4.1: "findings on `true`").
+
+**Control (same vector, a second case):** the same program with `fact claim(doc, reed)` removed gives `true owner(doc, alex)`, no findings, `clear`, exit 0.
+
+**Out of scope here:** a violation among *undefined* atoms is not reported. W computes findings on `true` only (engine slice 2, `42bc2e58`), so a key violated only by undefined atoms is not a definite refusal. A vector for that boundary (`opaque` with no finding) is left for later, numbered when it is written.
