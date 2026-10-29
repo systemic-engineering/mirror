@@ -147,36 +147,57 @@ Math: math §10. Alex: "A single-truth is what makes it a useful CI pipeline. A 
 - **Intonation (multi-truth):** a connection on the observer graph, i.e. exact transports between frames. It has no value per reading, and its holonomy is its comma.
 - **Vector ruler (the middle):** a lattice, plural while unweighted (a Pareto front). Weighting it is a Choice, i.e. a temperament act.
 
+> **Reshaped 2026-10-29 (Alex: "Isn't a `Ruler` a `Prism`, and then the whole distinction dissolves? A single-truth ruler settles to a single scalar value. A multi-truth ruler to a field."; math §11).** One trait. Every ruler is a prism whose `settle` yields a `Field<B, V>`. The single/multi distinction moves to the field's base and value algebra:
+> - point: a scalar;
+> - lattice-valued: lawfully collapsible by meet;
+> - flat group-valued: collapsible up to gauge;
+> - **curved group-valued: never collapsible, only temperable**.
+>
+> `Intonation` is now `Field<Graph, G>` with G a group, and it **is** a ruler ("Fifty" closed, math §11.2). I5 is replaced below. I1–I4, I6 and IN1–IN5 hold with the renaming.
+
 ```rust
-/// Multi-truth: transports between observers' frames, in an exact group.
-/// Shares the envelope's provenance fields (addr, reader, approval), but is
-/// not a `Ruler<B>`: an intonation narrows nothing until it is tempered.
-pub struct Intonation<G: LoopGroup> {
-    addr: Addr,
-    frames: NonEmpty<ObserverRef>,
-    transports: Vec<(ObserverRef, ObserverRef, G)>,   // τ_vu = τ_uv⁻¹ enforced at construction
-    approval: ApprovalChain,
+/// A value on each cell of a base. A scalar is a field over one point.
+pub struct Field<B: Base, V> { base: B, values: Vec<(Cell, V)> }
+pub struct Point;                                         // K₁: the decree's base
+pub struct Graph { /* observers as vertices, lines as edges; b₁ computed */ }
+pub struct Discrete<const K: usize>;                      // k criteria, no lines between them
+pub type Scalar<V> = Field<Point, V>;
+pub type Intonation<G> = Field<Graph, G>;                  // G: LoopGroup, transports on lines
+pub type Front<const K: usize> = Field<Discrete<K>, Ratio>;
+
+/// One ruler trait: a prism (focus, project, settle) whose settled value is a field.
+/// Provenance (addr, reader, approval) is the envelope of §1; `Body` stays sealed.
+pub trait Ruler: Prism<Refracted = Optic<Self::Projected, Field<Self::Base, Self::Value>>> {
+    type Base: Base;
+    type Value;
 }
+
+/// Flatness is a runtime fact with a type-level witness.
+pub struct Flat<G>(Intonation<G>);                        // only from `check_flat`
 impl<G: LoopGroup> Intonation<G> {
     pub fn transport(&self, path: &Path) -> G;
     pub fn holonomy(&self, l: &Loop<G>) -> Holonomy<G>;
-    pub fn ruler_free(&self) -> RulerFree<G>;            // its gauge class (math §10.3)
+    pub fn ruler_free(&self) -> RulerFree<G>;            // its gauge class
+    pub fn check_flat(&self) -> Result<Flat<G>, Curved<G>>;
 }
-// Deliberately absent: From/Into any scalar, number or Ruler; PartialOrd/Ord;
-// Sum/Product; any `summary`/`score`/`as_f64`; Display that prints a number.
+impl<G: LoopGroup> Flat<G> {
+    /// Lossless up to gauge: the gauge class of a flat field is one point.
+    pub fn gauge_point(&self) -> Shaped<Scalar<GaugeClass>, Gauge<G>>;  // erasure: the gauge (who translates how)
+}
+// Deliberately absent: any From/Into from Field<Graph, G> to Field<Point, _>
+// (flat or curved); PartialOrd/Ord; Sum; score/as_f64; numeric Display.
 
-/// The only bridge. Borrows, never consumes; the intonation is unchanged.
+/// Temper: the only bridge from a curved field. Borrows, never consumes.
 pub fn temper<G: LoopGroup>(i: &Intonation<G>, t: &Approved<'_, Choice>)
-    -> Shaped<Temperament, TemperErasure<G>>;               // #[must_use]
-pub struct TemperErasure<G> { commas: Vec<Holonomy<G>> }    // what was averaged away, around a cycle basis
+    -> Shaped<Flat<G>, Curvature<G>>;                      // #[must_use]; erasure = the curvature
+pub struct Curvature<G> { commas: Vec<Holonomy<G>> }       // around a cycle basis; empty iff flat
 
 /// A vector ruler stays a front until a declared weighting collapses it.
-pub struct Front<const K: usize> { points: NonEmpty<[Ratio; K]> }   // an antichain
 pub fn weigh<const K: usize>(f: &Front<K>, w: &Approved<'_, Choice>) -> Shaped<Ratio, Front<K>>;
 
 /// CI gates read temperaments and the kept commas. No field can hold an Intonation.
 pub struct GateInput<'a> {
-    temperaments: &'a [Shaped<Temperament, ErasureAny>],
+    temperaments: &'a [Shaped<Scalar<Verdictable>, ErasureAny>],   // point-fields only
     kept: &'a [KeptComma],                    // commas between voices: "a question, not a red build"
 }
 pub fn gate(input: &GateInput<'_>, ruler: &Approved<'_, Authority>) -> Shaped<Verdict, Vec<KeptComma>>;
@@ -187,7 +208,13 @@ pub fn gate(input: &GateInput<'_>, ruler: &Approved<'_, Authority>) -> Shaped<Ve
 - **I2 (`temper` borrows):** `temper` takes `&Intonation`. The intonation is unchanged and stays addressable after any number of temperings. The result names its temperament (`shaped_by`), and its erasure is the averaged-away comma (for abelian real Γ, the harmonic part, math Prop 10.6).
 - **I3 (vector rulers):** a `Front` collapses only through `weigh` with an approved Choice. The erasure is the front itself, so the collapse is reversible by reading the erasure.
 - **I4 (gates):** `GateInput` holds temperaments and kept commas only. A gate's verdict is single-truth; the kept commas ride alongside, unchanged, in its result.
-- **I5 (provenance without narrowing):** an `Intonation` carries an address and an approval (who declared these transports), but it is not a `Ruler<B>`, because it narrows nothing. (Scarlet's and Mara's disagreement on the word is in the essay; the type is the same either way.)
+- ~~**I5 (provenance without narrowing):** … not a `Ruler<B>`, because it narrows nothing.~~ **I5′ (one trait):** every ruler is a prism settling to a field. An intonation is a ruler whose field lives on a graph with group values. It narrows *possibilities* (which connection holds), not readings. ("Fifty" closed, math §11.2.)
+- **I7 (the codomain decides):**
+  - `Field<Point, _>` is a scalar;
+  - a lattice-valued field collapses by meet, and picking among several lawful collapses is a Choice;
+  - a flat group field collapses up to gauge through `Flat::gauge_point`, with the gauge as erasure;
+  - a curved group field collapses only through `temper`, with a non-empty `Curvature` as erasure (math §11.3).
+- **I8 (temper vs an edge settle):** for abelian real G, `temper` keeps the gradient part and erases the harmonic part. An edge-Laplacian settle keeps the harmonic part and fades the gradient part. They are complementary, so tempered field + curvature = the original (math §11.4). prism's `spectral::settle` is vertex-only today, so this pairs `temper` with a settle prism hasn't landed.
 - **I6 (the ruler-free third):** `ruler_free()` returns the intonation's gauge class: holonomy for constant Γ, non-abelian H¹ for per-line groups. On a tree it is `Absorbable`, while the transports still exist.
 
 **Red tests.**
@@ -204,6 +231,11 @@ pub fn gate(input: &GateInput<'_>, ruler: &Approved<'_, Authority>) -> Shaped<Ve
   - `compile_fail`: constructing `GateInput` with an `Intonation`;
   - a gate over two temperaments and one kept comma passes or fails on the temperaments alone, and returns the kept comma unchanged.
 - **IN5 (tree vs loop):** an intonation on one wire has `ruler_free() == Absorbable` and a non-identity `transport`; on a triangle with non-trivial holonomy, `Classes([Comma])`.
+- **FP1 (a point-field is today's scalar):** a `Scalar<Budget>` ruler passes every RU test that a `Ruler<Budget>` passed: same composite (min), same truncation erasure, same `shaped_by`.
+- **FP2 (flat tempers losslessly):** a triangle intonation in `Z<12>` with holonomy identity. `check_flat` is `Ok`; `temper` returns an empty `Curvature`; `gauge_point` returns the trivial class, with the transports in its erasure.
+- **FP3 (curved tempers only with the comma):** the 12-fifths intonation in `PitchClassRatio`. `check_flat` is `Err(Curved)`; `temper` returns `Curvature` = `[−19, 12⟩` (non-empty); the intonation is unchanged afterwards.
+- **FP4 (`compile_fail`):** `let s: Scalar<Ratio> = intonation.into();` and `let s: Scalar<_> = flat.into();` both fail to compile. The only routes are `temper` and `gauge_point`, each returning an erasure.
+- **FP5 (temper + settle = original, abelian real):** on a 4-cycle with real edge values, the tempered flat field plus the harmonic part (computed by the test oracle's own edge-Laplacian projection, in rational arithmetic) reconstructs the input field exactly. prism's vertex-only `settle` is not used.
 
 ## §5 Open decisions (Reed's lean, pending Alex; the spec works either way)
 
