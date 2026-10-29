@@ -1,0 +1,166 @@
+scope      shards
+files      410
+claim      2
+name?      11
+undeclared 44
+undeclared_shards 33
+
+claim      @mirror/spec
+by         shards/mirror/spec.mirror shards/mirror/spec/keywords.mirror
+
+claim      @song
+by         shards/song.mirror shards/song/keywords.mirror
+
+name?      shards/epistemologic/cybernetic/algedonic.mirror
+
+name?      shards/epistemologic/cybernetic/design.mirror
+
+name?      shards/epistemologic/pact/keywords.mirror
+
+name?      shards/generated/rust_translated_hello_translate.mirror
+
+name?      shards/mirror/book.mirror
+
+name?      shards/mirror/lens/knife.mirror
+
+name?      shards/mirror/matrix.mirror
+
+name?      shards/mirror/phone.mirror
+
+name?      shards/mirror/realisation.mirror
+
+name?      shards/mirror/spec/keywords.mirror
+
+name?      shards/song/keywords.mirror
+
+undeclared shards/bumblebee.mirror
+ref        @mcp/tool
+
+undeclared shards/epistemologic/cybernetic/coevolution.mirror
+ref        @epistemologic/cybernetic/coherence-parametric/carrier
+
+undeclared shards/epistemologic/cybernetic/coevolution.mirror
+ref        @epistemologic/property/coevolution/edge_of_chaos
+
+undeclared shards/epistemologic/cybernetic/coevolution.mirror
+ref        @epistemologic/property/coevolution/red_queen_bounded
+
+undeclared shards/epistemologic/cybernetic/coevolution.mirror
+ref        @epistemologic/property/coevolution/transition_well_typed
+
+undeclared shards/epistemologic/cybernetic/coevolution.mirror
+ref        @epistemologic/property/coevolution/well_formed
+
+undeclared shards/epistemologic/math/cholesky.mirror
+ref        @epistemologic/math
+
+undeclared shards/generated/rust_translated_hello_translate.mirror
+ref        @facet/turing
+
+undeclared shards/generated/rust_translated_hello_translate.mirror
+ref        @facet/turing/mirror/value
+
+undeclared shards/generated/rust_translated_hello_translate.mirror
+ref        @facet/turing/program
+
+undeclared shards/gestalt.mirror
+ref        @time/monotonic
+
+undeclared shards/glass.mirror
+ref        @nl
+
+undeclared shards/kintsugi/fracture/angle_to_paren.mirror
+ref        @meta/ast
+
+undeclared shards/kintsugi/fracture/cold_compile_within_tolerance.mirror
+ref        @meta/ast
+
+undeclared shards/kintsugi/fracture/dark_count_monotone.mirror
+ref        @meta/ast
+
+undeclared shards/kintsugi/fracture/gate.mirror
+ref        @meta/ast
+
+undeclared shards/kintsugi/fracture/keyword.mirror
+ref        @meta/ast
+
+undeclared shards/kintsugi/fracture/operator_match.mirror
+ref        @meta/ast
+
+undeclared shards/kintsugi/fracture/parent_cycle.mirror
+ref        @meta/ast
+
+undeclared shards/kintsugi/fracture/partials_align.mirror
+ref        @meta/ast
+
+undeclared shards/kintsugi/fracture/relocate.mirror
+ref        @meta/ast
+
+undeclared shards/kintsugi/fracture/symbol_lift.mirror
+ref        @meta/ast
+
+undeclared shards/kintsugi/mosaic.mirror
+ref        @repo
+
+undeclared shards/loom.mirror
+ref        @time/monotonic
+
+undeclared shards/loom/keyboard.mirror
+ref        @time/monotonic
+
+undeclared shards/mirror/lens/cli.mirror
+ref        @mirror/store/oid
+
+undeclared shards/mirror/lens/knife.mirror
+ref        @fractal
+
+undeclared shards/mirror/mosaic.mirror
+ref        @facet/rust
+
+undeclared shards/mirror/ref.mirror
+ref        @meta/ast
+
+undeclared shards/nl.mirror
+ref        @sigil
+
+undeclared shards/optics/source/ganglion/abyss.mirror
+ref        @optics/aperture/connectome
+
+undeclared shards/optics/source/ganglion/abyss.mirror
+ref        @optics/aperture/splinter
+
+undeclared shards/optics/source/ganglion/cartographer.mirror
+ref        @optics/aperture/connectome
+
+undeclared shards/optics/source/ganglion/cartographer.mirror
+ref        @optics/aperture/splinter
+
+undeclared shards/optics/source/ganglion/explorer.mirror
+ref        @optics/aperture/connectome
+
+undeclared shards/optics/source/ganglion/explorer.mirror
+ref        @optics/aperture/splinter
+
+undeclared shards/optics/source/ganglion/fate.mirror
+ref        @optics/aperture/connectome
+
+undeclared shards/optics/source/ganglion/fate.mirror
+ref        @optics/aperture/splinter
+
+undeclared shards/optics/source/ganglion/introject.mirror
+ref        @optics/aperture/connectome
+
+undeclared shards/optics/source/ganglion/introject.mirror
+ref        @optics/aperture/splinter
+
+undeclared shards/spectral/mosaic.mirror
+ref        @repo
+
+undeclared shards/spectral/signature.mirror
+ref        @time/monotonic
+
+undeclared shards/task/link.mirror
+ref        @sigil
+
+undeclared shards/uuid/spectral/time.mirror
+ref        @time/monotonic

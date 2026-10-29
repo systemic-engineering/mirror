@@ -1,0 +1,340 @@
+scope      all
+files      558
+claim      20
+name?      62
+undeclared 50
+undeclared_shards 39
+
+claim      @fate
+by         boot/std/fate.mirror shards/fate.mirror
+
+claim      @fate/tournament
+by         boot/std/fate/tournament.mirror shards/fate/tournament.mirror
+
+claim      @git
+by         boot/07a-package-git.mirror boot/std/git.mirror
+
+claim      @io
+by         boot/02a-io.mirror boot/std/io.mirror shards/io.mirror
+
+claim      @io/crypto
+by         boot/std/io/crypto.mirror shards/io/crypto.mirror
+
+claim      @io/socket
+by         boot/std/io/socket.mirror shards/io/socket.mirror
+
+claim      @kintsugi
+by         boot/std/kintsugi.mirror shards/kintsugi.mirror
+
+claim      @kintsugi/shift
+by         boot/std/kintsugi/shift.mirror shards/kintsugi/shift.mirror
+
+claim      @kintsugi/translate
+by         boot/std/kintsugi/translate.mirror shards/kintsugi/translate.mirror
+
+claim      @mirror/spec
+by         boot/std/mirror/spec.mirror shards/mirror/spec.mirror shards/mirror/spec/keywords.mirror
+
+claim      @mirror/spectral
+by         boot/std/mirror/spectral.mirror shards/mirror/spectral.mirror
+
+claim      @mirror/store
+by         boot/std/mirror/store.mirror shards/mirror/store.mirror
+
+claim      @mirror/store/git
+by         boot/std/mirror/store/git.mirror shards/mirror/store/git.mirror
+
+claim      @nl
+by         boot/01b-nl.mirror boot/std/mirror/nl.mirror boot/std/nl.mirror shards/nl.mirror
+
+claim      @order
+by         boot/std/order.mirror shards/order.mirror
+
+claim      @peer
+by         boot/std/peer.mirror shards/peer.mirror
+
+claim      @prism
+by         boot/00-prism.mirror shards/prism.mirror
+
+claim      @runtime
+by         boot/02b-runtime.mirror boot/std/runtime.mirror
+
+claim      @song
+by         shards/song.mirror shards/song/keywords.mirror
+
+claim      @spectral/portal
+by         boot/std/spectral/portal.mirror shards/spectral/portal.mirror
+
+name?      boot/01a-error.mirror
+
+name?      boot/01b-nl.mirror
+
+name?      boot/06-action.mirror
+
+name?      boot/std/ai/abyss.mirror
+
+name?      boot/std/ai/cartographer.mirror
+
+name?      boot/std/ai/explorer.mirror
+
+name?      boot/std/ai/fate.mirror
+
+name?      boot/std/ai/introject.mirror
+
+name?      boot/std/code/kernel.mirror
+
+name?      boot/std/code/llvm/emit.mirror
+
+name?      boot/std/compose/weighted.mirror
+
+name?      boot/std/craft.mirror
+
+name?      boot/std/data/json.mirror
+
+name?      boot/std/epistemologic/math/bundle.mirror
+
+name?      boot/std/epistemologic/property.mirror
+
+name?      boot/std/epistemologic/property/duplicate_variant.mirror
+
+name?      boot/std/epistemologic/property/filename_matches_glass.mirror
+
+name?      boot/std/epistemologic/property/io_safety.mirror
+
+name?      boot/std/epistemologic/resolve.mirror
+
+name?      boot/std/fate/tournament.mirror
+
+name?      boot/std/fragmentation.mirror
+
+name?      boot/std/git.mirror
+
+name?      boot/std/git/hooks.mirror
+
+name?      boot/std/kintsugi.mirror
+
+name?      boot/std/kintsugi/fracture.mirror
+
+name?      boot/std/kintsugi/fracture/generic-brackets.mirror
+
+name?      boot/std/kintsugi/fracture/settle-to-fixed.mirror
+
+name?      boot/std/kintsugi/migrate.mirror
+
+name?      boot/std/kintsugi/shatter.mirror
+
+name?      boot/std/kintsugi/shift.mirror
+
+name?      boot/std/kintsugi/translate.mirror
+
+name?      boot/std/mcp.mirror
+
+name?      boot/std/mirror.mirror
+
+name?      boot/std/mirror/bootstrap.mirror
+
+name?      boot/std/mirror/butterfly.mirror
+
+name?      boot/std/mirror/compile.mirror
+
+name?      boot/std/mirror/evaluate.mirror
+
+name?      boot/std/mirror/execute.mirror
+
+name?      boot/std/mirror/interpreter.mirror
+
+name?      boot/std/mirror/liquid.mirror
+
+name?      boot/std/mirror/liquid/cd.mirror
+
+name?      boot/std/mirror/liquid/ci.mirror
+
+name?      boot/std/mirror/lsp.mirror
+
+name?      boot/std/mirror/resolve.mirror
+
+name?      boot/std/mirror/runtime.mirror
+
+name?      boot/std/mirror/serve.mirror
+
+name?      boot/std/mirror/spectral.mirror
+
+name?      boot/std/mirror/store.mirror
+
+name?      boot/std/nl.mirror
+
+name?      boot/std/prism/compose.mirror
+
+name?      boot/std/properties.mirror
+
+name?      shards/epistemologic/cybernetic/algedonic.mirror
+
+name?      shards/epistemologic/cybernetic/design.mirror
+
+name?      shards/epistemologic/pact/keywords.mirror
+
+name?      shards/generated/rust_translated_hello_translate.mirror
+
+name?      shards/mirror/book.mirror
+
+name?      shards/mirror/lens/knife.mirror
+
+name?      shards/mirror/matrix.mirror
+
+name?      shards/mirror/phone.mirror
+
+name?      shards/mirror/realisation.mirror
+
+name?      shards/mirror/spec/keywords.mirror
+
+name?      shards/song/keywords.mirror
+
+undeclared boot/02b-runtime.mirror
+ref        @shatter
+
+undeclared boot/07-package.mirror
+ref        @mirror
+
+undeclared boot/std/file.mirror
+ref        @code/rust
+
+undeclared boot/std/mirror/grammar.mirror
+ref        @nl
+
+undeclared boot/std/mirror/reload.mirror
+ref        @mirror/spectral
+
+undeclared boot/std/peer.mirror
+ref        @mirror/grammar
+
+undeclared shards/bumblebee.mirror
+ref        @mcp/tool
+
+undeclared shards/epistemologic/cybernetic/coevolution.mirror
+ref        @epistemologic/cybernetic/coherence-parametric/carrier
+
+undeclared shards/epistemologic/cybernetic/coevolution.mirror
+ref        @epistemologic/property/coevolution/edge_of_chaos
+
+undeclared shards/epistemologic/cybernetic/coevolution.mirror
+ref        @epistemologic/property/coevolution/red_queen_bounded
+
+undeclared shards/epistemologic/cybernetic/coevolution.mirror
+ref        @epistemologic/property/coevolution/transition_well_typed
+
+undeclared shards/epistemologic/cybernetic/coevolution.mirror
+ref        @epistemologic/property/coevolution/well_formed
+
+undeclared shards/epistemologic/math/cholesky.mirror
+ref        @epistemologic/math
+
+undeclared shards/generated/rust_translated_hello_translate.mirror
+ref        @facet/turing
+
+undeclared shards/generated/rust_translated_hello_translate.mirror
+ref        @facet/turing/mirror/value
+
+undeclared shards/generated/rust_translated_hello_translate.mirror
+ref        @facet/turing/program
+
+undeclared shards/gestalt.mirror
+ref        @time/monotonic
+
+undeclared shards/glass.mirror
+ref        @nl
+
+undeclared shards/kintsugi/fracture/angle_to_paren.mirror
+ref        @meta/ast
+
+undeclared shards/kintsugi/fracture/cold_compile_within_tolerance.mirror
+ref        @meta/ast
+
+undeclared shards/kintsugi/fracture/dark_count_monotone.mirror
+ref        @meta/ast
+
+undeclared shards/kintsugi/fracture/gate.mirror
+ref        @meta/ast
+
+undeclared shards/kintsugi/fracture/keyword.mirror
+ref        @meta/ast
+
+undeclared shards/kintsugi/fracture/operator_match.mirror
+ref        @meta/ast
+
+undeclared shards/kintsugi/fracture/parent_cycle.mirror
+ref        @meta/ast
+
+undeclared shards/kintsugi/fracture/partials_align.mirror
+ref        @meta/ast
+
+undeclared shards/kintsugi/fracture/relocate.mirror
+ref        @meta/ast
+
+undeclared shards/kintsugi/fracture/symbol_lift.mirror
+ref        @meta/ast
+
+undeclared shards/kintsugi/mosaic.mirror
+ref        @repo
+
+undeclared shards/loom.mirror
+ref        @time/monotonic
+
+undeclared shards/loom/keyboard.mirror
+ref        @time/monotonic
+
+undeclared shards/mirror/lens/cli.mirror
+ref        @mirror/store/oid
+
+undeclared shards/mirror/lens/knife.mirror
+ref        @fractal
+
+undeclared shards/mirror/mosaic.mirror
+ref        @facet/rust
+
+undeclared shards/mirror/ref.mirror
+ref        @meta/ast
+
+undeclared shards/nl.mirror
+ref        @sigil
+
+undeclared shards/optics/source/ganglion/abyss.mirror
+ref        @optics/aperture/connectome
+
+undeclared shards/optics/source/ganglion/abyss.mirror
+ref        @optics/aperture/splinter
+
+undeclared shards/optics/source/ganglion/cartographer.mirror
+ref        @optics/aperture/connectome
+
+undeclared shards/optics/source/ganglion/cartographer.mirror
+ref        @optics/aperture/splinter
+
+undeclared shards/optics/source/ganglion/explorer.mirror
+ref        @optics/aperture/connectome
+
+undeclared shards/optics/source/ganglion/explorer.mirror
+ref        @optics/aperture/splinter
+
+undeclared shards/optics/source/ganglion/fate.mirror
+ref        @optics/aperture/connectome
+
+undeclared shards/optics/source/ganglion/fate.mirror
+ref        @optics/aperture/splinter
+
+undeclared shards/optics/source/ganglion/introject.mirror
+ref        @optics/aperture/connectome
+
+undeclared shards/optics/source/ganglion/introject.mirror
+ref        @optics/aperture/splinter
+
+undeclared shards/spectral/mosaic.mirror
+ref        @repo
+
+undeclared shards/spectral/signature.mirror
+ref        @time/monotonic
+
+undeclared shards/task/link.mirror
+ref        @sigil
+
+undeclared shards/uuid/spectral/time.mirror
+ref        @time/monotonic
