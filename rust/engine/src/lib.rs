@@ -16,7 +16,7 @@
 
 #![forbid(unsafe_code)]
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 /// A 32-byte BLAKE3 address (spec §5.0).
 pub type Addr = [u8; 32];
@@ -148,13 +148,290 @@ pub enum Dark {
     Bound { ticks: u64, bound: u64 },
 }
 
+// ── Addressing (§5.0 bytes; §4.1 atom content) ───────────────────────────
+
+/// Tag bytes, in §4.1's listing order. §4.1 names the tag byte but does not
+/// pin its value; no test pins derived-atom hex (audit §3.2) until it does.
+const TAG_SYM: u8 = 0x00;
+const TAG_NAT: u8 = 0x01;
+const TAG_ADDR: u8 = 0x02;
+
+/// The fragment label of `M`'s store-merge fragment. Not pinned by §4.1.
+const MODEL_LABEL: &[u8] = b"model";
+
+fn put_u64(h: &mut blake3::Hasher, n: u64) {
+    h.update(&n.to_be_bytes());
+}
+
+fn put_enc(h: &mut blake3::Hasher, b: &[u8]) {
+    put_u64(h, b.len() as u64);
+    h.update(b);
+}
+
+/// `τ`: the altitude's UTF-8, NUL, then `0x00` (root grammar `@mirror`).
+fn put_tau(h: &mut blake3::Hasher, altitude: &str) {
+    h.update(altitude.as_bytes());
+    h.update(&[0x00, 0x00]);
+}
+
 /// `addr = H("splinter\0" ‖ τ ‖ enc(p) ‖ u64(n) ‖ for each argument:
 /// tag ‖ enc(bytes))` (§4.1, §5.0).
-pub fn addr(_altitude: &str, _fact: &Fact) -> Addr {
-    todo!("E: §4.1 atom address")
+pub fn addr(altitude: &str, fact: &Fact) -> Addr {
+    let mut h = blake3::Hasher::new();
+    h.update(b"splinter\0");
+    put_tau(&mut h, altitude);
+    put_enc(&mut h, fact.pred.as_bytes());
+    put_u64(&mut h, fact.args.len() as u64);
+    for c in &fact.args {
+        match c {
+            Const::Sym(s) => {
+                h.update(&[TAG_SYM]);
+                put_enc(&mut h, s.as_bytes());
+            }
+            Const::Nat(n) => {
+                h.update(&[TAG_NAT]);
+                put_enc(&mut h, &n.to_be_bytes());
+            }
+            Const::Addr(a) => {
+                h.update(&[TAG_ADDR]);
+                put_enc(&mut h, a);
+            }
+        }
+    }
+    *h.finalize().as_bytes()
+}
+
+/// `H("fragment\0" ‖ τ ‖ enc(ℓ) ‖ u64(k) ‖ addr(x₀) ‖ …)`, children in the
+/// order given (the caller sorts them for a store-merge).
+fn fragment(altitude: &str, label: &[u8], children: impl ExactSizeIterator<Item = Addr>) -> Addr {
+    let mut h = blake3::Hasher::new();
+    h.update(b"fragment\0");
+    put_tau(&mut h, altitude);
+    put_enc(&mut h, label);
+    put_u64(&mut h, children.len() as u64);
+    for c in children {
+        h.update(&c);
+    }
+    *h.finalize().as_bytes()
+}
+
+// ── The compiled program ─────────────────────────────────────────────────
+
+/// A term with variables numbered per rule.
+#[derive(Clone, Debug)]
+enum Slot {
+    Var(usize),
+    Const(Const),
+}
+
+#[derive(Clone, Debug)]
+struct Pattern {
+    pred: String,
+    args: Vec<Slot>,
+}
+
+#[derive(Clone, Debug)]
+struct Compiled {
+    head: Pattern,
+    pos: Vec<Pattern>,
+    neg: Vec<Pattern>,
+    vars: usize,
+}
+
+fn compile(rule: &Rule) -> Compiled {
+    let mut names: Vec<&str> = Vec::new();
+    // Number variables in order of first occurrence: positive body, then
+    // negative body, then head.
+    fn slots<'a>(a: &'a Atom, names: &mut Vec<&'a str>) -> Pattern {
+        let args = a
+            .args
+            .iter()
+            .map(|t| match t {
+                Term::Const(c) => Slot::Const(c.clone()),
+                Term::Var(v) => match names.iter().position(|n| *n == v.as_str()) {
+                    Some(i) => Slot::Var(i),
+                    None => {
+                        names.push(v.as_str());
+                        Slot::Var(names.len() - 1)
+                    }
+                },
+            })
+            .collect();
+        Pattern { pred: a.pred.clone(), args }
+    }
+    let mut pos = Vec::new();
+    let mut neg = Vec::new();
+    for l in &rule.body {
+        if let Literal::Pos(a) = l {
+            pos.push(slots(a, &mut names));
+        }
+    }
+    for l in &rule.body {
+        if let Literal::Not(a) = l {
+            neg.push(slots(a, &mut names));
+        }
+    }
+    let head = slots(&rule.head, &mut names);
+    Compiled { head, pos, neg, vars: names.len() }
+}
+
+// ── Relations ────────────────────────────────────────────────────────────
+
+/// Ground atoms grouped by predicate; tuples sorted.
+type Rel = BTreeMap<String, BTreeSet<Vec<Const>>>;
+
+fn rel_contains(r: &Rel, pred: &str, args: &[Const]) -> bool {
+    r.get(pred).is_some_and(|s| s.contains(args))
+}
+
+fn rel_insert(r: &mut Rel, pred: &str, args: Vec<Const>) -> bool {
+    r.entry(pred.to_string()).or_default().insert(args)
+}
+
+/// Bind `pat` against `tuple`; on success return the newly bound slots.
+fn unify(pat: &Pattern, tuple: &[Const], env: &mut [Option<Const>]) -> Option<Vec<usize>> {
+    if pat.args.len() != tuple.len() {
+        return None;
+    }
+    let mut bound = Vec::new();
+    for (s, v) in pat.args.iter().zip(tuple) {
+        let ok = match s {
+            Slot::Const(c) => c == v,
+            Slot::Var(i) => match &env[*i] {
+                Some(w) => w == v,
+                None => {
+                    env[*i] = Some(v.clone());
+                    bound.push(*i);
+                    true
+                }
+            },
+        };
+        if !ok {
+            for i in bound {
+                env[i] = None;
+            }
+            return None;
+        }
+    }
+    Some(bound)
+}
+
+fn instantiate(pat: &Pattern, env: &[Option<Const>]) -> Vec<Const> {
+    pat.args
+        .iter()
+        .map(|s| match s {
+            Slot::Const(c) => c.clone(),
+            Slot::Var(i) => env[*i].clone().expect("safe rule: head variable bound by the body"),
+        })
+        .collect()
+}
+
+/// One semi-naive round for one rule: literal `delta_at` ranges over `delta`,
+/// every other positive literal over `model`. Negative literals are tests
+/// against the fixed context `ctx` (the core gets none).
+struct Round<'a> {
+    rule: &'a Compiled,
+    model: &'a Rel,
+    delta: &'a Rel,
+    delta_at: Option<usize>,
+    ctx: Option<&'a Rel>,
+}
+
+impl Round<'_> {
+    fn join(&self, i: usize, env: &mut Vec<Option<Const>>, out: &mut Rel) {
+        if i == self.rule.pos.len() {
+            if let Some(ctx) = self.ctx {
+                for n in &self.rule.neg {
+                    if rel_contains(ctx, &n.pred, &instantiate(n, env)) {
+                        return;
+                    }
+                }
+            }
+            let head = instantiate(&self.rule.head, env);
+            if !rel_contains(self.model, &self.rule.head.pred, &head) {
+                rel_insert(out, &self.rule.head.pred, head);
+            }
+            return;
+        }
+        let pat = &self.rule.pos[i];
+        let source = if self.delta_at == Some(i) { self.delta } else { self.model };
+        let Some(tuples) = source.get(&pat.pred) else { return };
+        for t in tuples {
+            if let Some(bound) = unify(pat, t, env) {
+                self.join(i + 1, env, out);
+                for b in bound {
+                    env[b] = None;
+                }
+            }
+        }
+    }
+}
+
+/// The least model of `rules` over `facts`, semi-naively, with negative
+/// literals read against `ctx`. Returns `M` with first ticks, and the stop.
+fn least_model(
+    rules: &[Compiled],
+    facts: &[Fact],
+    k_max: u64,
+    ctx: Option<&Rel>,
+) -> (BTreeMap<Fact, u64>, Stop) {
+    let mut model: Rel = Rel::new();
+    let mut tick_of: BTreeMap<Fact, u64> = BTreeMap::new();
+    for f in facts {
+        if rel_insert(&mut model, &f.pred, f.args.clone()) {
+            tick_of.insert(f.clone(), 0);
+        }
+    }
+    // Δ₀ = M₀ = F.
+    let mut delta = model.clone();
+    let mut t = 0u64;
+    loop {
+        if t == k_max {
+            return (tick_of, Stop::Budget(k_max));
+        }
+        t += 1;
+        let mut next = Rel::new();
+        for r in rules {
+            let mut env = vec![None; r.vars];
+            if r.pos.is_empty() {
+                // A rule with no positive body fires once, in round 1.
+                if t == 1 {
+                    Round { rule: r, model: &model, delta: &delta, delta_at: None, ctx }
+                        .join(0, &mut env, &mut next);
+                }
+                continue;
+            }
+            for i in 0..r.pos.len() {
+                Round { rule: r, model: &model, delta: &delta, delta_at: Some(i), ctx }
+                    .join(0, &mut env, &mut next);
+            }
+        }
+        if next.values().all(BTreeSet::is_empty) {
+            return (tick_of, Stop::Fixed(t));
+        }
+        for (p, tuples) in &next {
+            for args in tuples {
+                rel_insert(&mut model, p, args.clone());
+                tick_of.insert(Fact { pred: p.clone(), args: args.clone() }, t);
+            }
+        }
+        delta = next;
+    }
 }
 
 /// `E(P, F, k_max) → (M, D, stop)`.
-pub fn run(_program: &Program, _facts: &Facts, _k_max: u64) -> Result<Run, Dark> {
-    todo!("E: semi-naive core (audit §3.1)")
+pub fn run(program: &Program, facts: &Facts, k_max: u64) -> Result<Run, Dark> {
+    let rules: Vec<Compiled> = program.rules.iter().map(compile).collect();
+    let (ticks, stop) = least_model(&rules, &facts.atoms, k_max, None);
+    let tau = facts.altitude.as_str();
+    let mut model = BTreeMap::new();
+    let mut deposits = Vec::with_capacity(ticks.len());
+    for (f, t) in ticks {
+        let a = addr(tau, &f);
+        deposits.push(Deposit { addr: a, tick: t });
+        model.insert(a, f);
+    }
+    deposits.sort_by_key(|d| (d.tick, d.addr));
+    let model_addr = fragment(tau, MODEL_LABEL, model.keys().copied().collect::<Vec<_>>().into_iter());
+    Ok(Run { model, model_addr, deposits, stop, findings: Vec::new() })
 }
