@@ -53,7 +53,7 @@ Seam's FAILS split into two kinds:
 ### §2.1 Summary record
 
 ```text
-verdict     red
+verdict     fail
 target      "mirror.spec"
 shards      410
 lines       2311
@@ -181,17 +181,17 @@ comma(S, X, n)    :- uses_kind(S, X, n, k), not matches(X, n, k).               
 |---|---|---|
 | `success` | no finding with a verdict column in §2.1 | 0 |
 | `partial` | only holes, `name?`, Dark (undeclared, unbound), Opaque, gaps, unused lines | 1 |
-| `red` | any claim, line comma, twist, or `fractured ≠ expected` | 255 |
+| `fail` | any claim, line comma, twist, or `fractured ≠ expected` | 255 |
 | `dark` | any shard dark | 2 |
 
-The same table as compile §1.1 and `mirror love` (Alex default 5). Partial, red and dark are three codes.
+The same table as compile §1.1 and `mirror love` (Alex default 5). Partial, fail and dark are three codes. *[T1 (b)]* The record word is `fail`, as in compile; "red" is only the traffic-light reading, and the §2.1 verdict column below uses it in that sense.
 
 **The gate is a ruler, declared in `mirror.spec`** and approved by a human like any ruler (compile §10):
 
 ```text
 ruler @mirror/gate {
   tolerate   partial
-  refuse     red  dark
+  refuse     fail  dark
   fractured  1
 }
 ```
@@ -314,7 +314,7 @@ Against the binary, the way `rust/tests/pact_vectors.rs` drives `mirror pact eva
 **K4. The rules.**
 - `in @bogus` → `gap`, `partial`, exit 1.
 - The same file under `mirror compile` alone → no `gap` (compile can't know).
-- Two shards with `out @x` → `claim @x`, `red`, exit 255; a third shard's `in @x` → `opaque`.
+- Two shards with `out @x` → `claim @x`, `fail`, exit 255; a third shard's `in @x` → `opaque`.
 - A bare name exported by no in-target → `unbound`, `partial`.
 
 **K5. Line commas (kinds and arity).**

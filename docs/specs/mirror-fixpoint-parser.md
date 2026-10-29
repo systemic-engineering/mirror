@@ -48,7 +48,7 @@ Per `docs/specs/kintsugi-ci-v0.1.md` §1.4 (mirror-text is the default; JSON onl
 ```text
 verdict    success
 file       "mirror.mirror"
-start      <the start rule the parse used, e.g. @mirror/grammar.shard>
+start      <the start rule the parse used, e.g. @mirror.shard>
 root       <addr(N), 64 hex, BLAKE3>
 source     <addr of the source lens, 64 hex>
 erasure    <addr(ε), 64 hex>
@@ -56,7 +56,7 @@ interface  <addr(I(N)), 64 hex: the shard's stalk, §1.3>
 git        <git object id of g(root): 40 hex (sha1 repo) or 64 hex (sha256 repo)>
 uuid       <uuid_spectral, 32 hex, no hyphens (not an RFC 9562 UUID; DECISION §12) >
 active     unsigned
-crystals   <number of distinct splinters in the DAG>
+crystals   <number of distinct splinters reachable from root: fragments + atoms, §7>
 holes      <number of `\` occurrences in N>
 undefined  <number of undefined (e, i) atoms in the start atom's dependency cone>
 undeclared <number of code-line references to @X with no `in @X`, §1.3>
@@ -85,7 +85,7 @@ at         <path in N>
 `verdict` is the oriented ternary plus dark:
 - `success`: no holes, no undefined atoms, no Dark lines;
 - `partial`: holes, undefined atoms or Dark lines, all named. *[Alex 10-29, second round]* An **undeclared reference is a Dark line**: it points into what compile can't see (nothing looked). A hole is Opaque (a question asked). Success lines plus a Dark line compose to `partial`;
-- `fail`: a pact or property the shard states about itself evaluates false (the verdict chain that runs after stage 5);
+- `fail`: a pact or property the shard states about itself evaluates false (the verdict chain that runs after stage 5). *[T1 (b)]* **`fail` is the record word**, in compile and in kintsugi alike (the family success / partial / fail / dark, as in `kintsugi-ci-v0.1.md`). "Red" is the traffic-light *reading* of `fail` and of `mirror love`'s third state, never a value printed in a `verdict` field;
 - `dark`: the input could not be read at all.
 
 **Exit codes** *[A5; Seam 10]*: one table for compile, kintsugi and `mirror love` (which already maps Green → 0, Yellow → 1, Red → 255, `rust/src/main.rs`, the block after `fn cmd_love`):
@@ -94,7 +94,7 @@ at         <path in N>
 |---|---|
 | `success` | 0 |
 | `partial` | 1 |
-| `fail` (red) | 255 |
+| `fail` | 255 |
 | `dark` | 2 |
 
 - Partial, red and dark are three different codes, so CI can tell an honest hole from a disagreement.
@@ -116,6 +116,7 @@ at         <path in N>
 - **Plain `mirror compile <file>` is `--stage 1`.** It is the parser the substrate trusts once the engine exists. Before `E` exists, plain compile is red: it does not silently fall back to the seed.
 - On any file, `mirror.mirror` included, the parser reads the file under its format grammar (`@mirror` unless `--in <format>` names another, §9) and prints one §1.1 record. Nothing is special about `mirror.mirror` except that it *is* the `@mirror` grammar.
 - **Start** *[Seam 8, 9; Alex 10-29 second round]*: `--start <@grammar.rule>` names it. Without it, the format's **default start** is used, pinned per format by this spec: for `@mirror`, the exported rule `shard` (`mirror.mirror` must export a rule of that name); for `@data/json`, `value`; for `@data/mirror-text`, `records`. The record's `start` field says which was used. A format with no pinned default and no `--start` reads as `partial` with the hole "start?".
+- *[T1 (f)]* **Every option takes its value in either form**, `--stage 0` or `--stage=0` (likewise `--start`, `--in`, `--out`). The two spellings parse to the same option and print the same record. An option given twice is an error, never last-wins.
 - Consequence for T1.4: comparing plain against `--stage 1` compares a thing with itself. T1.4 compares **`--stage 0` against `--stage 1`** (amended below).
 
 ### §1.3 The interface, and the one lint compile owns *[10-29]*
@@ -169,7 +170,7 @@ This spec does not write `mirror.mirror`. It states what the file must contain f
 7. **`split` as syntax.** The verb exists in the grammar (math §4.2–4.3: choice needs it). Its semantics on the spectral triple live in prismqueer.
 8. **Ruler positions.** `settle`'s `by:` and every threshold or bin position accept an `@ruler` reference (§10). Until `@ruler` lands, a bare number in a ruler position reads as `Opaque` ("whose ruler?"), mirror-005's rule.
 9. **Holes.** `\` is an atom, valid wherever a body or value is expected, and never reduced (math §3.4). Each hole has a **question** and an **occurrence** (§5.1).
-10. *[T1; Alex 10-29 second round; Seam 9]* **The start rule is named, never positional, and it is what the grammar exports.** No new keyword: a grammar's entry points are its exported rules (`out <rule>`), and the caller names one (`@mirror/grammar.shard`). The closure derives every rule at every position at once, so the start is the question an observer puts to it. **Start candidates = exported names whose declaration is a rule** (kind `rule`); an exported keyword or sigil (`out in`, `out @`, `out #` in `boot/`) is kind `keyword` and never a start. Order stays out of meaning, so T1.3 holds. The start is an input to compile (§1), not part of the grammar's `root`.
+10. *[T1; Alex 10-29 second round; Seam 9]* **The start rule is named, never positional, and it is what the grammar exports.** No new keyword: a grammar's entry points are its exported rules (`out <rule>`), and the caller names one (`@mirror.shard`). *[T1 (a)]* **A rule's qualified name is `<grammar name>.<rule>`**: `grammar @mirror { … }` (item 1) gives `@mirror.shard`, the same `@X.name` form as any reference (§1.3). `@mirror/grammar` is the legacy `boot/std/mirror/grammar.mirror` grammar, a different name (slated to become `@mirror/prism`), and never the qualifier of `mirror.mirror`'s rules. The closure derives every rule at every position at once, so the start is the question an observer puts to it. **Start candidates = exported names whose declaration is a rule** (kind `rule`); an exported keyword or sigil (`out in`, `out @`, `out #` in `boot/`) is kind `keyword` and never a start. Order stays out of meaning, so T1.3 holds. The start is an input to compile (§1), not part of the grammar's `root`.
 
 ---
 
@@ -260,7 +261,8 @@ Layout (math Def. 7.3; bytes pinned *[T1]* against §5.0):
 - atom → blob, payload **`τ ‖ enc(content)`**, so `addr = H("splinter\0" ‖ payload)`;
 - fragment → tree: entry `@` (blob, payload **`τ ‖ enc(ℓ)`**), then the children as numbered entries, modes `100644` / `040000`;
 - lens → tree: `@` (same payload shape), then `^`-prefixed numbered entries for the targets;
-- **child-entry width** *[T1]*: a fixed width per tree, `w = max(3, number of decimal digits of k − 1)`. So `000 … 009` for ten children and `0000 … 1233` for 1234. Fixed width makes git's byte order of entry names the child order, and the minimum of 3 is the `000` the example always showed. ("Width of the largest index" and "fixed width per tree" now say the same thing.);
+- *[T1 (c)]* **The `τ` in a tree's `@` payload is the fragment's (or lens's) own altitude**: the same `τ` that is in its address preimage (§5.0), never a separate "label altitude". So an `@` payload and an atom blob can be byte-identical (equal `τ`, and `enc(ℓ)` equal to `enc(content)`), and then git stores **one** blob for both. That is git's dedup, and it is harmless: addresses differ by kind prefix (`fragment\0` vs `splinter\0`), and the read path tells them apart by **position** (the `@` entry is always the header; a numbered entry is always a child). A walk never reads an `@` blob as a child atom.
+- **child-entry width** *[T1]*: a fixed width per tree, `w = max(3, number of decimal digits of k − 1)`. *[T1 (e)]* For `k = 0` there are no numbered entries, so no width is used; by convention `w(0) = 3`. A fragment with no children (or a lens with no targets) is a tree whose only entry is `@`. So `000 … 009` for ten children and `0000 … 1233` for 1234. Fixed width makes git's byte order of entry names the child order, and the minimum of 3 is the `000` the example always showed. ("Width of the largest index" and "fixed width per tree" now say the same thing.);
 - **the read path's re-encoding**: for a tree, `addr = H(kind ‖ @payload ‖ u64(number of numbered entries) ‖ addr(child₀) ‖ …)` with `kind` = `fragment\0` or `lens\0` by entry prefix, children taken in entry order, each child's `addr` computed recursively; for a blob, `addr = H("splinter\0" ‖ blob)`. Every `@` payload starts with `@` (the first byte of `τ`), which is what `9dbcb13`'s T1.5 asserts;
 - objects are written into the repository's own object database (`git hash-object -w`, `git mktree`), in the repository's object format (SHA-1 or SHA-256).
 
@@ -361,6 +363,8 @@ Rulers to declare once `@ruler` exists (math §9): the commutator thresholds `1e
 | 18 | *[10-29]* number type. **Default [A6]:** `μ` declares a number type per position: data positions `exact` (ℚ; `1 ≡ 1.0`; spelling to erasure), typed positions keep their type (an `f64` field prints as a float; `int` positions make `arity 1.0` a hole). Unmarked = `exact` | Alex | default adopted | §9.1; 10-29 math §7 |
 | 19 | *[T1]* byte encoding (`u64` big-endian lengths, `τ` layout, stored payloads, child width) | — (spec) | as §5.0, §7 | Prop. 1.1 |
 | 20 | *[10-29]* undeclared. **Decided (Alex 10-29):** Dark at the line, `partial` for the document. **Exits [A5]:** success 0, partial 1, red 255, dark 2; gate tolerance is a ruler in `mirror.spec` | Alex | decided / default | §1.1, §1.3 |
+| 23 | *[T1 (d)]* `crystals` = the number of distinct splinter addresses reachable from `g(root)`: fragments (trees) and atoms (blobs at numbered entries). `@` blobs are headers, not splinters, and are not counted. Lenses are not reachable from `g(root)` (the source lens points *at* the root), so they are not counted either | — (spec) | as stated; matches `0a7fc73`'s walk | Prop. 7.4 |
+| 24 | *[T1]* rows 9 and 17–23 settle the six T1 ambiguities: (a) `@mirror.shard`; (b) `fail` is the record word; (c) `@` payload `τ` = the fragment's own; (d) `crystals` as row 23; (e) `w(0) = 3`, no entries; (f) `--opt v` and `--opt=v` both. Row 9 is decided (b), boundary Rust (`aaa41e3a`). **The commit gate returns with kintsugi v0, not with T1** (`4e8c3d6c`'s Justfile comment): T1 is a gated acceptance test of compile; the gate is `mirror kintsugi mirror.spec` under `ruler @mirror/gate` | — (record) | — | — |
 | 22 | *[Seam 8]* compile's cache key `(addr(grammar), start, bytes)`; default start per format pinned (§1.2′; `@mirror` → `shard`) | — (spec) | as §1, §1.2′ | — |
 | 21 | *[10-29]* `in @X` covers exactly `@X`, not `@X/…` | Alex | exact (stalk completeness) | 10-29 math Prop. 4.2 |
 | 12 | prismqueer `lib.rs` docstring "project — the lossy transformation" vs. §7b″ "project is emission" | prism-Reed | fix the docstring | §3.3 |
