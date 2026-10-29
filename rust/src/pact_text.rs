@@ -11,9 +11,13 @@
 //! retires when `E(G_pact)` reads the same fixtures, and is never extended
 //! in place. Anything outside the grammar is `dark` at its line and column.
 //!
-//! Exit codes (audit §1.4): 0 clear, 1 opaque, 255 refused (a definite
-//! functional violation on `true`), 2 dark. Usage errors print to stderr,
-//! no record, exit 2.
+//! Verdicts and exit codes (audit §1.4, amended by Alex 2026-10-29:
+//! "refused is Dark. The illumination was declined. … The discoball is
+//! selective."): `clear` 0, `opaque` 1, `dark` 2 (the bytes or the program
+//! don't read; `shaped_by none`), and `dark` 255, a *selected* Dark: a
+//! definite functional violation on `true`, whose `shaped_by` names the
+//! declining declaration(s) by surface text. `refused` is never printed.
+//! Usage errors print to stderr, no record, exit 2.
 
 use engine::{
     Atom, Const, Dark, Fact, Facts, Functional, Instance, Literal, NormalProgram, NormalRule,
@@ -63,6 +67,9 @@ struct Summary {
     undefined_lines: Vec<String>,
     false_lines: Vec<String>,
     findings: Vec<String>,
+    /// The declarations that declined the illumination: those whose
+    /// predicate has a finding on `true`, as surface text, sorted.
+    declined: Vec<String>,
     outcome: Outcome,
 }
 
@@ -89,14 +96,16 @@ impl Record {
         let mut out = String::new();
         match self {
             Record::Dark(why) => {
+                // Unreadable: nothing selected it, so nothing shaped it.
                 kv(&mut out, "verdict", "dark");
                 kv(&mut out, "file", &quote(path));
+                kv(&mut out, "shaped_by", "none");
                 kv(&mut out, "dark", why);
                 (out, 2)
             }
             Record::Done(s) => {
                 let (verdict, exit) = if !s.findings.is_empty() {
-                    ("refused", 255)
+                    ("dark", 255) // a selected Dark: the illumination was declined
                 } else if s.outcome == Outcome::Opaque {
                     ("opaque", 1)
                 } else {
@@ -104,8 +113,14 @@ impl Record {
                 };
                 kv(&mut out, "verdict", verdict);
                 kv(&mut out, "file", &quote(path));
-                // W runs to its fixed point: no ruler shaped this result.
-                kv(&mut out, "shaped_by", "none");
+                if s.findings.is_empty() {
+                    // W runs to its fixed point: no ruler shaped this result.
+                    kv(&mut out, "shaped_by", "none");
+                } else {
+                    for d in &s.declined {
+                        kv(&mut out, "shaped_by", d);
+                    }
+                }
                 kv(&mut out, "true", &s.true_lines.len().to_string());
                 kv(&mut out, "undefined", &s.undefined_lines.len().to_string());
                 kv(&mut out, "findings", &s.findings.len().to_string());
@@ -177,6 +192,17 @@ fn evaluate(bytes: &[u8]) -> Record {
         .collect();
     false_lines.sort();
     false_lines.dedup();
+    // A finding names a predicate, not a declaration, so every declaration
+    // on a violated predicate is listed as declining.
+    let violated: BTreeSet<&str> = w.findings.iter().map(|v| v.pred().as_str()).collect();
+    let mut declined: Vec<String> = read
+        .decls
+        .iter()
+        .filter(|(d, _)| violated.contains(d.pred.as_str()))
+        .map(|(d, _)| render_decl(d))
+        .collect();
+    declined.sort();
+    declined.dedup();
     let findings = w
         .findings
         .iter()
@@ -196,8 +222,20 @@ fn evaluate(bytes: &[u8]) -> Record {
         undefined_lines: listed(&w.undefined),
         false_lines,
         findings,
+        declined,
         outcome: w.outcome,
     })
+}
+
+/// A declaration's surface text: `functional p(1, 2) -> 3`.
+fn render_decl(d: &Functional) -> String {
+    let key: Vec<String> = d.key.iter().map(|p| p.get().to_string()).collect();
+    format!(
+        "functional {}({}) -> {}",
+        d.pred.as_str(),
+        key.join(", "),
+        d.value.get()
+    )
 }
 
 /// An engine `Dark`, named in the file's terms where the file says where.
