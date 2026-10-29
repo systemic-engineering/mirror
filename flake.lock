@@ -58,31 +58,11 @@
         "type": "github"
       }
     },
-    "prism": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1792427730,
-        "narHash": "sha256-GmxYTolr1Q6rcGgylwL1ZQwA7GBtYNUSJYgDJNDyBLY=",
-        "ref": "refs/heads/main",
-        "rev": "7e6b00f8f6900a4df41cbf4574e30442569f72d9",
-        "revCount": 285,
-        "submodules": true,
-        "type": "git",
-        "url": "ssh://git@github.com/systemic-engineering/prism"
-      },
-      "original": {
-        "rev": "7e6b00f8f6900a4df41cbf4574e30442569f72d9",
-        "submodules": true,
-        "type": "git",
-        "url": "ssh://git@github.com/systemic-engineering/prism"
-      }
-    },
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
         "flakes": "flakes",
-        "nixpkgs": "nixpkgs",
-        "prism": "prism"
+        "nixpkgs": "nixpkgs"
       }
     },
     "rust-overlay": {

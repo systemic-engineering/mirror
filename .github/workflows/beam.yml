@@ -28,16 +28,6 @@ jobs:
       - name: the commit, as an input
         run: printf 'commit %s\ntree %s\n' "$(git rev-parse HEAD)" "$(git rev-parse 'HEAD^{tree}')" > commit.txt
 
-      # prism and its `imperfect` submodule are private. The flake pins prism
-      # as a git+ssh input; nix fetches it with git, so rewrite both URL forms
-      # (ssh:// and the scp-style submodule URL) to HTTPS with a read token.
-      - name: read access to prism
-        env:
-          TOKEN: ${{ secrets.PRISM_READ_TOKEN }}
-        run: |
-          git config --global url."https://x-access-token:${TOKEN}@github.com/".insteadOf "ssh://git@github.com/"
-          git config --global --add url."https://x-access-token:${TOKEN}@github.com/".insteadOf "git@github.com:"
-
       # TODO pin by SHA once spectral-beam's action.yml is pushed to main.
       - id: mirror
         uses: systemic-engineering/spectral-beam@main

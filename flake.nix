@@ -12,16 +12,9 @@
     flakes.inputs.nixpkgs.follows = "nixpkgs";
     flakes.inputs.flake-utils.follows = "flake-utils";
 
-    # prism, pinned to the same rev as rust/*/Cargo.toml (keep the two in
-    # step). Fetched by nix's git, which reads the scp-style `imperfect`
-    # submodule URL that cargo can't parse (prism-003).
-    prism = {
-      url = "git+ssh://git@github.com/systemic-engineering/prism?rev=7e6b00f8f6900a4df41cbf4574e30442569f72d9&submodules=1";
-      flake = false;
-    };
   };
 
-  outputs = { self, nixpkgs, flake-utils, flakes, prism }:
+  outputs = { self, nixpkgs, flake-utils, flakes }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
@@ -35,7 +28,16 @@
             pname = "mirror";
             version = "0.1.0";
             src = ./rust;
-            cargoLock.lockFile = ./rust/Cargo.lock;
+            # Cargo.lock is the single source of truth for prism's rev (no
+            # separate flake input to keep in step). nix vendors the git deps
+            # itself, the `imperfect` submodule included; prism is public, so
+            # no credentials. On a prism bump, update this hash too.
+            cargoLock = {
+              lockFile = ./rust/Cargo.lock;
+              outputHashes = {
+                "prismqueer-0.1.1" = "sha256-k9D9eHlnQlr0J/h/jtAZ/8srDN4I341YK3o291xNmfM=";
+              };
+            };
 
             nativeBuildInputs = [ pkgs.gfortran ];
             buildInputs = [ pkgs.lapack pkgs.blas ]
@@ -44,21 +46,6 @@
             FC = "gfortran";
             LAPACK_DIR = "${pkgs.lapack}";
             BLAS_DIR = "${pkgs.blas}";
-
-            # Resolve the pinned git deps from the prism input instead of
-            # fetching inside the build (no network in the sandbox). The copy
-            # is writable because prismqueer's build.rs lets gfortran write
-            # its .mod files into the source dir (prism-003).
-            postPatch = ''
-              cp -r ${prism} "$NIX_BUILD_TOP/prism"
-              chmod -R u+w "$NIX_BUILD_TOP/prism"
-              mkdir -p .cargo
-              cat >> .cargo/config.toml <<EOF
-              [patch."ssh://git@github.com/systemic-engineering/prism.git"]
-              prismqueer = { path = "$NIX_BUILD_TOP/prism/prismqueer" }
-              terni = { path = "$NIX_BUILD_TOP/prism/imperfect" }
-              EOF
-            '';
 
             # The suite carries two RED-by-design batteries (red_spec_claims,
             # fire_d_measure); tests run in the devshell, not here.

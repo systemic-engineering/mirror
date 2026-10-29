@@ -129,6 +129,7 @@ checksum = "68ab91017fe16c622486840e4c83c9a37afeff978bd239b5293d61ece587de66"
 [[package]]
 name = "prismqueer"
 version = "0.1.1"
+source = "git+https://github.com/systemic-engineering/prism.git?rev=26ed54baf381ceae298a3be6f9e3ad9c5f3e0d34#26ed54baf381ceae298a3be6f9e3ad9c5f3e0d34"
 dependencies = [
  "hex",
  "prismqueer-projections",
@@ -139,6 +140,7 @@ dependencies = [
 [[package]]
 name = "prismqueer-projections"
 version = "0.1.0"
+source = "git+https://github.com/systemic-engineering/prism.git?rev=26ed54baf381ceae298a3be6f9e3ad9c5f3e0d34#26ed54baf381ceae298a3be6f9e3ad9c5f3e0d34"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -194,6 +196,7 @@ dependencies = [
 [[package]]
 name = "terni"
 version = "0.7.0"
+source = "git+https://github.com/systemic-engineering/prism.git?rev=26ed54baf381ceae298a3be6f9e3ad9c5f3e0d34#26ed54baf381ceae298a3be6f9e3ad9c5f3e0d34"
 dependencies = [
  "terni-macros",
 ]
@@ -201,6 +204,7 @@ dependencies = [
 [[package]]
 name = "terni-macros"
 version = "0.7.0"
+source = "git+https://github.com/systemic-engineering/prism.git?rev=26ed54baf381ceae298a3be6f9e3ad9c5f3e0d34#26ed54baf381ceae298a3be6f9e3ad9c5f3e0d34"
 dependencies = [
  "proc-macro2",
  "quote",
