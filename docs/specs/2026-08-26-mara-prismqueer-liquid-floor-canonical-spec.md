@@ -13,7 +13,7 @@ companions:
   - ./liquid-types-for-mirror.md
   - ./2026-08-19-mara-recognition-90-compiler-as-one-mathematical-object-canonical-spec.md
 karen_ancestors:
-  - "Wolf, Anna (née Jakobs). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS, 2012. Consent obtained via Alex 2026-08-26."
+  - "Jakobs, Anna. *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS, 2012. Consent obtained via Alex 2026-08-26."
   - "Rondon, Kawaguchi, Jhala (2008). *Liquid Types.* PLDI."
   - "Chamseddine, Connes (2007). *Why the Standard Model.* arXiv:0706.3688."
   - "Adzic (2011). *Specification by Example.* Manning."

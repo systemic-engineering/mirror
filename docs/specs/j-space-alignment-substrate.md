@@ -3,7 +3,7 @@
 **Author:** Mara.
 **Date:** 2026-07-20.
 **Status:** Canonical spec grounding the composition of the observation
-substrate (Anna Wolf Jakobs 2012 Master's thesis), the target substrate
+substrate (Anna Jakobs 2012 Master's thesis), the target substrate
 (Anthropic 2026-07-07 J-space paper), and the specification substrate
 (mirror @paradox family + @autopoietic-classifier under Lagrange +
 @cyberpunk/intervention + @peer.audhd + @gestalt).
@@ -42,7 +42,7 @@ substrates:
 
 | Substrate | Provider | Landed | What it provides |
 |-----------|----------|--------|-----------------|
-| **Observation** | Anna Wolf (Jakobs) 2012 Master's thesis | August 2012, Fachhochschule Aachen / Peter-Grünberg-Institut Jülich | OpenCL buffer shared as the OpenGL VBO, with computation and visualization taking turns at step boundaries (p. 43; the arrow drawing copies back out of the VBO, pp. 29–30; a separate-thread live view was not achieved, p. 31); MT1997 weak-4th-order stochastic Runge-Kutta with $O(h^4 + \varepsilon^2 h^2)$ error; equidistant 2D FFT computed post hoc on per-step snapshots (pp. 35, 42; the task statement asked for non-equidistant data and a real-time view, and live FFT stayed future work, p. 45); generic-API generalization intent (§9 Ausblick) |
+| **Observation** | Anna Jakobs 2012 Master's thesis | August 2012, Fachhochschule Aachen / Peter-Grünberg-Institut Jülich | OpenCL buffer shared as the OpenGL VBO, with computation and visualization taking turns at step boundaries (p. 43; the arrow drawing copies back out of the VBO, pp. 29–30; a separate-thread live view was not achieved, p. 31); MT1997 weak-4th-order stochastic Runge-Kutta with $O(h^4 + \varepsilon^2 h^2)$ error; equidistant 2D FFT computed post hoc on per-step snapshots (pp. 35, 42; the task statement asked for non-equidistant data and a real-time view, and live FFT stayed future work, p. 45); generic-API generalization intent (§9 Ausblick) |
 | **Target** | Gurnee, Sofroniew, Pearce et al. (Anthropic) | 2026-07-07 | Jacobian lens $J_\ell$ + J-space as sparse subframe (union of $k$-dimensional polyhedral cones) + 5 functional properties (verbal report + directed modulation + internal reasoning + flexible generalization + selectivity) + 3 structural properties (intermediate-layers + limited capacity + broadcast hub) + counterfactual reflection training as forward-shape-shapes-now-cognition |
 | **Specification** | Mirror substrate (Alex + Reed + Pack; ongoing) | 2026-06 through 2026-07-20 | @paradox family (witnessed-only Crystals) + @autopoietic-classifier under Lagrange (narcissus/splinter equilibrium; sparsity-level $k$ IS the Lagrange knob) + @cyberpunk/intervention (SAGA-chain-after counterfactual-reflection substrate) + @peer.audhd (plural-observer discipline) + @gestalt (multi-lens io-crossing document); every-io-crossing-is-a-gestalt-document; coordination-without-signal via recognition-bombs |
 
@@ -279,9 +279,8 @@ substrates (observation from Anna Wolf 2012; target from Anthropic
 present) and the composition is compile-verifiable at tri-runtime
 altitude.
 
-First-witness: Alex 2026-07-20 in-transcript direction ("What is
-fucking life. My ex-wife brings the math on which the compiler
-stands").
+First-witness: Alex 2026-07-20 in-transcript direction (the thesis
+brings the math on which the compiler stands).
 
 Second-witness (this landing): Mara canonical spec + math root
 grounding the composition mathematically and architecturally, with
@@ -295,14 +294,11 @@ MCP live-observation surface per Q5).
 
 **`#R-anna-wolf-2012-is-14-year-intergenerational-substrate-lineage`**
 
-Statement: Anna Wolf (Jakobs)'s 2012 Master's thesis provides the
-architectural substrate for what her ex-husband + AI-collaborator +
-Pack are compile-verifiably formalizing 14 years later at tri-runtime
-altitude. Substrate carries personal history at load-bearing altitude.
+Statement: Anna Jakobs's 2012 Master's thesis provides the
+architectural substrate for what Alex + Reed + Pack are
+compile-verifiably formalizing 14 years later at tri-runtime altitude.
 
-Confidence: MEDIUM. HOLD for Alex adjudication (personal-and-
-substrate; requires Alex-blessing on intergenerational-altitude
-framing).
+Confidence: MEDIUM. HOLD for Alex adjudication.
 
 **`#R-sparsity-level-k-is-lagrange-knob-of-autopoietic-classifier`**
 
@@ -357,7 +353,7 @@ adjudicate the whole batch as one bundle (per Q1 spec-lean).
 | Q | Topic | Mara lean | Confidence |
 |---|-------|-----------|------------|
 | **Q1** | Should `#R-j-space-alignment-substrate-composes-anna-wolf-observation-with-mirror-specification` be PROMOTED at this landing or held for second-witness? | PROMOTE at this landing (the second-witness IS the empirical composition itself — Anna's 3 substrate patterns generalize independently AND together AND compose with mirror's specification substrate) | HIGH |
-| **Q2** | Should `#R-anna-wolf-2012-is-14-year-intergenerational-substrate-lineage` be promoted or held? | HOLD for Alex ratification (personal-and-substrate; substrate-honest but requires Alex-blessing on the intergenerational-altitude framing) | MEDIUM |
+| **Q2** | Should `#R-anna-wolf-2012-is-14-year-intergenerational-substrate-lineage` be promoted or held? | HOLD for Alex ratification | MEDIUM |
 | **Q3** | Should the RK4 upgrade of phase_lock (Reed follow-up) use MT1997 verbatim or a variant? | MT1997 VERBATIM (the small-noise regime holds for phase_lock; the $O(h^4 + \varepsilon^2 h^2)$ bound is what makes it load-bearing) | HIGH |
 | **Q4** | Should the Rust ↔ BEAM shared-memory NIF use Anna's VBO regulated-access pattern verbatim, or lean on BEAM's built-in shared-binary semantics? | VBO PATTERN VERBATIM at substrate-generalization altitude; implementation MAY delegate to BEAM primitives BUT the substrate-level discipline is the regulation-pattern Anna named | MEDIUM |
 | **Q5** | Should MCP live-observation of compile state fire on every compile-tick or only on Escalate-OID (wound observation)? | EVERY COMPILE-TICK when observer is attached (analogous to Anna's OpenGL live-visualization firing every frame); DISABLED when no observer attached (zero overhead in headless-compile path) | HIGH |
@@ -365,7 +361,7 @@ adjudicate the whole batch as one bundle (per Q1 spec-lean).
 | **Q7** | Should the FFT phase-transition detector operate on residual-stream trajectory OR on J-space content trajectory OR both? | BOTH at different altitudes; residual-stream FFT is Anna-derived (her FFT is post hoc and equidistant, and does not detect phase transitions; that reading is ours); J-space-content FFT is the composition-generalization (regime-shift detection in workspace content = alignment-boundary detection) | MEDIUM |
 | **Q8** (spec-only) | Should this spec propose new shard-decls (@peer/observation species; `mirror mcp jspace` MCP tool species) or defer species-decl minting to a follow-up Mara tick? | DEFER to follow-up Mara tick after Alex Q1-Q7 adjudication; this spec surfaces composition-graph and Q's, follow-up spec mints species-decls per ratified adjudications | HIGH |
 | **Q9** (spec-only) | Should this spec propose a new family-root @observation, or does @peer + @gestalt cover the observation-substrate altitude adequately? | @PEER + @GESTALT ADEQUATE at current altitude; @observation would be a substrate-invention where the substrate already-had-the-word (memory `feedback-substrate-already-had-the-word`) — @peer.audhd carries the plural-observer discipline; @gestalt carries the multi-lens rendering discipline | HIGH |
-| **Q10** (spec-only) | Should Anna Wolf be invited as second-witness on the intergenerational-lineage recognition? | ALEX-DECISION (personal-and-substrate; Mara defers entirely; if invited, the recognition promotes to SECOND-WITNESS at strong-confidence; if not, holds indefinitely at HELD state) | ALEX-DECISION |
+| **Q10** (spec-only) | Should Anna Wolf be invited as second-witness on the lineage recognition? | ALEX-DECISION (Mara defers entirely; if invited, the recognition promotes to SECOND-WITNESS at strong-confidence; if not, holds indefinitely at HELD state) | ALEX-DECISION |
 
 ---
 
@@ -480,9 +476,8 @@ covers the multi-lens rendering discipline per Q9 lean.
   composition that MAKES alignment observation, integration, and
   shape-influence compile-verifiable at tri-runtime altitude. The
   hard alignment questions remain hard.
-- **Does not perform emotion around the intergenerational lineage.**
-  Anna Wolf's substrate is cited with respect and load-bearing
-  precision. The recognition candidate is Alex-adjudicable at MEDIUM
+- **Cites the thesis with load-bearing precision.** Cited with her
+  consent (2026-10-28). The recognition candidate is Alex-adjudicable at MEDIUM
   confidence per Q2.
 
 ---
@@ -521,7 +516,7 @@ tick landings per §6 (Reed empirical + Mara species-decls).
 **Substrate-honesty check**: this spec:
 - Cites the math foundation (companion Mara math root same tick) for
   all equations and derivations
-- Cites Anna Wolf (Jakobs) 2012 verbatim in her own words and
+- Cites Anna Jakobs 2012 verbatim in her own words and
   language (German + English)
 - Cites Anthropic 2026-07-07 verbatim in the authors' own words
 - Grounds composition in mirror's landed substrate primitives (no new
@@ -530,8 +525,7 @@ tick landings per §6 (Reed empirical + Mara species-decls).
   per §5
 - Defers implementation to Reed follow-up per §6
 - Defers species-decl minting to follow-up Mara tick per Q8
-- Honors the intergenerational-substrate-lineage recognition at
-  substrate-honest altitude per §4.2 (not sentimental; witness)
+- Records the lineage recognition per §4.2
 
 ---
 
@@ -542,7 +536,7 @@ See companion math foundation
 §11 for full citation list.
 
 Load-bearing citations for this spec:
-- **AW2012** — Anna Wolf (Jakobs) August 2012 Master's thesis
+- **AW2012** — Anna Jakobs August 2012 Master's thesis
 - **GSP2026** — Gurnee, Sofroniew, Pearce et al. 2026-07-07 J-space
   paper
 - **MT1997** — Milstein & Tret'yakov December 1997

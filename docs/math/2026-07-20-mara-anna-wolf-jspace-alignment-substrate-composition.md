@@ -2,8 +2,7 @@
 
 **Author:** Mara.
 **Date:** 2026-07-20.
-**Status:** Math foundation composing the observation substrate (Anna Wolf
-Jakobs 2012 Master's thesis, Fachhochschule Aachen /
+**Status:** Math foundation composing the observation substrate (Anna Jakobs 2012 Master's thesis, Fachhochschule Aachen /
 Peter-Grünberg-Institut Jülich) with the target substrate (Anthropic
 2026-07-07 Gurnee et al. "Verbalizable Representations Form a Global
 Workspace in Language Models") through mirror's specification substrate
@@ -12,15 +11,14 @@ Workspace in Language Models") through mirror's specification substrate
 **Companion canonical spec:** `docs/specs/j-space-alignment-substrate.md`
 (Mara same tick).
 **Pure-docs 📝 markdown-only bypass.**
-**Load-bearing personal-and-substrate anchor:** Anna Wolf (née Jakobs)
-is Alex Wolf's ex-wife. Her thesis is dated August 2012. The
+**Load-bearing anchor:** [personal detail removed, 2026-10-29] Her thesis is dated August 2012. The
 architectural substrate she authored 14 years ago — zero-copy shared
 VBO memory between OpenCL compute + OpenGL visualization, weak 4th-order
 Runge-Kutta SDE integration with small noise — is the same substrate
 Alex + Reed + Pack are now compile-verifiably formalizing for J-space
 alignment observation at tri-runtime altitude. Recognition candidate
 `#R-anna-wolf-2012-is-14-year-intergenerational-substrate-lineage`
-(see §9). Cite with respect. Not maudlin — witness.
+(see §9). Cited with her consent (2026-10-28).
 
 ---
 
@@ -97,7 +95,7 @@ Let:
 
 ---
 
-## §2 Anna Wolf (Jakobs) 2012 — the SDE substrate she brought
+## §2 Anna Jakobs 2012 — the SDE substrate she brought
 
 ### §2.1 The Landau-Lifshitz-Gilbert stochastic differential equation (AW2012 §B.1)
 
@@ -789,8 +787,7 @@ observers because they're reading consistent state.
 
 ## §9 Recognition candidate: `#R-anna-wolf-2012-is-14-year-intergenerational-substrate-lineage`
 
-Anna Wolf (née Jakobs) is Alex Wolf's ex-wife. Her thesis is dated
-August 2012.
+[personal detail removed, 2026-10-29] Her thesis is dated August 2012.
 
 In 2012 the substrate she was authoring — under Prof. Dr. Martin
 Reißel at Fachhochschule Aachen, with Josef Heinen at
@@ -802,21 +799,17 @@ Peter-Grünberg-Institut / Jülich Centre for Neutron Science — solved:
 4. The generic-API generalization intent (§9 Ausblick)
 
 In 2026, 14 years later, that same substrate provides the
-architectural template for what her ex-husband + his AI-collaborator
-(Reed) + Pack (Mara / Seam / Taut / Glint) are formalizing at
+architectural template for what Alex + Reed + Pack (Mara / Seam / Taut / Glint) are formalizing at
 compile-verifiable substrate altitude for J-space alignment.
 
-**The intergenerational lineage is load-bearing**:
+**The lineage is load-bearing**:
 - Anna's numerical + architectural substrate is the *observation*
   layer of the composition
 - Alex + Reed's mirror substrate is the *specification* layer
 - The Anthropic team's J-space paper is the *target* layer
-- Composition happens across generations, across research
-  communities, and across relationship-histories
+- Composition happens across research communities
 
-**This is substrate-honesty at intergenerational altitude**: the
-substrate carries personal history at load-bearing altitude. Not
-sentimental — witness. Anna authored a substrate that solved a
+[personal detail removed, 2026-10-29] Anna authored a substrate that solved a
 problem in her domain (GPU spin dynamics for magnetic
 nano-structures) at Peter-Grünberg-Institut, where Peter Grünberg won
 the 2007 Nobel Prize for GMR — the effect that made modern hard-disk
@@ -840,7 +833,7 @@ with her.
 | Q | Topic | Mara lean | Confidence |
 |---|-------|-----------|------------|
 | **Q1** | Should `#R-j-space-alignment-substrate-composes-anna-wolf-observation-with-mirror-specification` be PROMOTED at this landing or held for second-witness? | PROMOTE at this landing (the second-witness is the empirical composition itself — Anna's 3 substrate patterns generalize independently AND together AND compose with mirror's specification substrate) | HIGH |
-| **Q2** | Should `#R-anna-wolf-2012-is-14-year-intergenerational-substrate-lineage` be promoted or held? | HOLD for Alex ratification (personal-and-substrate; substrate-honest but requires Alex-blessing on the intergenerational-altitude framing) | MEDIUM |
+| **Q2** | Should `#R-anna-wolf-2012-is-14-year-intergenerational-substrate-lineage` be promoted or held? | HOLD for Alex ratification | MEDIUM |
 | **Q3** | Should the RK4 upgrade of phase_lock (Reed follow-up) use MT1997 verbatim or a variant? | MT1997 VERBATIM (the small-noise regime holds for phase_lock; the $O(h^4 + \varepsilon^2 h^2)$ bound is what makes it load-bearing; deviation requires new empirical justification) | HIGH |
 | **Q4** | Should the Rust ↔ BEAM shared-memory NIF use Anna's VBO regulated-access pattern verbatim, or lean on BEAM's built-in shared-binary semantics? | VBO PATTERN VERBATIM at the substrate-generalization altitude (regulated per-region lock; per-tick snapshot); implementation MAY delegate to BEAM's shared-binary primitives BUT the substrate-level discipline is the regulation-pattern Anna named | MEDIUM |
 | **Q5** | Should MCP live-observation of compile state fire on every compile-tick or only on Escalate-OID (wound observation)? | EVERY COMPILE-TICK when observer is attached (analogous to Anna's OpenGL live-visualization firing every frame); DISABLED when no observer attached (zero overhead in headless-compile path) | HIGH |
@@ -852,7 +845,7 @@ with her.
 ## §11 References (canonical citation)
 
 ### Anna's lineage
-- **AW2012**: Anna Wolf (Jakobs), Master's thesis, August 2012.
+- **AW2012**: Anna Jakobs, Master's thesis, August 2012.
   "Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen."
   Supervisor: Prof. Dr. Martin Reißel + Josef Heinen (Peter-Grünberg-
   Institut / Jülich Centre for Neutron Science, JCNS).
@@ -934,9 +927,7 @@ with her.
 
 ## §12 Landing lineage
 
-**First-witness**: Alex 2026-07-20 in-transcript direction: "What
-is fucking life. My ex-wife brings the math on which the compiler
-stands."
+**First-witness**: Alex 2026-07-20 in-transcript direction: [personal detail removed, 2026-10-29]
 
 **Second-witness (this landing)**: Mara authoring the math composition
 grounding the observation substrate (Anna 2012) with the target
@@ -949,10 +940,10 @@ Rust ↔ BEAM shared-memory NIF; MCP live-observation surface);
 (c) Anna herself as second-witness if the composition is ever shared
 with her.
 
-**Substrate-honesty check**: this math root cites Anna Wolf (Jakobs)
+**Substrate-honesty check**: this math root cites Anna Jakobs
 in her own words (AW2012 verbatim German + English), cites the Anthropic
 team in theirs (GSP2026 verbatim), and grounds the composition in
 mirror's landed substrate primitives without inventing new family-roots.
 The `#R-anna-wolf-2012-is-14-year-intergenerational-substrate-lineage`
 recognition is proposed at MEDIUM confidence with explicit Alex-hold
-per §10 Q2. Personal-and-load-bearing. Not maudlin — witness.
+per §10 Q2. [personal detail removed, 2026-10-29]

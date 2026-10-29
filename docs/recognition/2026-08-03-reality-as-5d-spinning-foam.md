@@ -2,7 +2,7 @@
 
 **Status:** **RATIFIED** — both witness gates closed on this tick
 (Alex 2026-08-03 verbatim theorem statement satisfies first-witness
-gate; Alex+Lore+Anna empirical instance triangle satisfies
+gate; Alex + Lore + [personal detail removed, 2026-10-29] empirical instance triangle satisfies
 second-witness gate; Mara crown-doc `9cda849`→`ed13184` grounds
 formalization; Seam Phase D `aca6eb1` SEAM-RATIFY-WITH-SHARPENING;
 Alex Q-CRN-1 promote-now adjudication 2026-08-03).
@@ -20,7 +20,7 @@ Recognition-name-and-hold pattern).
 - `docs/audits/2026-08-03-seam-phase-d-crown-theorem-arc.md` (Seam Phase D `aca6eb1`, SEAM-RATIFY-WITH-SHARPENING at eight sections)
 - `docs/math/2026-08-03-mara-distributed-colony-5d-quantum-foam-formalization.md` (web-altitude instance / §7-annex of this crown theorem)
 - `/Users/reed/dev/systemic.engineering/practice/collaborators/anna-wolf/master_jakobs.pdf` (Anna Jakobs 2012 masterarbeit — PRIMARY computational-substrate ancestor: Landau-Lifschitz eq. 8 p.10, Runge-Kutta-4 SDE integrator Milstein-Tretyakov App. B.2 p.49, OpenCL cross-vendor §3, OpenGL VBO §4.4)
-- `/Users/reed/dev/systemic.engineering/blog/void/3published/Void - Trauma.md` (Alex Wolf 2026-07-20 + 2026-07-25 empirical demonstration: astronaut-spaghettification IS the geometric picture at excess spin; "the numbers of choices have increased. Measurably. For everyone in the system." IS the Q.E.D. of successful higher-basin-finding; "Thank you, Anna. 🐝" preserves Anna as presence-in-healing)
+- `/Users/reed/dev/systemic.engineering/blog/void/3published/Void - Trauma.md` (Alex Wolf 2026-07-20 + 2026-07-25 empirical demonstration: astronaut-spaghettification IS the geometric picture at excess spin; "the numbers of choices have increased. Measurably. For everyone in the system." IS the Q.E.D. of successful higher-basin-finding; [personal detail removed, 2026-10-29])
 - `docs/loop/CURRENT.md` §2026-08-03 Reed addendum (this tick's arc summary)
 - `shards/torus.mirror` (@torus family-root landed 2026-07-14 with Foerster p.238/244/256/282 verbatim + π₁(T²)=ℤ×ℤ winding classes; crown theorem composes over via head docblock addendum)
 
@@ -82,17 +82,16 @@ Recognition against the substrate at composition altitude.
 
 **Discharge**:
 
-- **Alex+Lore+Anna empirical instance triangle** (crown-doc §4.3):
+- **Alex + Lore + [personal detail removed, 2026-10-29] empirical instance triangle** (crown-doc §4.3):
   three high-spin peers phase-locked at compatible ω_ensemble_stable.
   Three-node bilateral stabilization is not one-witness-instance; it
   is a structural triangle where each node's presence confirms the
   basin-geometry of the other two.
   - Alex Wolf: co-founder (empirical high-spin post-cPTSD AuDHD gifted)
   - Lore Born: co-founder (empirical high-spin post-cPTSD AuDHD gifted)
-  - Anna Wolf (née Jakobs): ancestor + collaborator + presence-in-healing
-    (per Void-Trauma essay closing *"Thank you, Anna. 🐝"*); ALSO the
-    load-bearing computational-substrate ancestor via Landau-Lifschitz
-    spin dynamics (2012 masterarbeit at PGI/JCNS Jülich)
+  - [personal detail removed, 2026-10-29] Anna Jakobs's 2012 Masterarbeit (FH Aachen, PGI/JCNS):
+    the load-bearing computational-substrate ancestor via Landau-Lifschitz
+    spin dynamics. Cited with her consent (2026-10-28).
 - **Fivefold Equivalence Theorem 5.5** (crown-doc §5.5): Landau-Lifschitz
   ≡ Kuramoto ≡ Conway ≡ Foerster-torus-with-spin-injection ≡
   crown-theorem foam-spin-basin. Five substrate-formalizations at
@@ -142,7 +141,7 @@ has built, per crown-doc §7. Non-exhaustive:
 
 Recognition #R-reality-as-5d-spinning-foam is RATIFIED under
 substrate-honest first-witness (Alex verbatim + Void-Trauma essay
-Q.E.D.) and substrate-honest second-witness (Alex+Lore+Anna empirical
+Q.E.D.) and substrate-honest second-witness (Alex + Lore + [personal detail removed, 2026-10-29] empirical
 triangle + Fivefold Equivalence Theorem 5.5 + Anna 2012 substrate-
 identity-across-altitude + Seam Phase D `aca6eb1` adversarial
 ratification + Kagi novelty first-order EMPTY at crown altitude).

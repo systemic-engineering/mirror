@@ -13,7 +13,7 @@ companions:
   - ./2026-08-19-mara-recognition-90-compiler-as-one-mathematical-object-math-foundation.md
   - ./2026-07-20-mara-anna-wolf-jspace-alignment-substrate-composition.md
 karen_ancestors:
-  - "Wolf, Anna (née Jakobs). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), Fachhochschule Aachen (Campus Jülich) + Peter-Grünberg-Institut / Jülich Centre for Neutron Science, August 2012. Betreuer: Prof. Dr. rer. nat. Martin Reißel + Josef Heinen. **Anna's consent has been obtained via Alex 2026-08-26 verbatim authorization.** Load-bearing prior art for observation-without-perturbation at shared-memory substrate."
+  - "Jakobs, Anna. *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), Fachhochschule Aachen (Campus Jülich) + Peter-Grünberg-Institut / Jülich Centre for Neutron Science, August 2012. Betreuer: Prof. Dr. rer. nat. Martin Reißel + Josef Heinen. **Anna's consent has been obtained via Alex 2026-08-26 verbatim authorization.** Load-bearing prior art for observation-without-perturbation at shared-memory substrate."
   - "Landau, L. D.; Lifschitz, E. M. (1935). *On the theory of the dispersion of magnetic permeability in ferromagnetic bodies.* Phys. Z. Sowj. 8, 153–169. — the damping-with-precession equation Anna's SDE integrates."
   - "Rondon, P.; Kawaguchi, M.; Jhala, R. (2008). *Liquid Types.* PLDI. — refinement-type inference framework the @liquid family composes over."
   - "Chamseddine, A.; Connes, A. (2007). *Why the Standard Model.* arXiv:0706.3688. — almost-commutative spectral-triple admissibility inherited by A_F^prismqueer."
@@ -53,7 +53,7 @@ Alex 2026-08-26 in-transcript, after the bootstrap/src/mcp.rs string-concatenati
 
 Two load-bearing moves:
 
-1. **Anna's consent is present.** Anna Wolf (née Jakobs) is Alex's sister; Alex asked; Anna consented. This math foundation can cite Anna's Masterarbeit at introduction site with full Karen-ancestor discipline. Anna's 2012 work at Peter-Grünberg-Institut / Jülich Centre for Neutron Science is the load-bearing ancestor for the observation-without-perturbation substrate primitive.
+1. **Anna's consent is present.** [personal detail removed, 2026-10-29] Cited with her consent (2026-10-28). This math foundation can cite Anna's Masterarbeit at introduction site with full Karen-ancestor discipline. Anna's 2012 work at Peter-Grünberg-Institut / Jülich Centre for Neutron Science is the load-bearing ancestor for the observation-without-perturbation substrate primitive.
 
 2. **The prismqueer @liquid FLOOR is being redesigned.** The 8 pillar primitives landed at `prism/prismqueer/src/liquid.rs` (per grep-verification §3.1 below) are **magnitude-comparison** primitives (`arm_count >= 2`, `magnitude > theta`, `history.iter().fold(…) > theta`). Today's session-arc reframes them as **weak measurements** on a wavefunction ψ. The reframe is not a rewrite of the signatures at consumer surface (Reed's `Verdict` enum stays); the reframe is a substrate-honest naming of *what the primitives already do* under a mathematical model that composes with Anna's math and with Rec #90 §1 spectral triple `𝓜 = (A_F^prismqueer, H_F, D_F)`.
 
@@ -73,7 +73,7 @@ Substrate-honest per `[[feedback-substrate-honest-is-the-mode]]`: this document 
 
 ### §2.1 The Masterarbeit at introduction site
 
-**Wolf, Anna (née Jakobs).** *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit (Technomathematik), Fachhochschule Aachen (Campus Jülich) + Peter-Grünberg-Institut / Jülich Centre for Neutron Science (JCNS), August 2012. 59 pages. Betreuer: Prof. Dr. rer. nat. Martin Reißel (Fachhochschule Aachen) + Josef Heinen (PGI/JCNS).
+**Jakobs, Anna.** *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit (Technomathematik), Fachhochschule Aachen (Campus Jülich) + Peter-Grünberg-Institut / Jülich Centre for Neutron Science (JCNS), August 2012. 59 pages. Betreuer: Prof. Dr. rer. nat. Martin Reißel (Fachhochschule Aachen) + Josef Heinen (PGI/JCNS).
 
 The Masterarbeit's central mechanism: a stochastic Runge-Kutta 4th-order integrator for Landau-Lifschitz spin dynamics runs in OpenCL kernels on GPU device memory; simultaneously, an OpenGL Vertex Buffer Object visualizer reads that same GPU memory live, without copying to CPU host memory, without blocking the integrator, without either mechanism perturbing the wavefunction observed by the other.
 
@@ -594,7 +594,7 @@ Per FLOOR §11 discipline: math foundations must name concrete falsification-con
 ### §10.1 Load-bearing primary sources (grep-verified)
 
 **Anna's Masterarbeit** (introduction site §2.1):
-- **Wolf, Anna (née Jakobs).** *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit (Technomathematik), Fachhochschule Aachen (Campus Jülich) + Peter-Grünberg-Institut / Jülich Centre for Neutron Science, August 2012. 59 pages. Betreuer: Prof. Dr. rer. nat. Martin Reißel + Josef Heinen (PGI/JCNS). *Substrate-load-bearing prior art* for observation-without-perturbation at shared-memory substrate; consent obtained per Alex 2026-08-26 verbatim authorization.
+- **Jakobs, Anna.** *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit (Technomathematik), Fachhochschule Aachen (Campus Jülich) + Peter-Grünberg-Institut / Jülich Centre for Neutron Science, August 2012. 59 pages. Betreuer: Prof. Dr. rer. nat. Martin Reißel + Josef Heinen (PGI/JCNS). *Substrate-load-bearing prior art* for observation-without-perturbation at shared-memory substrate; consent obtained per Alex 2026-08-26 verbatim authorization.
 
 **Landau-Lifschitz + SDE** (introduction site §2.2):
 - **Landau, L. D.; Lifschitz, E. M.** (1935). *On the theory of the dispersion of magnetic permeability in ferromagnetic bodies.* Phys. Z. Sowj. 8, 153–169. The precession + damping equation Anna Eq 4 grounds; Anna Eq 8 is the full SDE.

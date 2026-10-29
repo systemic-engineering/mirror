@@ -21,7 +21,7 @@ karen_ancestors:
   - "Schreiber, Urs (2013). *Differential cohomology in a cohesive infinity-topos.* arXiv:1310.7930. Higher-bundle tower."
   - "Chamseddine, A.; Connes, A. (2007). *Why the Standard Model.* arXiv:0706.3688. Almost-commutative spectral-triple admissibility; A_F^prismqueer inherits."
   - "Connes, A. (1985). *Non-commutative differential geometry.* Publ. Math. IHÉS 62:257. Foundational spectral-triple definition."
-  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS. Observation-without-perturbation at shared-memory substrate. Consent obtained via Alex 2026-08-26. Foundational for measurement primitives per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`."
+  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS. Observation-without-perturbation at shared-memory substrate. Consent obtained via Alex 2026-08-26. Foundational for measurement primitives per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`."
   - "von Foerster, H. (1974). *Notes on an Epistemology for Living Things.* Ethical imperative F: increase choice-count. Compile-time gauge at `rust/src/magic.rs`."
   - "Fiedler, M. (1973). *Algebraic connectivity of graphs.* Czech. Math. J. 23:298. λ₂ eigenvalue; algebraic-connectivity; the coherence value the compiler rises."
   - "Braunstein, S. L.; Ghosh, S.; Severini, S. (2006). *The Laplacian of a graph as a density matrix.* Ann. Comb. 10:291. Void-duality enumeration (8 dualities, 5 orthogonal)."
@@ -937,7 +937,7 @@ Per FLOOR §11 discipline: math foundations must name concrete falsification-con
 - **Connes, A.** (1985). *Non-commutative differential geometry.* Publ. Math. IHÉS 62:257. Foundational.
 - **von Foerster, H.** (1974). *Notes on an Epistemology for Living Things.* Ethical imperative F: increase choice-count.
 - **Fiedler, M.** (1973). *Algebraic connectivity of graphs.* Czech. Math. J. 23:298. λ_2 eigenvalue.
-- **Wolf, Anna (née Jakobs)** (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS. Observation-without-perturbation. Consent obtained via Alex 2026-08-26.
+- **Jakobs, Anna** (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS. Observation-without-perturbation. Consent obtained via Alex 2026-08-26.
 
 **Dirac operator on graphs** (introduction site §3.4):
 - **Requardt, M.** (2002). *Dirac Operators and the Calculation of the Connes Metric on arbitrary (Infinite) Graphs.* J. Phys. A 35:759-779. D² = L_0 + L_1 Hodge Laplacian.

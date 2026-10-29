@@ -59,7 +59,7 @@ karen_ancestors:
   - "Turing, Alan M. (1936). *On Computable Numbers, with an Application to the Entscheidungsproblem.* Proceedings of the London Mathematical Society, s2-42(1):230-265. https://londmathsoc.onlinelibrary.wiley.com/doi/abs/10.1112/plms/s2-42.1.230. LOAD-BEARING at §7.1 K_4 ancestral topology — the computability substrate the @question dissolves (per Alex 2026-09-05 Turing-boundary-dissolves recognition composed OVER)."
   - "Turing, Alan M. (1950). *Computing Machinery and Intelligence.* Mind 49:433-460. p. 446 verbatim: 'These abstract machines are mathematical fictions rather than physical objects. By definition they are incapable of errors of functioning.' LOAD-BEARING at §7.1 K_4 ancestral topology — the observer-exterior fiction @question structurally reinstates by refusing to strip the observer."
   - "Rice, H. G. (1953). *Classes of recursively enumerable sets and their decision problems.* Transactions of the American Mathematical Society 74:358-366. Semantic-property undecidability. LOAD-BEARING at §4.3 Rice-safe uniform-D per bilateral-sentinel §2.4 discipline — @question dispatch is sub-Turing polynomial-time bounded."
-  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, Peter Grünberg Institut / Jülich Centre for Neutron Science. J-space observation-without-perturbation at shared-memory substrate. Consent obtained via Alex 2026-08-26. LOAD-BEARING at §4.3 observation-without-perturbation invariant at @question dispatch site."
+  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, Peter Grünberg Institut / Jülich Centre for Neutron Science. J-space observation-without-perturbation at shared-memory substrate. Consent obtained via Alex 2026-08-26. LOAD-BEARING at §4.3 observation-without-perturbation invariant at @question dispatch site."
   - "Wiener, Norbert (1948). *Cybernetics: or Control and Communication in the Animal and the Machine.* MIT Press, Cambridge. Chapter 4 pp. 96-114. LOAD-BEARING at §1 observer-in-the-loop by mathematical construction; the substrate the K-T @question reinstates."
   - "Hickey, Rich (2011). *Simple Made Easy.* Strange Loop 2011 keynote. https://www.youtube.com/watch?v=SxdOUGdseq4. Noun-lift discipline. LOAD-BEARING at §6 @question naming (noun; timeless; substrate-verb-derivative composing over LANDED karl_tomm() verb)."
   - "Wolf, Alex (2026-09-09, in-transcript verbatim, load-bearing charter): 'Algebra = prismqueer. Hilbert Space = Frame Cohomology (each Sheaf IS a Frame and each Frame IS a @mirror/lens). Dirac Operator = @karl_tomm.' + 'Yes. And let's name it @question and cite Karl-Tomm.' Grounds §0-§12 the entire foundation at compiler-substrate altitude."
@@ -920,7 +920,7 @@ See frontmatter `karen_ancestors:` for 30+ formal citations with Kagi-verified p
 33. Hickey 2011 Simple Made Easy (noun-lift)
 34. Minsky (Yaron) 2011 make-illegal-states-unrepresentable
 35. Rice 1953 Trans. AMS 74:358-366 (undecidability)
-36. Wolf (Anna) 2012 Masterarbeit PGI/JCNS (observation-without-perturbation)
+36. Jakobs (Anna) 2012 Masterarbeit PGI/JCNS (observation-without-perturbation)
 
 **Mirror-substrate landings**:
 

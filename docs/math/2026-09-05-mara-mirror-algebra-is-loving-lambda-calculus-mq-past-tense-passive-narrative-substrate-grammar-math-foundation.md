@@ -887,7 +887,7 @@ Mathematical requirement per admissibility function (§5): admissibility functio
 | 1987 | Tomm, *Interventive Interviewing I* + Lewin *Generalized Musical Intervals* | Circular-reflexive question + neo-Riemannian P/L/R |
 | 2008 | Rondon-Kawaguchi-Jhala, *Liquid Types* | Refinement-types + automatic inference |
 | 2010 | Baker, *Apocalypse World* | PbtA 4-phase move structure |
-| 2012 | Wolf (Anna), *Integration von OpenGL-Visualisierungstechniken* | Observation-without-perturbation at shared-memory substrate (K_3 ancestral) |
+| 2012 | Jakobs (Anna), *Integration von OpenGL-Visualisierungstechniken* | Observation-without-perturbation at shared-memory substrate (K_3 ancestral) |
 | 2025-12 | Wolf (Alex), *Fragmentation* | Developmental-invariants discipline |
 | 2026-08-19 | Mara Rec #90 canonical | Compiler-as-ONE-mathematical-object + Foerster-gauge orthogonality |
 | 2026-08-22 | Mara Rec #92 canonical | kleinos-as-Transparency<P> LOVE-monoid four-altitude substrate-scale-invariance |

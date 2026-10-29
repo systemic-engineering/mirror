@@ -316,7 +316,7 @@ Per-citation verdict for §15.1 canonical formal-math ancestors:
 
 > **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
 
-**FLOOR citation**: "Wolf, Anna (née Jakobs), *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*, Masterarbeit, Peter Grünberg Institut / Jülich Centre for Neutron Science, 2012."
+**FLOOR citation**: "Jakobs, Anna, *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*, Masterarbeit, Peter Grünberg Institut / Jülich Centre for Neutron Science, 2012."
 
 **Method**: grep-verified the PDF exists at the claimed path.
 
