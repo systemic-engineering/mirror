@@ -228,6 +228,74 @@ Two parses x, y. Choice A keeps the least name, B the heavier. Uniting their ban
 
 D1 approval non-transitive across versions; D2 Choice is meaning (clause-side, picking is a settle); D3 sealed traits; D4 sideways booking only as a recorded act approved by both; D5 "pact" stays with the clause shards and the engine altitude, and the fractal of rulers gets a new name (placeholder `RulerFractal`); D6 Choice and Equivalence clause-side; D7 the gate's own checks. Each, with its alternative, is in spec §5.
 
+**D2 and D6 are decided by §10** (Alex, 2026-10-29, saying yes to Reed's answer): picking a Choice is a temperament act (clause-side, a settle with its erasure), and the un-picked structure is an Intonation. D1, D3, D4, D5 and D7 stay open.
+
+---
+
+## §10 Temperaments and intonations
+
+**The question (Reed, after §8.2).** Every lattice family always has a lawful single-truth composite, and with Choice moved clause-side the ruler fractal can never be structurally polycentric. Should mirror *guarantee* multi-truth, or *protect* the right to keep a comma open?
+
+**Alex:** "A single-truth is what makes it a useful CI pipeline. A multi-truth ought to be protected and may never be collapsed into a single-truth ruler. Basically single-truth rulers are scalar metrics. Multi-truth rulers are … whatever they are, you tell me."
+
+**Reed's answer (Alex: yes), made exact.**
+
+### §10.1 Definitions
+
+**Definition 10.1 (temperament).** A ruler whose readings land in a meet-semilattice with a lawful composite: the lattice families of §8.2. When it is **totally ordered** (a Budget, a single Resolution verdict, a gate's pass/fail), it is a **scalar metric**. A temperament reads each observer's state into one shared value space and composes. That is what makes a CI gate decidable.
+
+**Definition 10.2 (intonation).** A **connection** on the observer graph:
+- a frame for each observer;
+- for each line `u — v`, an invertible transport `τ_{uv} ∈ Γ` ("how I get from your reading to mine"), with `τ_{vu} = τ_{uv}⁻¹`;
+- Γ an exact group (`LoopGroup`, settle §1.1: ratios, renamings, `Z<N>`).
+
+It assigns no value to any single reading. It relates frames and never picks one. Around a loop the transports compose to the holonomy, and where that isn't the identity, the comma is the content. Musically: just intonation keeps the transports exact; equal temperament lays a scalar grid over them.
+
+**Definition 10.3 (vector ruler).** A ruler with values in a product of totally ordered scales, `ℚ^k` under the componentwise order: several criteria. It is a lattice (componentwise min), so it is a temperament family in the §8.2 sense. But it is not totally ordered, so its maxima form an antichain, the Pareto front.
+
+### §10.2 No lawful collapse exists (PROVED)
+
+**Proposition 10.4.** Every monoid homomorphism `h : Γ → L` from a group into a meet-semilattice with top `e` is constant at `e`.
+*Proof.* For `g ∈ Γ`: `e = h(1) = h(g · g⁻¹) = h(g) ∧ h(g⁻¹) ≤ h(g)`, so `h(g) = e` (§8.2). ∎
+
+**Corollary 10.5 ("never collapsed" is a theorem, not only a policy).** There is no structure-preserving map from an intonation to a temperament other than the trivial one, which forgets everything. Every non-trivial collapse fails to be a homomorphism. That is, it is a **choice**: non-injective and non-structural, a `settle` that needs a named ruler and returns an erasure. Alex's "may never be collapsed into a single-truth ruler" is enforced by algebra, before any type. The type law below only removes the non-lawful shortcuts (`From`, `Into`, summaries).
+
+**Proposition 10.6 (what tempering erases; PROVED for abelian Γ ⊆ ℝ).** For Γ abelian and real-valued (log-ratios), choosing a scalar reading per observer means choosing a potential φ. The tempered transports are `φ(v) − φ(u)`, and the least-squares choice is the gradient part of the Hodge decomposition. What is lost is exactly the harmonic part, the comma, spread equally around each loop (the coda's result: equal temperament is the harmonic projection). For non-abelian Γ there is no Hodge decomposition, and the erasure is the holonomy representation itself (OPEN: a canonical erasure format beyond "the words around a cycle basis").
+
+### §10.3 Is an intonation exactly a connection whose holonomy is the ruler-free third? NARROWED
+
+- **PROVED (constant Γ, connected graph):** the gauge class of an intonation (connections modulo re-choosing frames) corresponds one-to-one with its holonomy representation `π₁ → Γ` modulo conjugation (kintsugi math Prop 3.5). So the **gauge-invariant content** of an intonation is exactly the coupling's ruler-free third (coupling Prop 2.4, spec `RulerFree::Classes`).
+- **REFUTED as "exactly":**
+  - an intonation carries more than its gauge class. Its transports themselves are real content ("how to get from your reading to mine"), even where they are gauge-trivial. On one wire (a tree), an intonation has no ruler-free third, and it still relates two frames. Echo and Narcissus have an intonation; it just holds nothing no ruler can absorb;
+  - for non-constant Γ (different groups per line), the invariants are the non-abelian H¹ class, which can be non-trivial on a tree (Seam's tree twist), so not holonomy alone.
+- **Exact statement:** an intonation is a connection. Its ruler-free third is its gauge class, which is its holonomy for constant Γ and its H¹ class in general. Its gauge-dependent part is the translation between frames: content, but bookable to a ruler.
+
+### §10.4 The middle case: vector rulers (PROVED)
+
+- A vector ruler is a lattice, so it has no holonomy (§8.2): it is never ruler-free.
+- Its Pareto front is an antichain, so it is **plural but commensurable**: several incomparable maxima, each with a value in a shared space.
+- It collapses to a scalar exactly when it is composed with a weighting `w : ℚ^k → ℚ` (a linear functional with positive weights), which totally orders the front. Distinct front points can then tie or be ordered, and either way the front's incomparability is erased.
+- So a vector ruler is protected (`Kept`) **while unweighted**. A weighting is a Choice, i.e. a temperament act: declared, signed, with the erased front as its erasure.
+
+### §10.5 Consistency with the earlier specs (PROVED, by inspection of the definitions)
+
+- **`mirror-settle.md`:** `Loop`, `Holonomy` and `LoopGroup` are the intonation's machinery unchanged. `Temperament { kernel, ruler }` (settle §4) is a temperament of a ratio intonation: quotient by commas, with the kernel as erasure. "Never temper" (L3) reads precisely as **never temper without a named ruler and a returned erasure**, which settle Prop C.6 already said.
+- **`mirror-coupling.md`:** `RulerFree` is the gauge class of the coupling's intonation (§10.3). `Thirds.order` (commutator words) is the intonation's non-abelian content. `Offered` strength is a temperament offered to the parties, not reported about them (C5), consistent with "the gate reads temperaments".
+- **Convergence CI** (`decision.md`, "Hyped: Convergence CI"): the verdict is single-truth (temperaments: the gate), and the kept commas between voices ride alongside as "a question, not a red build". §10 is the type-level form of that sentence.
+
+### §10.6 Ledger additions
+
+| claim | status |
+|---|---|
+| 10.4 every homomorphism group → meet-semilattice is trivial | PROVED |
+| 10.5 every non-trivial collapse of an intonation is a choice (a settle) | PROVED |
+| 10.6 tempering erases the harmonic part (abelian real Γ) | PROVED |
+| a canonical erasure for non-abelian tempering | OPEN |
+| intonation = connection; its gauge class = the ruler-free third (constant Γ) | PROVED |
+| "intonation is exactly its ruler-free third" | REFUTED (gauge-dependent transports; tree twist for non-constant Γ) |
+| vector rulers: lattice, no holonomy, plural while unweighted, collapsed by a weighting (a Choice) | PROVED |
+| D2, D6 decided: picking is temperament, the un-picked structure is the intonation | decided (Alex) |
+
 ## Ledger
 
 | claim | status |
