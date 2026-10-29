@@ -175,7 +175,11 @@ fn e3_e6_permutations_of_rules_and_facts_change_nothing() {
                 atoms: shuffled(&f.atoms, &mut rng),
             };
             let r = fixpoint(&p2, &f2);
-            assert_eq!(r.model_addr(), base.model_addr(), "fixture {i} permutation {k}");
+            assert_eq!(
+                r.model_addr(),
+                base.model_addr(),
+                "fixture {i} permutation {k}"
+            );
             assert_eq!(ticks(&r), ticks(&base), "fixture {i} permutation {k}");
             assert_eq!(
                 record(&r),

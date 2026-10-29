@@ -650,16 +650,56 @@ impl FunctionalViolation {
 
 /// `(M, D, stop)`, plus functionality findings. `S` is [`Fixed`] or
 /// [`Bounded`].
+///
+/// Built only by [`run_to_fixpoint`] and [`run_bounded`]: the fields are
+/// private, so no caller can forge a `Run<Fixed>` that no run produced
+/// (spec §4.2). Read it through the accessors.
+///
+/// ```compile_fail
+/// use engine::{Fixed, Run, Tick};
+/// let forged: Run<Fixed> = Run {
+///     model: Default::default(),
+///     model_addr: engine::Addr::from_hex(&"00".repeat(32)).unwrap(),
+///     deposits: vec![],
+///     stop: Fixed(Tick(1)),
+///     findings: vec![],
+/// };
+/// ```
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Run<S> {
+    model: BTreeMap<Addr, Fact>,
+    model_addr: Addr,
+    deposits: Vec<Deposit>,
+    stop: S,
+    findings: Vec<FunctionalViolation>,
+}
+
+impl<S> Run<S> {
     /// `M`, keyed (and so sorted) by address.
-    pub model: BTreeMap<Addr, Fact>,
+    pub fn model(&self) -> &BTreeMap<Addr, Fact> {
+        &self.model
+    }
+
     /// The store-merge fragment address of `M` (children sorted by address).
-    pub model_addr: Addr,
+    pub fn model_addr(&self) -> Addr {
+        self.model_addr
+    }
+
     /// `D`: one deposit per atom of `M`, sorted by `(tick, addr)`.
-    pub deposits: Vec<Deposit>,
-    pub stop: S,
-    pub findings: Vec<FunctionalViolation>,
+    pub fn deposits(&self) -> &[Deposit] {
+        &self.deposits
+    }
+
+    pub fn findings(&self) -> &[FunctionalViolation] {
+        &self.findings
+    }
+}
+
+impl<S: Copy> Run<S> {
+    /// [`Fixed`] or [`Bounded`].
+    pub fn stop(&self) -> S {
+        self.stop
+    }
 }
 
 // ── W ────────────────────────────────────────────────────────────────────

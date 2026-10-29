@@ -250,7 +250,7 @@ pub fn run_bounded(
     }
     let k = Budget::new(count.n.get()).expect("NonZeroU64");
     let run = engine::run_bounded(inst, k);
-    let erasure = match run.stop {
+    let erasure = match run.stop() {
         Bounded::Budget(b) => Some(Truncated { at: Tick(b.get()) }),
         Bounded::Fixed(_) => None,
     };

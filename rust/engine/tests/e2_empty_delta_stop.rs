@@ -30,7 +30,11 @@ fn e2_chain_stops_fixed_at_n_plus_1() {
             Some(n),
             "n = {n}: last deposit tick"
         );
-        assert_eq!(run.model().len() as u64, n + n * (n + 1) / 2, "n = {n}: |M|");
+        assert_eq!(
+            run.model().len() as u64,
+            n + n * (n + 1) / 2,
+            "n = {n}: |M|"
+        );
     }
 }
 
