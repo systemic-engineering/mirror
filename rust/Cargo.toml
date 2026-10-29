@@ -117,6 +117,11 @@ red-claims = []
 # git_add/git_commit_as fixtures + @io/fs round-trip tests).
 # Cleanup on TempDir drop; no leaked state.
 tempfile = "3"
+#
+# blake3: tests/fixpoint_t1.rs re-hashes the git projection of `root` with
+# its own BLAKE3 (docs/specs/mirror-fixpoint-parser.md §5.0, §7), a second
+# observer independent of the binary's read path.
+blake3 = "1"
 
 [profile.release]
 # Match bootstrap's release profile shape for byte-parity of the

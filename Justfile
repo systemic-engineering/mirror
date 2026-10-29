@@ -325,6 +325,7 @@ test:
 # claim's roadmap step lands; the ignore reason names the step).
 test-red:
     cargo test --manifest-path {{MANIFEST_PATH}} --features red-claims --test red_spec_claims
+    cargo test --manifest-path {{MANIFEST_PATH}} --features red-claims --test fixpoint_t1
     cargo test --manifest-path rust/fractal/Cargo.toml --features red-claims --test fire_d_measure
 
 # Watch + retest on every change (requires cargo-watch).
