@@ -326,12 +326,102 @@ fn instantiate(pat: &Pattern, env: &[Option<Const>]) -> Vec<Const> {
         .collect()
 }
 
+// ── The functionality index (§3.3) ───────────────────────────────────────
+
+/// A declaration with 0-based positions: `key` arguments determine `value`.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+struct Key {
+    pred: String,
+    key: Vec<usize>,
+    value: usize,
+}
+
+fn key_of(k: &Key, tuple: &[Const]) -> Vec<Const> {
+    k.key.iter().map(|&p| tuple[p].clone()).collect()
+}
+
+/// `M` indexed by each declared key: pred → key values → tuples. With
+/// Ford's functionality there is at most one tuple per key, so a join on a
+/// bound key is one lookup instead of a scan (math §5.4; linearity stays a
+/// CONJECTURE until T6b measures it).
+#[derive(Default)]
+struct Index {
+    keys: Vec<Key>,
+    by_key: BTreeMap<String, BTreeMap<Vec<Const>, BTreeSet<Vec<Const>>>>,
+}
+
+impl Index {
+    fn new(keys: &[Key]) -> Self {
+        // One key per predicate drives the join; the first in sorted order.
+        let mut chosen: Vec<Key> = Vec::new();
+        for k in keys {
+            if !chosen.iter().any(|c| c.pred == k.pred) {
+                chosen.push(k.clone());
+            }
+        }
+        Index { keys: chosen, by_key: BTreeMap::new() }
+    }
+
+    fn key(&self, pred: &str) -> Option<&Key> {
+        self.keys.iter().find(|k| k.pred == pred)
+    }
+
+    fn insert(&mut self, pred: &str, tuple: &[Const]) {
+        if let Some(k) = self.key(pred) {
+            let kv = key_of(k, tuple);
+            self.by_key.entry(pred.to_string()).or_default().entry(kv).or_default().insert(tuple.to_vec());
+        }
+    }
+
+    /// The tuples of `pat.pred` whose key equals `pat`'s key under `env`,
+    /// if `pat.pred` is indexed and the key is fully bound.
+    fn lookup(&self, pat: &Pattern, env: &[Option<Const>]) -> Option<Option<&BTreeSet<Vec<Const>>>> {
+        let k = self.key(&pat.pred)?;
+        let mut kv = Vec::with_capacity(k.key.len());
+        for &p in &k.key {
+            match pat.args.get(p)? {
+                Slot::Const(c) => kv.push(c.clone()),
+                Slot::Var(i) => kv.push(env[*i].clone()?),
+            }
+        }
+        Some(self.by_key.get(&pat.pred).and_then(|m| m.get(&kv)))
+    }
+}
+
+/// `functional_violation(p, key, v, v′)` for every key with more than one
+/// value: each value after the least is paired with the least.
+fn violations(keys: &[Key], model: &Rel) -> Vec<FunctionalViolation> {
+    let mut out = BTreeSet::new();
+    for k in keys {
+        let Some(tuples) = model.get(&k.pred) else { continue };
+        let mut values: BTreeMap<Vec<Const>, BTreeSet<Const>> = BTreeMap::new();
+        for t in tuples {
+            values.entry(key_of(k, t)).or_default().insert(t[k.value].clone());
+        }
+        for (key, vs) in values {
+            let mut it = vs.into_iter();
+            let Some(least) = it.next() else { continue };
+            for v_prime in it {
+                out.insert(FunctionalViolation {
+                    pred: k.pred.clone(),
+                    key: key.clone(),
+                    v: least.clone(),
+                    v_prime,
+                });
+            }
+        }
+    }
+    out.into_iter().collect()
+}
+
 /// One semi-naive round for one rule: literal `delta_at` ranges over `delta`,
-/// every other positive literal over `model`. Negative literals are tests
-/// against the fixed context `ctx` (the core gets none).
+/// every other positive literal over `model` (through the index when its
+/// key is bound). Negative literals are tests against the fixed context
+/// `ctx` (the core gets none).
 struct Round<'a> {
     rule: &'a Compiled,
     model: &'a Rel,
+    index: &'a Index,
     delta: &'a Rel,
     delta_at: Option<usize>,
     ctx: Option<&'a Rel>,
@@ -354,8 +444,15 @@ impl Round<'_> {
             return;
         }
         let pat = &self.rule.pos[i];
-        let source = if self.delta_at == Some(i) { self.delta } else { self.model };
-        let Some(tuples) = source.get(&pat.pred) else { return };
+        let tuples = if self.delta_at == Some(i) {
+            self.delta.get(&pat.pred)
+        } else {
+            match self.index.lookup(pat, env) {
+                Some(hit) => hit,
+                None => self.model.get(&pat.pred),
+            }
+        };
+        let Some(tuples) = tuples else { return };
         for t in tuples {
             if let Some(bound) = unify(pat, t, env) {
                 self.join(i + 1, env, out);
@@ -368,17 +465,21 @@ impl Round<'_> {
 }
 
 /// The least model of `rules` over `facts`, semi-naively, with negative
-/// literals read against `ctx`. Returns `M` with first ticks, and the stop.
+/// literals read against `ctx`. Returns `M` with first ticks, the stop,
+/// and the functionality findings on `M`.
 fn least_model(
     rules: &[Compiled],
+    keys: &[Key],
     facts: &[Fact],
     k_max: u64,
     ctx: Option<&Rel>,
-) -> (BTreeMap<Fact, u64>, Stop) {
+) -> (BTreeMap<Fact, u64>, Stop, Vec<FunctionalViolation>) {
     let mut model: Rel = Rel::new();
+    let mut index = Index::new(keys);
     let mut tick_of: BTreeMap<Fact, u64> = BTreeMap::new();
     for f in facts {
         if rel_insert(&mut model, &f.pred, f.args.clone()) {
+            index.insert(&f.pred, &f.args);
             tick_of.insert(f.clone(), 0);
         }
     }
@@ -387,7 +488,8 @@ fn least_model(
     let mut t = 0u64;
     loop {
         if t == k_max {
-            return (tick_of, Stop::Budget(k_max));
+            let found = violations(keys, &model);
+            return (tick_of, Stop::Budget(k_max), found);
         }
         t += 1;
         let mut next = Rel::new();
@@ -396,22 +498,24 @@ fn least_model(
             if r.pos.is_empty() {
                 // A rule with no positive body fires once, in round 1.
                 if t == 1 {
-                    Round { rule: r, model: &model, delta: &delta, delta_at: None, ctx }
+                    Round { rule: r, model: &model, index: &index, delta: &delta, delta_at: None, ctx }
                         .join(0, &mut env, &mut next);
                 }
                 continue;
             }
             for i in 0..r.pos.len() {
-                Round { rule: r, model: &model, delta: &delta, delta_at: Some(i), ctx }
+                Round { rule: r, model: &model, index: &index, delta: &delta, delta_at: Some(i), ctx }
                     .join(0, &mut env, &mut next);
             }
         }
         if next.values().all(BTreeSet::is_empty) {
-            return (tick_of, Stop::Fixed(t));
+            let found = violations(keys, &model);
+            return (tick_of, Stop::Fixed(t), found);
         }
         for (p, tuples) in &next {
             for args in tuples {
                 rel_insert(&mut model, p, args.clone());
+                index.insert(p, args);
                 tick_of.insert(Fact { pred: p.clone(), args: args.clone() }, t);
             }
         }
@@ -468,6 +572,17 @@ fn validate(program: &Program, facts: &Facts, allow_negation: bool) -> Result<()
             return Err(Dark::Unsafe { rule: r.id.clone(), var: var.to_string() });
         }
     }
+    // Declarations: 1-based positions inside the predicate's arity, the
+    // value outside the key. A predicate with no atoms anywhere is vacuous.
+    let mut decls: Vec<&Functional> = program.functional.iter().collect();
+    decls.sort();
+    for d in decls {
+        let Some(&arity) = arities.get(d.pred.as_str()).and_then(|s| s.iter().next()) else { continue };
+        let in_range = |p: usize| (1..=arity).contains(&p);
+        if !in_range(d.value) || !d.key.iter().all(|&p| in_range(p)) || d.key.contains(&d.value) {
+            return Err(Dark::Functional { pred: d.pred.clone() });
+        }
+    }
     if !allow_negation {
         if let Some(r) = rules.iter().find(|r| r.body.iter().any(|l| matches!(l, Literal::Not(_)))) {
             return Err(Dark::Negation { rule: r.id.clone() });
@@ -505,11 +620,23 @@ fn herbrand_size(program: &Program, facts: &Facts) -> u64 {
         .fold(0u64, |acc, &k| acc.saturating_add(n.saturating_pow(k as u32)))
 }
 
+/// The validated declarations, 0-based and sorted (order-independent).
+fn keys(program: &Program) -> Vec<Key> {
+    let mut out: Vec<Key> = program
+        .functional
+        .iter()
+        .map(|d| Key { pred: d.pred.clone(), key: d.key.iter().map(|p| p - 1).collect(), value: d.value - 1 })
+        .collect();
+    out.sort();
+    out.dedup();
+    out
+}
+
 /// `E(P, F, k_max) → (M, D, stop)`.
 pub fn run(program: &Program, facts: &Facts, k_max: u64) -> Result<Run, Dark> {
     validate(program, facts, false)?;
     let rules: Vec<Compiled> = program.rules.iter().map(compile).collect();
-    let (ticks, stop) = least_model(&rules, &facts.atoms, k_max, None);
+    let (ticks, stop, findings) = least_model(&rules, &keys(program), &facts.atoms, k_max, None);
     // Prop. 5.4: at most |B| ticks carry deposits. Exceeding it is a bug in
     // E, reported, never looped on.
     let last = ticks.values().copied().max().unwrap_or(0);
@@ -527,5 +654,5 @@ pub fn run(program: &Program, facts: &Facts, k_max: u64) -> Result<Run, Dark> {
     }
     deposits.sort_by_key(|d| (d.tick, d.addr));
     let model_addr = fragment(tau, MODEL_LABEL, model.keys().copied().collect::<Vec<_>>().into_iter());
-    Ok(Run { model, model_addr, deposits, stop, findings: Vec::new() })
+    Ok(Run { model, model_addr, deposits, stop, findings })
 }
