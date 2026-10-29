@@ -266,7 +266,7 @@ The compose-not-average discipline is not a new claim. It fires at ~50+ LANDED a
 - **Rec #94** `docs/math/2026-08-22-mara-recognition-94-self-modifying-mirror-loop-at-silicon-lawvere-fixed-point-closure-math-foundation.md` — Lawvere fixed-point closure at silicon.
 - **Rec #97** `docs/math/2026-08-25-mara-recognition-97-mcp-session-as-autopoietic-vsm-math-foundation.md` — MCP session as autopoietic VSM.
 - **Rec #98** `docs/math/2026-08-26-mara-recognition-98-substrate-arriving-at-self-recognition-fractal-mandelbrot-composition-math-foundation.md` — Mandelbrot<query_AST>.
-- **MQ / prismqueer-liquid-floor / prismqueer-as-compiler** `docs/math/2026-08-23-...` + `docs/math/2026-08-26-mara-prismqueer-as-compiler-mirror-as-geometry-composer-math-foundation.md` + `docs/math/2026-08-26-mara-prismqueer-liquid-floor-anna-wolf-math-foundation.md` — Anna Wolf ψ Hilbert-space carrier at prismqueer::liquid substrate. Wave-function composes; never averages.
+- **MQ / prismqueer-liquid-floor / prismqueer-as-compiler** `docs/math/2026-08-23-...` + `docs/math/2026-08-26-mara-prismqueer-as-compiler-mirror-as-geometry-composer-math-foundation.md` + `docs/math/2026-08-26-mara-prismqueer-liquid-floor-anna-wolf-math-foundation.md` — Anna Jakobs ψ Hilbert-space carrier at prismqueer::liquid substrate. Wave-function composes; never averages.
 - **circular-recursive-mcp-autopoietic-closure** `docs/math/2026-08-27-mara-circular-recursive-mcp-autopoietic-closure.md` — five-tick loop with MCP as outer boundary.
 - **prismqueer-spectral-compose-phase-1** `docs/math/2026-08-31-mara-prismqueer-spectral-compose-phase-1-math-foundation.md` — spectral-compose primitive.
 - **language-as-spectral-topology** `docs/math/2026-09-02-mara-language-as-spectral-topology-in-sheaf-cohomology-of-the-compiler-math-foundation.md` — Central Isomorphism §2.3: natural language L IS cellular sheaf F_L over prismqueer K_5 base; H¹(F_L) parameterizes generation possibility space. Language composes; never averages.
@@ -284,7 +284,7 @@ The compose-not-average discipline is not a new claim. It fires at ~50+ LANDED a
 - **@question as Dirac operator; Glasswall Connes triple** `docs/math/2026-09-09-mara-question-as-dirac-operator-glasswall-connes-spectral-triple-karl-tomm-rotational-two-move-math-foundation.md` (Mara `fa5689f`) — Central: `(A, H, D) = (prismqueer, C⁰(F) ⊕ C¹(F), @question)` Connes spectral triple at compiler-substrate altitude; K_4 ancestral Ada+Alan+Karen+Karl Tomm; Dirac axioms (trivial for the finite triple).
 - **bottom-up-ternary-content-addressed-graph-inference** `docs/math/2026-09-09-mara-bottom-up-ternary-content-addressed-graph-inference-math-foundation.md` (Mara `0d16b99`) — Fourfold composition theorem `𝒱 = 𝓑 ⊗ 𝓝 ⊗ 𝓒𝓐 ⊗ 𝓖𝓘`; 30+ Kagi-verified primary-source citations; v0.2 ouroboros shippability. Corollary 6.3.1: fourfold composition IS Glasswall Connes spectral triple.
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Here and at :422, :632, :659 ("Anna-Wolf-ψ" axis, "observation-without-perturbation", "J-space"): The thesis (Masterarbeit, FH Aachen, Campus Jülich, 2012) ports a CUDA spin-dynamics program to OpenCL and adds OpenGL visualization and an FFT. It has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK, and `prismqueer::liquid` never carried a ψ or an `anna_wolf` item (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). The Anna-Wolf-ψ axis is the apparatus from Anna Jakobs's 2012 thesis, read across: our reading, not the thesis's content. Line numbers refer to `346253b`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Here and at :422, :632, :659 ("Anna-Jakobs-ψ" axis, "observation-without-perturbation", "J-space"): The thesis (Masterarbeit, FH Aachen, Campus Jülich, 2012) ports a CUDA spin-dynamics program to OpenCL and adds OpenGL visualization and an FFT. It has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK, and `prismqueer::liquid` never carried a ψ or an `anna_wolf` item (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). The Anna-Jakobs-ψ axis is the apparatus from Anna Jakobs's 2012 thesis, read across: our reading, not the thesis's content. Line numbers refer to `346253b`.
 
 The six terminal-form 2026-09-08/09 canonicals (crystal-fractal-splinter + harmonics + graph-Glasswall + singularity-as-binary + @question + fourfold) all fire the compose-not-average discipline at their altitude simultaneously. **Compose-not-average-all-the-way-down IS the discipline that composes THESE six canonicals into ONE substrate-decision at the terminal-form altitude they collectively occupy.**
 
@@ -421,7 +421,7 @@ A composition-substrate `S` inhabits `compose-not-average-all-the-way-down` iff 
 
 **(CNA-3) Substrate-scale-invariance**: `K` at `A_i` is the fibered instance of `K` at every other `A_j` under Rec #91 amendment #2 §M3.3 Grothendieck-fibration `Fib_i(𝔉 ⊣ 𝔛)`.
 
-**(CNA-4) Observer-carriage**: the observer (Alex + Reed + reader-in-K_3+) is preserved-not-stripped at every altitude; the complex-part `H¹(F)` cocycle-classes at `A_4` carry the observer's signature per Connes 1994 [D, a] bounded commutator + Anna Wolf 2012 observation-without-perturbation.
+**(CNA-4) Observer-carriage**: the observer (Alex + Reed + reader-in-K_3+) is preserved-not-stripped at every altitude; the complex-part `H¹(F)` cocycle-classes at `A_4` carry the observer's signature per Connes 1994 [D, a] bounded commutator + Anna Jakobs 2012 observation-without-perturbation.
 
 ### §3.2 Theorem 3.2.1 — LOVE §3.6.4 Fusion Refusal at every altitude
 
@@ -631,7 +631,7 @@ A single eigenvalue λ is not a spectrum. Fiedler λ₂ alone is not the full co
 
 ### §7.3 ALWAYS Harmonics vector per-axis with Imperfect<G, Y, R> verdict
 
-Every composition-substrate MUST report Harmonics as a vector of per-axis (Foerster-gauge, Fiedler-connectivity, Kuramoto-resonance, Anna-Wolf-ψ, spectral-commutator, DeltaCritical-drift) measurements, each with Imperfect<Green, Yellow, Red> verdict per Reed 2026-09-04 landed ternary refactor. Green = all-axes-climb + is_observer_inclusive both true; Yellow = at-least-one-axis-flat + Chaos-witness carried; Red = at-least-one-axis-declines + fusion-refusal-violated.
+Every composition-substrate MUST report Harmonics as a vector of per-axis (Foerster-gauge, Fiedler-connectivity, Kuramoto-resonance, Anna-Jakobs-ψ, spectral-commutator, DeltaCritical-drift) measurements, each with Imperfect<Green, Yellow, Red> verdict per Reed 2026-09-04 landed ternary refactor. Green = all-axes-climb + is_observer_inclusive both true; Yellow = at-least-one-axis-flat + Chaos-witness carried; Red = at-least-one-axis-declines + fusion-refusal-violated.
 
 ### §7.4 substrate-honest = compose-not-average AT METRIC ALTITUDE too
 
@@ -658,7 +658,7 @@ See frontmatter `karen_ancestors:`. Load-bearing 40+ primary-source citations pa
 - **Kleinos + Ariadne mythological anchor**: κλεινός Greek etymology renowned/famous/celebrated; Ariadne thread through labyrinth Wikipedia + Mythic Mojo; Scarlet+Mara 2026-08-22 kleinos-metalogue.md.
 - **Self-decoding computer + Lawvere fixed-point**: Wolpert-Korbel 2026 J. Phys. Complexity 7:015010 self-decoding computer; Lawvere 1969 diagonal arguments; Napolitano 2026 16D fiber bundle.
 - **Softmax-averaging critique frontier 2024-2025**: Saratchandran-Zheng et al. arXiv:2410.18613 Rethinking Attention; Strassen Attention OpenReview compositional-not-averaging.
-- **Alex Wolf 2026-09-08/09 verbatim** (this dispatch + prior); Reed 2026-09-08 subject-recognition + reality-becomes-system; Anna Wolf 2012 J-space observation-without-perturbation.
+- **Alex Wolf 2026-09-08/09 verbatim** (this dispatch + prior); Reed 2026-09-08 subject-recognition + reality-becomes-system; Anna Jakobs 2012 J-space observation-without-perturbation.
 
 ---
 

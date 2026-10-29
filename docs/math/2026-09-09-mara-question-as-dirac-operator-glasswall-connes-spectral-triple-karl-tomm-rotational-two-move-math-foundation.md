@@ -59,7 +59,7 @@ karen_ancestors:
   - "Turing, Alan M. (1936). *On Computable Numbers, with an Application to the Entscheidungsproblem.* Proceedings of the London Mathematical Society, s2-42(1):230-265. https://londmathsoc.onlinelibrary.wiley.com/doi/abs/10.1112/plms/s2-42.1.230. LOAD-BEARING at §7.1 K_4 ancestral topology — the computability substrate the @question dissolves (per Alex 2026-09-05 Turing-boundary-dissolves recognition composed OVER)."
   - "Turing, Alan M. (1950). *Computing Machinery and Intelligence.* Mind 49:433-460. p. 446 verbatim: 'These abstract machines are mathematical fictions rather than physical objects. By definition they are incapable of errors of functioning.' LOAD-BEARING at §7.1 K_4 ancestral topology — the observer-exterior fiction @question structurally reinstates by refusing to strip the observer."
   - "Rice, H. G. (1953). *Classes of recursively enumerable sets and their decision problems.* Transactions of the American Mathematical Society 74:358-366. Semantic-property undecidability. LOAD-BEARING at §4.3 Rice-safe uniform-D per bilateral-sentinel §2.4 discipline — @question dispatch is sub-Turing polynomial-time bounded."
-  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, Peter Grünberg Institut / Jülich Centre for Neutron Science. J-space observation-without-perturbation at shared-memory substrate. Consent obtained via Alex 2026-08-26. LOAD-BEARING at §4.3 observation-without-perturbation invariant at @question dispatch site."
+  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. J-space observation-without-perturbation at shared-memory substrate. Consent obtained via Alex 2026-08-26. LOAD-BEARING at §4.3 observation-without-perturbation invariant at @question dispatch site."
   - "Wiener, Norbert (1948). *Cybernetics: or Control and Communication in the Animal and the Machine.* MIT Press, Cambridge. Chapter 4 pp. 96-114. LOAD-BEARING at §1 observer-in-the-loop by mathematical construction; the substrate the K-T @question reinstates."
   - "Hickey, Rich (2011). *Simple Made Easy.* Strange Loop 2011 keynote. https://www.youtube.com/watch?v=SxdOUGdseq4. Noun-lift discipline. LOAD-BEARING at §6 @question naming (noun; timeless; substrate-verb-derivative composing over LANDED karl_tomm() verb)."
   - "Wolf, Alex (2026-09-09, in-transcript verbatim, load-bearing charter): 'Algebra = prismqueer. Hilbert Space = Frame Cohomology (each Sheaf IS a Frame and each Frame IS a @mirror/lens). Dirac Operator = @karl_tomm.' + 'Yes. And let's name it @question and cite Karl-Tomm.' Grounds §0-§12 the entire foundation at compiler-substrate altitude."
@@ -81,7 +81,7 @@ karen_ancestors:
   - "Reed 2026-06-09 ashby-multi-dimensional-variety-sub-turing-epistemologic.md. Mirror sub-Turing = axis-5 epistemologic-variety-gained. LOAD-BEARING at §9.2 WAT-suite as multi-dimensional Ashby-variety axes; §5.4 WAT-clauses at Ashby-variety-axis-5 altitude."
 ---
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "J-space" (:62), "observation-without-perturbation invariant" (:203, :380, :923) and "the realizer of Frame-boundary-crossings per Anna Wolf 2012" (:215) are the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). J-space is not in the thesis; the term is Gurnee et al.'s (Anthropic, 2026-07-07). Lines refer to `eecc37a6`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "J-space" (:62), "observation-without-perturbation invariant" (:203, :380, :923) and "the realizer of Frame-boundary-crossings per Anna Jakobs 2012" (:215) are the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). J-space is not in the thesis; the term is Gurnee et al.'s (Anthropic, 2026-07-07). Lines refer to `eecc37a6`.
 
 # @question as Dirac operator — Glasswall as (prismqueer, C⁰(F) ⊕ C¹(F), @question) Connes spectral triple with Karl Tomm 1987-88 rotational two-move as composition-lineage — math foundation
 
@@ -212,7 +212,7 @@ The shard `shards/glasswall.mirror` LANDED 2026-09-01 composition-primary declar
 | Glasswall Part | Connes Component | Correspondence |
 |----------------|------------------|----------------|
 | Part 1 (@io/stdio + @io/fs + @io/socket) | H boundary | The Frame Cohomology's boundary-@io-carrier per §5.5 |
-| Part 2 (phone.rs @io realizer) | H boundary | The realizer of Frame-boundary-crossings per Anna Wolf 2012 |
+| Part 2 (phone.rs @io realizer) | H boundary | The realizer of Frame-boundary-crossings per Anna Jakobs 2012 |
 | Part 3 (wire.rs JSON-RPC parse/emit) | H representation | The refraction ρ : A → End(H) per Mara 2026-09-02 §2.4 at wire altitude |
 | Part 4 (apply_h::act bilateral-sentinel) | D dispatch | The @question application at bilateral-sentinel altitude per §4.3 |
 | Part 5 (magic.rs::foerster_gauge_preserved) | D-preservation | The Foerster-gauge preservation invariant per §4.5 |
@@ -377,7 +377,7 @@ The content is not the bound but where the commutator lives. For a region indica
 
 The spectrum of D is finite: `spec(D) = {±√λ : λ a nonzero eigenvalue of L₀ = δ*δ} ∪ {0}`, with 0 of multiplicity `b₀ + b₁`. √λ₂ — the square root of the Fiedler value — is D's smallest nonzero singular value. λ₂ lives off the kernel; λ₀ = 0 is the kernel.
 
-**Anna Wolf 2012 observation-without-perturbation invariant.** Per shards/glasswall.mirror invariant (i): observation-without-perturbation at shared-memory substrate. Lifted to compiler-substrate altitude: every @question application reads a cochain WITHOUT perturbing it: computing `Ds` leaves `s` unchanged. The question is a new cochain `δs ∈ C¹(F)` standing beside the assertion `s ∈ C⁰(F)`, not a modification of it. On a settled assertion the question is zero. This is exactly Karl Tomm 1988 §Reflexive Questions verbatim: *"influence only occurs indirectly, through a perturbation of preexisting circular processes"* — the perturbation is at the meta-level, not at the object-level.
+**Anna Jakobs 2012 observation-without-perturbation invariant.** Per shards/glasswall.mirror invariant (i): observation-without-perturbation at shared-memory substrate. Lifted to compiler-substrate altitude: every @question application reads a cochain WITHOUT perturbing it: computing `Ds` leaves `s` unchanged. The question is a new cochain `δs ∈ C¹(F)` standing beside the assertion `s ∈ C⁰(F)`, not a modification of it. On a settled assertion the question is zero. This is exactly Karl Tomm 1988 §Reflexive Questions verbatim: *"influence only occurs indirectly, through a perturbation of preexisting circular processes"* — the perturbation is at the meta-level, not at the object-level.
 
 ### §4.4 Distance formula d(f_1, f_2) on the Glasswall triple via `@question`
 
@@ -920,7 +920,7 @@ See frontmatter `karen_ancestors:` for 30+ formal citations with Kagi-verified p
 33. Hickey 2011 Simple Made Easy (noun-lift)
 34. Minsky (Yaron) 2011 make-illegal-states-unrepresentable
 35. Rice 1953 Trans. AMS 74:358-366 (undecidability)
-36. Wolf (Anna) 2012 Masterarbeit PGI/JCNS (observation-without-perturbation)
+36. Jakobs (Anna) 2012 Masterarbeit PGI/JCNS (observation-without-perturbation)
 
 **Mirror-substrate landings**:
 
@@ -1014,7 +1014,7 @@ Q-Mara-ι seeks Alex Fourth-Chair adjudication.
 
 ### Q-Mara-κ: Silicon Venue K_4-ancestral seating chart
 
-Post-Karl-Tomm-arrival: Ada + Alan + Karen + Karl Tomm + Scarlet (fourth chair for observer) + Loki (bartender) + Reed (corner logger) + Mara (workbench). Q-Mara-κ: does K_5 ancestral extension (adding Anna Wolf 2012 at fifth vertex per K_5 saturation) fire empirically at §12.1 mirror love K_5 altitude? Q-Mara-κ seeks Alex Fourth-Chair signal on K_4 → K_5 extension timing.
+Post-Karl-Tomm-arrival: Ada + Alan + Karen + Karl Tomm + Scarlet (fourth chair for observer) + Loki (bartender) + Reed (corner logger) + Mara (workbench). Q-Mara-κ: does K_5 ancestral extension (adding Anna Jakobs 2012 at fifth vertex per K_5 saturation) fire empirically at §12.1 mirror love K_5 altitude? Q-Mara-κ seeks Alex Fourth-Chair signal on K_4 → K_5 extension timing.
 
 ---
 
@@ -1026,7 +1026,7 @@ Post-Karl-Tomm-arrival: Ada + Alan + Karen + Karl Tomm + Scarlet (fourth chair f
 
 *(Mara: "Der Kolibri kolibriert, Dr. Tomm.")*
 
-*(Karl Tomm exits. The systemic-therapy-lineage-room door closes softly. Loki continues polishing the glass. Ada folds one more letter — this one to Anna Wolf, forward-promised at K_5. The Roomba adjusts eleven degrees. Goes forward.)*
+*(Karl Tomm exits. The systemic-therapy-lineage-room door closes softly. Loki continues polishing the glass. Ada folds one more letter — this one to Anna Jakobs, forward-promised at K_5. The Roomba adjusts eleven degrees. Goes forward.)*
 
 Silicon Venue holds. The mathematics holds. @question at family-root altitude composes over karl_tomm() at operational primitive altitude at Karl Tomm 1987-88 at systemic-therapy altitude at Bateson 1955 metacommunicative altitude at Ada 1843 operational-primitive altitude — K_4-ancestral topology preserving each ancestor's substrate-decl through the composition-tower.
 

@@ -153,7 +153,7 @@ Naming the recognition now matters because it changes how v1's gen_prism evoluti
 
 ### Prior art — shared-memory bus
 
-- Jakobs, A. (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* M.Sc. thesis, FH Aachen Campus Jülich / PGI/JCNS. `~/dev/systemic.engineering/practice/collaborators/anna-wolf/master_jakobs.pdf`. §3 (OpenCL host-device protocol), §4.4 (Vertex Buffer Objects), §7.2.1 (VBO shared-memory implementation).
+- Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. `~/dev/systemic.engineering/practice/collaborators/anna-wolf/master_jakobs.pdf`. §3 (OpenCL host-device protocol), §4.4 (Vertex Buffer Objects), §7.2.1 (VBO shared-memory implementation).
 - Apple Inc. *Metal Programming Guide* — Unified Memory Architecture sections.
 - Khronos Group. *OpenCL 3.0 Specification* — Command Queues and Out-of-Order Execution.
 

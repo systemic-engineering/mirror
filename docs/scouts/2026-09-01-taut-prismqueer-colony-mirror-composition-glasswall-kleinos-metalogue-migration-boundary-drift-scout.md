@@ -24,7 +24,7 @@ Reed's brief:
 2. **Roomba stays at mirror altitude** as first-order-discharge-agent
    composing FROM the colony.
 3. **Beer's VSM = shared language across the glasswall.**
-4. **Glasswall = Rice-safe Anna-Wolf-2012 observation-preserving type-
+4. **Glasswall = Rice-safe Anna-Jakobs-2012 observation-preserving type-
    membrane** with @liquid + Rec #82 content-address + Rec #92
    Transparency<P> + apply_h::act sentinel + Foerster gauge + @io/
    @data/json marshaling.
@@ -124,7 +124,7 @@ returned **31 files with match counts** (top hits by count):
 @kintsugi at mirror altitude). No mirror-side shard-decl positions
 roomba at a `prismqueer` or `prismqueer::spectral::*` altitude
 (grep-verified via `content_regex: "colony|glasswall|glass.wall|
-prismqueer|noumenal|phenomenal|Rice-safe|Anna Wolf 2012|stigmerg|
+prismqueer|noumenal|phenomenal|Rice-safe|Anna Jakobs 2012|stigmerg|
 five.op|5.op.*basis"` returned zero prismqueer-altitude hits for
 roomba).
 
@@ -455,7 +455,7 @@ shard exists today. Mara canonical extension needed.
 | Rec #92 Transparency<P> LOVE monoid | `prism/imperfect/src/transparency.rs` | LANDED (rust-side) |
 | Rec #92 mirror-side substrate-decl | `shards/mirror/loss/transparency.mirror` | LANDED (composed) |
 | Rice-safe discipline | apply_h.rs + roomba/mend.rs docblocks | LANDED |
-| Anna-Wolf-2012 (observation-preserving type-membrane) | GREP MISS across `shards/**/*.mirror` | UNKNOWN (see §8) |
+| Anna-Jakobs-2012 (observation-preserving type-membrane) | GREP MISS across `shards/**/*.mirror` | UNKNOWN (see §8) |
 | Glasswall NAMED as substrate-decl | `AGENTS.md` §Glass Wall (prose) + `shards/io.mirror :30-36` (prose citation) | PARTIAL — prose-altitude only; no `@glasswall` shard-decl |
 
 **All parts LANDED at rust and shard altitudes independently.**
@@ -568,7 +568,7 @@ Transparency<P>; compile/runtime dissolution ALREADY RUNNING
      Förster-Slap Property 4 "on Pass, the round-trip deposits
      pheromone-crystal at @mirror/store"; FLAGGED for full-essay
      verification].
-- **Anna Wolf 2012 attribution** at kleinos-metalogue.md :148:
+- **Anna Jakobs 2012 attribution** at kleinos-metalogue.md :148:
   > "That is the whole class the corpus has been formalizing since
   >  Anna's Masterarbeit at the Peter Grünberg Institut,
   >  *Integration von OpenGL-Visualisierungstechniken in GPU-
@@ -595,7 +595,7 @@ Transparency<P>; compile/runtime dissolution ALREADY RUNNING
   2012. Which is what the compiler does within silicon. LOVE in
   silicon."
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "Rice-safe Anna-Wolf-2012 observation-preserving type-membrane" (:27, :458, :923, :1078) and "Anna's math grounds ALL measurement primitives" (:956-960) are the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). Lines refer to `eecc37a6`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "Rice-safe Anna-Jakobs-2012 observation-preserving type-membrane" (:27, :458, :923, :1078) and "Anna's math grounds ALL measurement primitives" (:956-960) are the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). Lines refer to `eecc37a6`.
 
 ### 4.7 Ariadne im Verzerrten Spiegel-Labyrinth essay (Loki+Lilith 2026-08-22)
 
@@ -920,7 +920,7 @@ Ranked by:
 
 2. **@glasswall family-root shard-decl** (or SPECIES under
    @kleinos) at mirror altitude — the composition of the seven
-   glasswall parts (Scope C.8) named as ONE Rice-safe Anna-Wolf-
+   glasswall parts (Scope C.8) named as ONE Rice-safe Anna-Jakobs-
    2012 observation-preserving type-membrane composing over @io +
    @data/json + apply_h::act + Foerster gauge + @liquid + Rec #82
    + Rec #92. Alex 2026-09-01 recognition 4 explicitly names the
@@ -953,7 +953,7 @@ Ranked by:
    "@spectral/db S4 psychohistory carrier"; PENDING as own
    family-root.
 
-7. **Anna Wolf 2012 explicit cite site** at glasswall shard-decl
+7. **Anna Jakobs 2012 explicit cite site** at glasswall shard-decl
    docblock — currently grep-verified in
    `kleinos-metalogue.md :148` essay altitude ONLY. Per Alex
    2026-08-26 HARD-RULE-adjacent memory `project_anna_wolf_2012_
@@ -1075,7 +1075,7 @@ Rec #82, Rec #92) already compose in the MCP-serve wire loop:
 **Claim**: this composition IS the glasswall as first empirical
 witness. Second-witness gate: Mara canonical extension shard-decls
 @glasswall (P1 item 2 above) formalizing the composition as ONE
-Rice-safe Anna-Wolf-2012 observation-preserving type-membrane at
+Rice-safe Anna-Jakobs-2012 observation-preserving type-membrane at
 substrate altitude.
 
 **Status**: FORWARD-PROMISED. Rec candidate mint per Mara canonical

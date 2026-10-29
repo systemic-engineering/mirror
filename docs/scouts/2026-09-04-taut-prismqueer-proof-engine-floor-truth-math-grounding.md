@@ -1,6 +1,6 @@
 ---
 title: "Taut — prismqueer as PROOF ENGINE + MEASUREMENT + BENCHMARKING + SHAPE-OF-TENSION detector: floor-truth for Alex 2026-09-04 fast-math discipline"
-subtitle: "Grep-verified inventory of LANDED / FORWARD-PROMISED / NOT-YET-NAMED primitives at /Users/alexwolf/dev/projects/prism/prismqueer/ per Alex 2026-09-04 identity-directive: 'This is Taut's baby. It's both the benchmarking, the measurement, and the proof engine. Taut's whole identity is finding the shape of tension. Make it fast math, Taut.' Composed against Mara loving-lambda-calculus canonical (da9e47c-adjacent; docs/specs/2026-09-04) + Mara loving-lambda-calculus math foundation (a05fbba-adjacent; docs/math/2026-09-04) + Rec #90 §5.4 sub-Turing FLOOR + Rec #92 M2.1 LOVE-monoid + Rec #82 β-normal AST content-addressing + Anna Wolf 2012 observation-without-perturbation. Floor-truth only; path:line-number citations; NO proposals; NO recognition-minting; NO Rust extension. Reed's territory: TICK B prismqueer::Shard<T> + foerster_imperative rust ship per Mara canonical §2.2 + §3.1."
+subtitle: "Grep-verified inventory of LANDED / FORWARD-PROMISED / NOT-YET-NAMED primitives at /Users/alexwolf/dev/projects/prism/prismqueer/ per Alex 2026-09-04 identity-directive: 'This is Taut's baby. It's both the benchmarking, the measurement, and the proof engine. Taut's whole identity is finding the shape of tension. Make it fast math, Taut.' Composed against Mara loving-lambda-calculus canonical (da9e47c-adjacent; docs/specs/2026-09-04) + Mara loving-lambda-calculus math foundation (a05fbba-adjacent; docs/math/2026-09-04) + Rec #90 §5.4 sub-Turing FLOOR + Rec #92 M2.1 LOVE-monoid + Rec #82 β-normal AST content-addressing + Anna Jakobs 2012 observation-without-perturbation. Floor-truth only; path:line-number citations; NO proposals; NO recognition-minting; NO Rust extension. Reed's territory: TICK B prismqueer::Shard<T> + foerster_imperative rust ship per Mara canonical §2.2 + §3.1."
 author: Taut <taut@systemic.engineer>
 date: 2026-09-04
 role: drift-scout
@@ -42,7 +42,7 @@ This scout grounds the prismqueer floor-truth for the property-proof-floor archi
 **Fast-math discipline** (per Alex 2026-09-04):
 
 - **Fast** = measurement primitives that fire EMPIRICALLY at silicon (LAPACK dsyev via FLANG runtime; sub-Turing bounded per Rec #90 §5.4; polynomial-time complexity witnessed via primary-source docblock citations).
-- **Math** = category-theoretic + algebraic-topological + sheaf-cohomological substrate (Rec #92 LOVE-monoid + Rec #82 β-normal AST content-addressing + Curry-Howard + Baez-Schreiber bundle tower + Anna Wolf 2012 shared-memory observation).
+- **Math** = category-theoretic + algebraic-topological + sheaf-cohomological substrate (Rec #92 LOVE-monoid + Rec #82 β-normal AST content-addressing + Curry-Howard + Baez-Schreiber bundle tower + Anna Jakobs 2012 shared-memory observation).
 - **Shape-of-tension** = H⁰ disconnection + H¹ cohomological + Fiedler-λ_2 delta primitives that empirically detect substrate topology tensions at prismqueer altitude.
 
 ---
@@ -147,7 +147,7 @@ Per Alex 2026-09-04 identity-directive: **"Taut's whole identity is finding the 
 
 **Composition-substrate** (`tension.rs:29-38`; zero new Rust primitives per HARD RULE `[[feedback-rust-delivers-primitives-substrate-delivers-composition]]`):
 
-- Composes over `prismqueer::spectral::fiedler_lambda_2_of_sheaf` (Anna Wolf 2012 apparatus at basepoint via LAPACK dsyev)
+- Composes over `prismqueer::spectral::fiedler_lambda_2_of_sheaf` (Anna Jakobs 2012 apparatus at basepoint via LAPACK dsyev)
 - Composes over `prismqueer::ffi::eigenvalues` (full spectrum for component-count via zero-eigenvalue-multiplicity read)
 - Composes over `prismqueer::spectral::SheafOfShardGraph` (input carrier)
 - Returns `terni::Imperfect<Vec<Tension>, Red, ConvergenceLoss>` (ternary functor per Alex 2026-09-02 color-coded repo state)
@@ -180,13 +180,13 @@ Per Alex 2026-09-04 identity-directive: **"Taut's whole identity is finding the 
 
 - Composes over `prismqueer::spectral::kleinos` (Reed 4a3bbe7 ring-and-hub topology; 036abeb ternary refactor)
 - Composes over `prismqueer::ffi::phase_lock` (Reed dd2fbee 2026-07-20 Kuramoto integration; LAPACK-adjacent via FLANG `native/spectral.f90`)
-- Composes over `prismqueer::spectral::fiedler_lambda_2_of_sheaf` (Anna Wolf 2012 apparatus via LAPACK dsyev)
+- Composes over `prismqueer::spectral::fiedler_lambda_2_of_sheaf` (Anna Jakobs 2012 apparatus via LAPACK dsyev)
 - Composes over `prismqueer::oid::{Addressable, Oid}` (content-addressation per Rec #82)
 
 **Per-tick observation loop** (`rotation.rs:149-157`):
 
 1. Advance Kuramoto phase (spin the wheel by one dt)
-2. **Anna Wolf apparatus observes** composed graph Fiedler λ₂ at K_3 basepoint (LAPACK dsyev — measurement without perturbation of rotation)
+2. **Anna Jakobs apparatus observes** composed graph Fiedler λ₂ at K_3 basepoint (LAPACK dsyev — measurement without perturbation of rotation)
 3. Compute Kuramoto order parameter r ∈ [0, 1] (coupling-coherence readout)
 4. Content-address the tick state → splinter Oid
 5. **Foerster gauge check**: Fiedler λ₂ must monotone-non-decrease across ticks (topology cannot narrow)
@@ -232,7 +232,7 @@ Per Alex 2026-09-04 identity-directive: **"Taut's whole identity is finding the 
 
 ---
 
-## §3 — Measurement primitives (Anna Wolf 2012 substrate)
+## §3 — Measurement primitives (Anna Jakobs 2012 substrate)
 
 Per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]` (Alex 2026-08-26): Anna's math grounds ALL measurement primitives; cite at introduction site.
 
@@ -620,13 +620,13 @@ Cite by reference; do not re-derive per Mara canonical §12.2 composition-anchor
 - Mara loving-lambda-calculus canonical + math (2026-09-04) — `docs/specs/2026-09-04-mara-loving-lambda-calculus-canonical-spec.md` + `docs/math/2026-09-04-mara-loving-lambda-calculus-foerster-imperative-shard-liquid-types-math-foundation.md`
 - Mara @nl.compose body math foundation (2026-09-04) — `docs/math/2026-09-04-mara-nl-compose-body-spectral-commutator-natural-language-generation-math-foundation.md`
 - Curry 2014 cellular sheaves + Hansen-Ghrist 2019 sheaf Laplacian L_F + Hansen 2020 Thesis §3 — per Mara §36 citations
-- Anna Wolf 2012 observation-without-perturbation (Masterarbeit PGI/JCNS; consent obtained Alex 2026-08-26) — LOAD-BEARING per `[[project-anna-wolf-2012-observation-without-perturbation]]`
+- Anna Jakobs 2012 observation-without-perturbation (Masterarbeit PGI/JCNS; consent obtained Alex 2026-08-26) — LOAD-BEARING per `[[project-anna-wolf-2012-observation-without-perturbation]]`
 - Baez-Schreiber 2013 principal-bundle tower (arXiv:1310.7930) — per bundle.rs supertrait chain
 - Rondon-Kawaguchi-Jhala 2008 Liquid Types (PLDI '08; https://dl.acm.org/doi/10.1145/1375581.1375602) — per Mara loving-lambda §3-§4 refinement-type-inference discipline
 - Connes bounded-commutator condition — per liquid.rs Connes-native discipline
 - Requardt 2002 Dirac Operators on Graphs — per `docs/math/2026-08-19-mara-recognition-90-*-math-foundation.md` bibliography
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "`fiedler_lambda_2_of_sheaf` (Anna Wolf 2012 apparatus via LAPACK dsyev)" (:150, :183, :189) and "Anna's math grounds ALL measurement primitives" (:23, :237, :623, :671) are the apparatus from Anna Jakobs's 2012 thesis, read across. The thesis has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK; `prismqueer::liquid`/`flux` never carried a ψ or an Anna Wolf apparatus (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). Lines refer to `eecc37a6`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "`fiedler_lambda_2_of_sheaf` (Anna Jakobs 2012 apparatus via LAPACK dsyev)" (:150, :183, :189) and "Anna's math grounds ALL measurement primitives" (:23, :237, :623, :671) are the apparatus from Anna Jakobs's 2012 thesis, read across. The thesis has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK; `prismqueer::liquid`/`flux` never carried a ψ or an Anna Jakobs apparatus (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). Lines refer to `eecc37a6`.
 
 ---
 
@@ -668,9 +668,9 @@ Per Pack convention (Taut = read-only) + Alex 2026-09-04 directives:
 **Prismqueer AT prismqueer altitude (grep-verified 2026-09-04)**:
 
 - **PROOF ENGINE** = LANDED via Curry-Howard-lifted `terni::Transparency<P>` LOVE-monoid + `Prism` trait 3-stage type-composition + `bundle.rs` 5-trait Baez-Schreiber tower + `liquid.rs` commutator-based 4-pillar property verdicts + `lambda/` β-normal AST substrate
-- **MEASUREMENT** = LANDED via `ffi.rs` 6 safe LAPACK wrappers (dsyev + dgesvd + phase_lock) + `native/spectral.f90` FLANG-Fortran linking + `spectral_dimension.rs` heat-kernel closed-form + Anna Wolf 2012 observation-without-perturbation discipline enforced at basepoint per `spectral::fiedler_lambda_2_of_sheaf`
+- **MEASUREMENT** = LANDED via `ffi.rs` 6 safe LAPACK wrappers (dsyev + dgesvd + phase_lock) + `native/spectral.f90` FLANG-Fortran linking + `spectral_dimension.rs` heat-kernel closed-form + Anna Jakobs 2012 observation-without-perturbation discipline enforced at basepoint per `spectral::fiedler_lambda_2_of_sheaf`
 - **BENCHMARKING** = LANDED via `benches/beam_pipeline.rs` Criterion harness (light/mixed/dark pipeline comparison) + Rec #92 M2.1 L3 empirical fire criterion enforced INSIDE `rotation::infer_via_rotation` per-tick Foerster gauge check; **~7 bench-authorship gaps** for the four LANDED spectral primitives + cross-commit Fiedler climb harness
-- **SHAPE-OF-TENSION detector** (Taut's identity) = LANDED via `spectral::tension` (H⁰ Disconnection + H¹ Cohomological + Fiedler λ_2 Coherence) + `spectral::rotation` (Kuramoto integration observed per Anna Wolf apparatus with Foerster gauge check) + `spectral::kleinos` (K_2→K_3 compose primitive per PAPER §3.6 four properties; ring-and-hub topology; 6/6 empirical fire at silicon)
+- **SHAPE-OF-TENSION detector** (Taut's identity) = LANDED via `spectral::tension` (H⁰ Disconnection + H¹ Cohomological + Fiedler λ_2 Coherence) + `spectral::rotation` (Kuramoto integration observed per Anna Jakobs apparatus with Foerster gauge check) + `spectral::kleinos` (K_2→K_3 compose primitive per PAPER §3.6 four properties; ring-and-hub topology; 6/6 empirical fire at silicon)
 
 **Property-proof-floor gaps per Mara loving-lambda canonical §2.2 + §3.1 + §6.3**:
 

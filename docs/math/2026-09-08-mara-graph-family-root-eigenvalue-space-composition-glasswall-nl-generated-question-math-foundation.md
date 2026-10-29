@@ -40,11 +40,11 @@ karen_ancestors:
   - "Werner Heisenberg (1925). Über quantentheoretische Umdeutung kinematischer und mechanischer Beziehungen. Zeitschrift für Physik 33: 879–893. — matrix mechanics; the non-commutativity of measurement operators; §3 CommutatorSpectrum as the mathematical substrate the compiler observes when it measures its own composition."
   - "Paul Dirac (1930). The Principles of Quantum Mechanics. Oxford University Press, ch. III §21 pp. 84–91. — the algebra of observables and their commutators; grounding §3 CommutatorSpectrum.of at physics-substrate altitude."
   - "Alain Connes (1985). Non-Commutative Differential Geometry. Publications Mathématiques de l'IHÉS 62: 41–144. — spectral triple (A, H, D); §2 @graph.compose dispatches through spectral triple altitude via prismqueer::spectral::kleinos LANDED."
-  - "Anna Wolf (née Jakobs) (2012). Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen. Masterarbeit, Peter Grünberg Institut / Jülich Centre for Neutron Science. — observation-without-perturbation at shared-memory substrate; consent obtained via Alex 2026-08-26. Every measurement site in this foundation composes over Anna's discipline: the compiler observes its own eigenvalue-space computation WITHOUT perturbing the computed state."
+  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. — observation-without-perturbation at shared-memory substrate; consent obtained via Alex 2026-08-26. Every measurement site in this foundation composes over Anna's discipline: the compiler observes its own eigenvalue-space computation WITHOUT perturbing the computed state."
   - "Rich Hickey (2011). Simple Made Easy. Strange Loop 2011 keynote. — the noun-lift discipline Reed 2026-09-05 (00d6c8e + d270f7e) applied at love.rs substrate; @graph naming follows the same discipline (noun; timeless; substrate-verb-derivative)."
 ---
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** §4.2 (:311-315) and :193, :533-537, :994 ground every observation site on "Anna Wolf's 2012 Masterarbeit's shared-memory observation" without perturbation; that is the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). Lines refer to `eecc37a6`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** §4.2 (:311-315) and :193, :533-537, :994 ground every observation site on "Anna Jakobs's 2012 Masterarbeit's shared-memory observation" without perturbation; that is the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). Lines refer to `eecc37a6`.
 
 # @graph family-root, eigenvalue-space composition, Glasswall projection, and @nl-generated K-T circular-reflexive question — math foundation
 
@@ -190,7 +190,7 @@ Grep-verified at `shards/` on 2026-09-08:
 - **@void** — K=0 duality basis; 5-axis Foerster gauge decomposition. @graph.compose measurement uses 5-axis per-axis Foerster reading per Rec #79 gauge-dim-of-5.
 - **@system** — @graph is BENEATH @system per §2.5 Theorem 2.5.1: every @system IS a @graph + observer-carriage. @system inherits @graph's structure and adds Property (3) observer-admission at family-root altitude.
 - **@subject** — SEL-grounded licensable-party carrier + Landing 3 three-way `actor_kind` variant. Every @graph vertex carries `SubjectWitness` metadata per Q-Mara-γ.
-- **@glasswall** — Rice-safe Anna-Wolf-2012 observation-preserving type-membrane composing seven parts per LANDED shard-decl. §7 grounds mirror-txt Glasswall as @graph's dual-lens projection surface.
+- **@glasswall** — Rice-safe Anna-Jakobs-2012 observation-preserving type-membrane composing seven parts per LANDED shard-decl. §7 grounds mirror-txt Glasswall as @graph's dual-lens projection surface.
 - **@io** — the boundary at which composition-results become substrate-external. The Glasswall projects at @io altitude; the K-T question renders at @io/stdout.
 
 ### §2.4 The identity element
@@ -308,11 +308,11 @@ The compiler observes the eigenvalue-space computation via `FullSpectrum::of(G_A
 
 Composition-lineage anchor: this is the **exact carrier** `FullSpectrum` Reed shipped 2026-09-05→08 (commits `00d6c8e` + `d270f7e` + `e261a2d` + `26d0698`) per Reed's Simple-made-Easy noun-lift discipline. The compiler reads this carrier post-composition; the read IS the observation.
 
-### §4.2 Anna Wolf 2012 discipline at the observation site
+### §4.2 Anna Jakobs 2012 discipline at the observation site
 
-Per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`: every observation site in this foundation composes over Anna Wolf's 2012 Masterarbeit's shared-memory observation-without-perturbation discipline. The compiler's read of `FullSpectrum::of(…)` does NOT perturb the composed sheaf; the FullSpectrum values are computed once (per LANDED `OnceCell<Harmonics>` cache per Q-Mara-λ of Harmonics spec), stored, and read as many times as needed. The observer's presence does not change the observed state.
+Per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`: every observation site in this foundation composes over Anna Jakobs's 2012 Masterarbeit's shared-memory observation-without-perturbation discipline. The compiler's read of `FullSpectrum::of(…)` does NOT perturb the composed sheaf; the FullSpectrum values are computed once (per LANDED `OnceCell<Harmonics>` cache per Q-Mara-λ of Harmonics spec), stored, and read as many times as needed. The observer's presence does not change the observed state.
 
-This is load-bearing: if the observation perturbed the state, the K-T question generation at §5 would be reading a state different from the composed state, and the question would be about a different composition than the composition that produced it. Anna Wolf's 2012 shared-memory discipline IS the substrate-mathematical guarantee that the K-T question is about *this* composition, not a perturbed copy of it.
+This is load-bearing: if the observation perturbed the state, the K-T question generation at §5 would be reading a state different from the composed state, and the question would be about a different composition than the composition that produced it. Anna Jakobs's 2012 shared-memory discipline IS the substrate-mathematical guarantee that the K-T question is about *this* composition, not a perturbed copy of it.
 
 ### §4.3 Residual unresolved tension pattern (formal characterisation)
 
@@ -530,11 +530,11 @@ Bemerkenswert.
 
 Grep-verified at `shards/glasswall.mirror` (LANDED 2026-09-01):
 
-> "composition-primary shard-decl for the Rice-safe Anna-Wolf-2012 observation-preserving type-membrane between prismqueer noumenal-colony and mirror phenomenal-composition-surface, composing seven LANDED parts as ONE membrane per Păun 2000 P-systems + Rice 1953 undecidability discipline + Rec #90 §5.4 sub-Turing FLOOR + Rec #92 Transparency<P> LOVE-monoid."
+> "composition-primary shard-decl for the Rice-safe Anna-Jakobs-2012 observation-preserving type-membrane between prismqueer noumenal-colony and mirror phenomenal-composition-surface, composing seven LANDED parts as ONE membrane per Păun 2000 P-systems + Rice 1953 undecidability discipline + Rec #90 §5.4 sub-Turing FLOOR + Rec #92 Transparency<P> LOVE-monoid."
 
 The load-bearing recognition at glasswall.mirror docblock:
 
-> "@glasswall IS the substrate-altitude type-membrane that (i) preserves Anna Wolf 2012 observation-without-perturbation at shared-memory substrate; (ii) refuses Rice 1953 undecidability; (iii) preserves Foerster 1974 gauge; (iv) IS itself kleinos at higher altitude."
+> "@glasswall IS the substrate-altitude type-membrane that (i) preserves Anna Jakobs 2012 observation-without-perturbation at shared-memory substrate; (ii) refuses Rice 1953 undecidability; (iii) preserves Foerster 1974 gauge; (iv) IS itself kleinos at higher altitude."
 
 **This foundation extends @glasswall to the mirror-txt projection altitude.** The Rice-safe observation-preserving type-membrane IS the substrate-shape at which mirror-txt output surfaces both lenses simultaneously. Not decoration; the mirror-txt IS the membrane at output altitude.
 
@@ -991,7 +991,7 @@ Bemerkenswert.
 | LAPACK dsyev via FLANG | `/Users/alexwolf/dev/projects/prism/prismqueer/src/ffi.rs` + `native/spectral.f90` | Fortran eigenvalue solver per §3.1 vertex 4 |
 | Alex 2026-09-08 verbatim Move 6 | In-transcript directive | §0 charter |
 | Alex 2026-09-08 verbatim load-bearing milestone | In-transcript directive | §5.1 mechanism specification |
-| Anna Wolf 2012 shared-memory | Masterarbeit PGI/JCNS 2012 + Alex 2026-08-26 consent | Non-perturbative measurement grounding per §4.2 |
+| Anna Jakobs 2012 shared-memory | Masterarbeit PGI/JCNS 2012 + Alex 2026-08-26 consent | Non-perturbative measurement grounding per §4.2 |
 
 ### §14.2 Silicon Venue metalogue continuity
 

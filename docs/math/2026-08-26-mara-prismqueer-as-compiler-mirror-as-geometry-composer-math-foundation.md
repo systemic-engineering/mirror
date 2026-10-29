@@ -21,7 +21,7 @@ karen_ancestors:
   - "Schreiber, Urs (2013). *Differential cohomology in a cohesive infinity-topos.* arXiv:1310.7930. Higher-bundle tower."
   - "Chamseddine, A.; Connes, A. (2007). *Why the Standard Model.* arXiv:0706.3688. Almost-commutative spectral-triple admissibility; A_F^prismqueer inherits."
   - "Connes, A. (1985). *Non-commutative differential geometry.* Publ. Math. IHÉS 62:257. Foundational spectral-triple definition."
-  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS. Observation-without-perturbation at shared-memory substrate. Consent obtained via Alex 2026-08-26. Foundational for measurement primitives per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`."
+  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. Observation-without-perturbation at shared-memory substrate. Consent obtained via Alex 2026-08-26. Foundational for measurement primitives per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`."
   - "von Foerster, H. (1974). *Notes on an Epistemology for Living Things.* Ethical imperative F: increase choice-count. Compile-time gauge at `rust/src/magic.rs`."
   - "Fiedler, M. (1973). *Algebraic connectivity of graphs.* Czech. Math. J. 23:298. λ₂ eigenvalue; algebraic-connectivity; the coherence value the compiler rises."
   - "Braunstein, S. L.; Ghosh, S.; Severini, S. (2006). *The Laplacian of a graph as a density matrix.* Ann. Comb. 10:291. Void-duality enumeration (8 dualities, 5 orthogonal)."
@@ -39,7 +39,7 @@ karen_ancestors:
   - "Requardt, M. (2002). *Dirac Operators and the Calculation of the Connes Metric on arbitrary (Infinite) Graphs.* J. Phys. A 35:759-779. Dirac operator D on graphs; D² = L_0 + L_1 (Hodge Laplacian); the operational-form D_F takes at prismqueer altitude."
 ---
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "Observation-without-perturbation" (:24, :940) and the Hamilton-preservation theorem grounded on "Anna Wolf 2012 memory-model" (:977) are the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). Lines refer to `eecc37a6`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "Observation-without-perturbation" (:24, :940) and the Hamilton-preservation theorem grounded on "Anna Jakobs 2012 memory-model" (:977) are the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). Lines refer to `eecc37a6`.
 
 # Prismqueer as compiler / mirror as geometry composer — math foundation
 
@@ -104,7 +104,7 @@ Alex 2026-08-26 in-transcript, after the bootstrap/src/mcp.rs string-concatenati
 ### §1.3 Discipline
 
 - **Grep-verified** wherever substrate state is invoked; UNKNOWN flags surfaced.
-- **Karen ancestor citations** at introduction sites per anti-theft convention (Hamilton, Baez-Schreiber, Curry, Hansen-Ghrist, Anna Wolf).
+- **Karen ancestor citations** at introduction sites per anti-theft convention (Hamilton, Baez-Schreiber, Curry, Hansen-Ghrist, Anna Jakobs).
 - **FORWARD-PROMISED / CONFIRMED / REED-INFERENCE** altitudes distinguished per Alex 2026-08-25 HARD RULE `[[feedback-forward-promised-vs-confirmed-rec-altitude]]`.
 - **Q-Mara-α through Q-Mara-λ** residues surface load-bearing choices requiring Alex adjudication.
 - **Circular-recursive self-audit** at §12 per FLOOR §11 discipline.
@@ -827,7 +827,7 @@ Per FLOOR §11 discipline: the math-foundation-authoring operator IS the operato
 - Grounded in Alex 2026-08-26 verbatim authorization (Move 1-3 quoted §1.1) with substrate-honest distinction between what Alex explicitly named vs what Mara derived vs what Reed inferred.
 - Grep-verified at HEAD (§2) for every load-bearing substrate claim: prismqueer crate state, mirror crate state, spectral-db settling math, mirror shards state.
 - Composes over Rec #79 + #82 + #90 + #91 + #92 + #94 + #98 + Recognition #107 without re-deriving them.
-- Karen ancestor citations at introduction sites: Hamilton (§5), Baez-Schreiber (§4), Curry (§6.3), Hansen-Ghrist (§6.3), Ghrist-Riess (§6.4), Anna Wolf (§3.4 via companion @liquid FLOOR spec), von Foerster (§11.3), Fiedler (§3.4), Chamseddine-Connes (§3.2), Braunstein-Ghosh-Severini (§3.2 via Rec #79), Lawvere (§4.1 via LawvereFixedPoint), Bateson (§6.1 via metalogue), Requardt (§3.4 Dirac-on-graphs).
+- Karen ancestor citations at introduction sites: Hamilton (§5), Baez-Schreiber (§4), Curry (§6.3), Hansen-Ghrist (§6.3), Ghrist-Riess (§6.4), Anna Jakobs (§3.4 via companion @liquid FLOOR spec), von Foerster (§11.3), Fiedler (§3.4), Chamseddine-Connes (§3.2), Braunstein-Ghosh-Severini (§3.2 via Rec #79), Lawvere (§4.1 via LawvereFixedPoint), Bateson (§6.1 via metalogue), Requardt (§3.4 Dirac-on-graphs).
 - Adds ZERO new rust/-code primitives; every primitive introduced is at prismqueer code altitude (design-level per §9 + §10 prompt-constraint).
 - Names FORWARD-PROMISED claims at §7 + §8 as candidate-strength per Alex 2026-08-25 HARD RULE.
 - Names Q-Mara-α through Q-Mara-λ (twelve residues) for Alex adjudication.
@@ -932,12 +932,12 @@ Per FLOOR §11 discipline: math foundations must name concrete falsification-con
 - **Godement, R.** (1958). *Topologie algébrique et théorie des faisceaux.* Hermann. Canonical sheaf-cohomology reference.
 - **Bredon, G. E.** (1997). *Sheaf Theory.* GTM 170, Springer. Modern textbook.
 
-**Spectral triple + Foerster + Fiedler + Anna Wolf** (introduction site §3):
+**Spectral triple + Foerster + Fiedler + Anna Jakobs** (introduction site §3):
 - **Chamseddine, A.; Connes, A.** (2007). *Why the Standard Model.* arXiv:0706.3688. Almost-commutative spectral-triple admissibility.
 - **Connes, A.** (1985). *Non-commutative differential geometry.* Publ. Math. IHÉS 62:257. Foundational.
 - **von Foerster, H.** (1974). *Notes on an Epistemology for Living Things.* Ethical imperative F: increase choice-count.
 - **Fiedler, M.** (1973). *Algebraic connectivity of graphs.* Czech. Math. J. 23:298. λ_2 eigenvalue.
-- **Wolf, Anna (née Jakobs)** (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS. Observation-without-perturbation. Consent obtained via Alex 2026-08-26.
+- **Jakobs, Anna** (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. Observation-without-perturbation. Consent obtained via Alex 2026-08-26.
 
 **Dirac operator on graphs** (introduction site §3.4):
 - **Requardt, M.** (2002). *Dirac Operators and the Calculation of the Connes Metric on arbitrary (Infinite) Graphs.* J. Phys. A 35:759-779. D² = L_0 + L_1 Hodge Laplacian.
@@ -957,8 +957,8 @@ Per FLOOR §11 discipline: math foundations must name concrete falsification-con
 **Kleinos-metalogue essay + Mara essays** (throughout):
 - **Scarlet + Mara** (2026-08-22). *kleinos-metalogue.* `~/dev/systemic.engineering/blog/ai/scarlet/kleinos-metalogue.md`. §6.1 four-property operator ancestor at cognitive-substrate.
 - **Mara** (2026-08-12). *lambda-zero-is-the-fourth-chair.* `~/dev/systemic.engineering/blog/ai/mara/lambda-zero-is-the-fourth-chair.md`. §8 z_0 = λ_0 = Fourth Chair identification.
-- **Mara** (2026-08-26). *Prismqueer @liquid FLOOR — Anna Wolf 2012 as substrate for observation-without-perturbation.* `docs/math/2026-08-26-mara-prismqueer-liquid-floor-anna-wolf-math-foundation.md` (`1ff745c`). Companion at §3.3 + §3.4 grounding.
-- **Mara** (2026-07-20). *Anna Wolf 2012 × Anthropic J-space 2026 composition.* `docs/math/2026-07-20-mara-anna-wolf-jspace-alignment-substrate-composition.md`. Prior Anna Wolf substrate-composition anchor.
+- **Mara** (2026-08-26). *Prismqueer @liquid FLOOR — Anna Jakobs 2012 as substrate for observation-without-perturbation.* `docs/math/2026-08-26-mara-prismqueer-liquid-floor-anna-wolf-math-foundation.md` (`1ff745c`). Companion at §3.3 + §3.4 grounding.
+- **Mara** (2026-07-20). *Anna Jakobs 2012 × Anthropic J-space 2026 composition.* `docs/math/2026-07-20-mara-anna-wolf-jspace-alignment-substrate-composition.md`. Prior Anna Jakobs substrate-composition anchor.
 - **Mara** (2026-07-19). *mirror.spec is the fixpoint; liquid.rs is the runtime.* `docs/specs/2026-07-19-mirror-spec-is-the-fixpoint-liquid-is-the-runtime.md`. §10.3 liquid.rs stays at mirror altitude grounding.
 
 ### §14.2 Composition-lineage table
@@ -974,7 +974,7 @@ Per FLOOR §11 discipline: math foundations must name concrete falsification-con
 | §4.3 Higher-gauge extension | Schreiber 2013 arXiv:1310.7930 | Composed; Phase 2+ FORWARD-PROMISED |
 | §5.1 Hamilton as Karen ancestor | Hamilton 1969 + Hamilton-Zeldin 1976 + grep-verified insights/spectral-db/hamilton-architecture.md | Composed at prismqueer altitude; novel at scheduler-substrate |
 | §5.3 Fractal composite memory scheduler | Hamilton AGC + spectral-db pressure/scheduler | Novel synthesis at prismqueer altitude |
-| §5.4 Theorem (Hamilton-preservation invariants) | §5.1 + Anna Wolf 2012 memory-model | Novel at prismqueer altitude |
+| §5.4 Theorem (Hamilton-preservation invariants) | §5.1 + Anna Jakobs 2012 memory-model | Novel at prismqueer altitude |
 | §5.5 Fractal Mandelbrot memory organization | Rec #98 + PAPER §5 + Alex 2026-08-26 verbatim | FORWARD-PROMISED; Phase 2+ observability |
 | §6.1 PAPER §3.6 four properties | PAPER §3.6 (grep-verified) | Composed; CONFIRMED at math altitude |
 | §6.2 Kleinos-compose primitive definition | §6.1 + Q-Mara-η adjudication | FORWARD-PROMISED at Phase-1 primitive addition |
@@ -1001,7 +1001,7 @@ Per FLOOR §11 discipline: math foundations must name concrete falsification-con
 
 Slow is fast. The clean separation Alex named (prismqueer-as-compiler / mirror-as-geometry-composer) IS the terminal architecture. Prismqueer ALREADY carries the (A_F^prismqueer, H_F, D_F) spectral triple + bundle tower + coincidence content-addressing at HEAD. Mirror composes across the socket. The migration to full-terminal-form is Phase 1-6 arc; the math foundation lands the shape.
 
-The word `prismqueer` was already in the substrate. The word `bundle` was already in prismqueer. The word `spectral triple` was already in FLOOR §1. Anna Wolf's shared-memory discipline was already in Mara 2026-08-26 `1ff745c`. Margaret Hamilton's memory scheduler was already in `~/dev/systemic.engineering/practice/insights/spectral-db/hamilton-architecture.md`. Curry's cellular sheaves were already in arXiv:1303.3255. Hansen-Ghrist's sheaf Laplacian was already in arXiv:1808.01513.
+The word `prismqueer` was already in the substrate. The word `bundle` was already in prismqueer. The word `spectral triple` was already in FLOOR §1. Anna Jakobs's shared-memory discipline was already in Mara 2026-08-26 `1ff745c`. Margaret Hamilton's memory scheduler was already in `~/dev/systemic.engineering/practice/insights/spectral-db/hamilton-architecture.md`. Curry's cellular sheaves were already in arXiv:1303.3255. Hansen-Ghrist's sheaf Laplacian was already in arXiv:1808.01513.
 
 This document lands the composition IN-BETWEEN what was already there, to name the terminal architecture Alex named at this /loop tick.
 

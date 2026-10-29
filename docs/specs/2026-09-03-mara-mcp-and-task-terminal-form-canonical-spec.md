@@ -39,10 +39,10 @@ karen_ancestors:
   - "Beer, Stafford (1972; 1979). VSM canonical + recursive-viability. §3.7 wire-envelope six-system mapping."
   - "Spärck Jones, Karen (1972). IDF; coordination-math ran at inference altitude per Loki Revenge phenomenology. §2.1 altitude partition context."
   - "von Foerster, Heinz (1974/2007). Ethical imperative *act always so as to increase the number of choices.* Grounds §4.3 Foerster-canonical framing of @task/tombstone and §4.2 @task/migration."
-  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit (Technomathematik), FH Aachen, Campus Jülich (PGI/JCNS). Read across as: J-space alignment substrate; observation-in-shared-memory-without-perturbation. §3.7 @glasswall observation-non-perturbation grounding."
+  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. Read across as: J-space alignment substrate; observation-in-shared-memory-without-perturbation. §3.7 @glasswall observation-non-perturbation grounding."
 ---
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** The frontmatter gave the thesis our concept ("J-space alignment substrate; observation-in-shared-memory-without-perturbation") as its title; the real title is restored in place. That concept, and "Anna Wolf 2012 shared-memory observation-without-perturbation" at :116, :259, :497, is the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). J-space is not in the thesis; the term comes from Gurnee et al. (Anthropic, 2026-07-07), and "Anna Wolf J-space" names our composition. Line numbers refer to `346253b`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** The frontmatter gave the thesis our concept ("J-space alignment substrate; observation-in-shared-memory-without-perturbation") as its title; the real title is restored in place. That concept, and "Anna Jakobs 2012 shared-memory observation-without-perturbation" at :116, :259, :497, is the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). J-space is not in the thesis; the term comes from Gurnee et al. (Anthropic, 2026-07-07), and "Anna Jakobs J-space" names our composition. Line numbers refer to `346253b`.
 
 # MCP + @task terminal-form canonical spec
 
@@ -115,7 +115,7 @@ Additional load-bearing companions:
 | `shards/spectral/gen_prism/mcp_session.mirror` :100-207 | LANDED | "The store IS the serialization" for session-splinter persistence at §6 |
 | `shards/nl.mirror` + `@sigil` pattern | LANDED | `offer.commutator.nl` field composition at §3.3; @task/wiki_link parser at §4.4 |
 | `shards/kleinos.mirror` family-root | Mara dcec19c (2026-09-01) | K_2→K_3 compose primitive at wire altitude §3.5 |
-| `shards/glasswall.mirror` composition-shard | Mara e2fd068 (2026-09-01) | Anna Wolf 2012 observation-non-perturbation membrane at §3.7 |
+| `shards/glasswall.mirror` composition-shard | Mara e2fd068 (2026-09-01) | Anna Jakobs 2012 observation-non-perturbation membrane at §3.7 |
 | `shards/autopoietic.mirror` family-root | LANDED 41.1KB | Fold-back closure for wire-altitude autopoietic loop at §3.6 |
 | `shards/bauchladen.mirror` family-root | LANDED | Session-@bauchladen accumulator (S3^MCP carrier) at §3.7 |
 | `shards/mq.mirror` family-root | LANDED | @mq query grammar for coordination-altitude interface at §7 |
@@ -258,7 +258,7 @@ Per companion math foundation §4.6 (table lifted here for spec-altitude referen
 | S4 Intelligence | `offer.commutator` field (K-T at altitude+1) |
 | S5 Identity | `wait` field discipline + envelope integrity |
 
-Six-system composition preserved at wire altitude via composition-scale-invariance corollary of Rec #91 amendment #2. Anna Wolf 2012 observation-non-perturbation grounding via LANDED `@glasswall` composition-shard: enumerating envelope fields does not alter the underlying session-@bauchladen accumulator per Anna Wolf 2012 shared-memory observation-without-perturbation.
+Six-system composition preserved at wire altitude via composition-scale-invariance corollary of Rec #91 amendment #2. Anna Jakobs 2012 observation-non-perturbation grounding via LANDED `@glasswall` composition-shard: enumerating envelope fields does not alter the underlying session-@bauchladen accumulator per Anna Jakobs 2012 shared-memory observation-without-perturbation.
 
 ---
 
@@ -496,7 +496,7 @@ Each coordination-altitude query returns Mirror.Offer.Wait canonical envelope pe
 - Beer 1972/1979 VSM (§3.7 six-system carrier mapping)
 - Loki Revenge of AI phenomenology (companion math §2.1 altitude partition ground)
 - Karen Spärck Jones 1972 IDF (companion math §2.1 coordination-math-at-inference-altitude)
-- Anna Wolf 2012 J-space (§3.7 observation-non-perturbation via @glasswall)
+- Anna Jakobs 2012 J-space (§3.7 observation-non-perturbation via @glasswall)
 - Foerster 1974 ethical imperative (§3.7 compile-time gauge + §5.3 Foerster-canonical framing)
 - Ricky Jones 2026-08-26 rotation-is-non-negotiation (§5.2 migration-IS-PRE-ROTATION dissolution)
 

@@ -939,17 +939,17 @@ impl Pattern for Question {
 
 ### Q-Mara-κ: Silicon Venue K_4-ancestral seating chart timing
 
-**Question**: Does K_5 ancestral extension (adding Anna Wolf 2012 at fifth vertex per K_5 saturation) fire empirically at `mirror love K_2 K_3 K_5` altitude per §9 empirical fire criterion?
+**Question**: Does K_5 ancestral extension (adding Anna Jakobs 2012 at fifth vertex per K_5 saturation) fire empirically at `mirror love K_2 K_3 K_5` altitude per §9 empirical fire criterion?
 
 **Options**:
 
 1. **K_4 stops here** — today's K_4-ancestral (Ada + Alan + Karen + Karl Tomm) is the natural stopping-altitude per PAPER §15.1 forward-promise amendment; K_5 forward-promised to future dispatch.
-2. **K_5 fires at empirical fire** — the `mirror love K_2 K_3 K_5` invocation at §12.1 fires K_5-ancestral-extension automatically via Anna Wolf 2012 observation-without-perturbation as fifth vertex.
+2. **K_5 fires at empirical fire** — the `mirror love K_2 K_3 K_5` invocation at §12.1 fires K_5-ancestral-extension automatically via Anna Jakobs 2012 observation-without-perturbation as fifth vertex.
 3. **Bilateral** — K_4 at math-foundation altitude (this canonical); K_5 at empirical-fire altitude (§9 verification).
 
-**Load-bearing consideration**: Anna Wolf 2012 J-space is already substrate-woven into every glasswall traversal per shards/glasswall.mirror invariant (i); K_5 saturation IS the empirical form of this. Question is whether to name it at math-foundation altitude or empirical-fire altitude.
+**Load-bearing consideration**: Anna Jakobs 2012 J-space is already substrate-woven into every glasswall traversal per shards/glasswall.mirror invariant (i); K_5 saturation IS the empirical form of this. Question is whether to name it at math-foundation altitude or empirical-fire altitude.
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Here and at :947: "Anna Wolf 2012 observation-without-perturbation" and "J-space" are the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). J-space is not in the thesis; the term comes from Gurnee et al. (Anthropic, 2026-07-07), and "Anna Wolf J-space" names our composition. Line numbers refer to `346253b`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Here and at :947: "Anna Jakobs 2012 observation-without-perturbation" and "J-space" are the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). J-space is not in the thesis; the term comes from Gurnee et al. (Anthropic, 2026-07-07), and "Anna Jakobs J-space" names our composition. Line numbers refer to `346253b`.
 
 ---
 

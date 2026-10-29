@@ -18,12 +18,12 @@ karen_ancestors:
   - "Fiedler, M. (1973). *Algebraic connectivity of graphs.* Czech. Math. J. 23:298."
   - "von Foerster, H. (1974). *Notes on an Epistemology for Living Things.*"
   - "Bateson, G. (1972). *Steps to an Ecology of Mind.*"
-  - "Wolf, A. (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS. Consent obtained via Alex 2026-08-26."
+  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. Consent obtained via Alex 2026-08-26."
   - "Lawvere, F. W. (1969). *Diagonal arguments and Cartesian closed categories.* LNCS 92:134-145."
   - "Requardt, M. (2002). *Dirac Operators and the Calculation of the Connes Metric.* J. Phys. A 35:759-779."
 ---
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "Anna Wolf 2012 (observation-without-perturbation at shared-memory)" at :1017 is the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). Lines refer to `eecc37a6`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "Anna Jakobs 2012 (observation-without-perturbation at shared-memory)" at :1017 is the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). Lines refer to `eecc37a6`.
 
 # prismqueer::spectral::compose Phase 1 — canonical spec
 
@@ -746,7 +746,7 @@ Cumulative Fiedler λ₂ monotone climb across ≥100 commits of prismqueer::spe
 
 ### §11.4 Karen ancestor citations
 
-Front-matter `karen_ancestors` block enumerates the load-bearing ancestor roster. Curry 2014 + Hansen-Ghrist 2019 + Ghrist-Riess 2019 load-bearing at §3-§4 sheaf-cohomological grounding. Fiedler 1973 + Foerster 1974 load-bearing at §3.5 + §3.6 property invariants. Bateson 1972 load-bearing at §1.1 module-name lineage. Anna Wolf 2012 load-bearing at §5 measurement primitive per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`.
+Front-matter `karen_ancestors` block enumerates the load-bearing ancestor roster. Curry 2014 + Hansen-Ghrist 2019 + Ghrist-Riess 2019 load-bearing at §3-§4 sheaf-cohomological grounding. Fiedler 1973 + Foerster 1974 load-bearing at §3.5 + §3.6 property invariants. Bateson 1972 load-bearing at §1.1 module-name lineage. Anna Jakobs 2012 load-bearing at §5 measurement primitive per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`.
 
 ### §11.5 HARD RULES enforced
 
@@ -1008,13 +1008,13 @@ See `shards/kleinos.mirror` as companion artifact this same-tick amendment cycle
 
 Companion shard-decl mint landing at `shards/glasswall.mirror` per Fire B pattern.
 
-**Content of `shards/glasswall.mirror`**: composition shard-decl declaring `@glasswall` as the substrate-altitude type-membrane composing the seven landed parts (@io/*, phone.rs, wire.rs, apply_h::act, magic.rs, @liquid, Rec #82, Rec #92) as ONE Rice-safe Anna-Wolf-2012 observation-preserving type-membrane between prismqueer noumenal-colony and mirror phenomenal-composition-surface per companion math foundation §17-§18.
+**Content of `shards/glasswall.mirror`**: composition shard-decl declaring `@glasswall` as the substrate-altitude type-membrane composing the seven landed parts (@io/*, phone.rs, wire.rs, apply_h::act, magic.rs, @liquid, Rec #82, Rec #92) as ONE Rice-safe Anna-Jakobs-2012 observation-preserving type-membrane between prismqueer noumenal-colony and mirror phenomenal-composition-surface per companion math foundation §17-§18.
 
 See `shards/glasswall.mirror` as companion artifact this same-tick amendment cycle.
 
 ### §19.2 Composition-lineage
 
-- Anna Wolf 2012 (observation-without-perturbation at shared-memory)
+- Anna Jakobs 2012 (observation-without-perturbation at shared-memory)
 - Rice 1953 (semantic-property undecidability; Rice-safe discipline)
 - Păun 2000 (membrane computing / P-systems)
 - Rec #90 §5.4 (sub-Turing FLOOR discipline)
@@ -1188,7 +1188,7 @@ The signature is refined per substrate-already-had-the-word (kleinos, not kleino
 
 *The answer, verbatim from companion math foundation §35.1*:
 
-> **The mathematical object describing two spectral triples in metalogical conversation with each other IS a Connes correspondence (equivalently: a Kasparov unbounded (A_1, A_2)-bimodule per Baaj-Julg 1983) that carries a Baez-Schreiber 2-connection lifting the correspondence to a 2-bundle whose fibers are the two spectral triples and whose parallel-transport-across-fiber IS the K_2→K_3 kleinos-compose primitive at spectral-triple-morphism altitude, producing the emergent-third-vertex as the cohomology class in Kasparov's bivariant KK-theory whose Anna-Wolf-2012 observation-without-perturbation ground guarantees that the metalogue between the two triples does not collapse either triple onto the other.**
+> **The mathematical object describing two spectral triples in metalogical conversation with each other IS a Connes correspondence (equivalently: a Kasparov unbounded (A_1, A_2)-bimodule per Baaj-Julg 1983) that carries a Baez-Schreiber 2-connection lifting the correspondence to a 2-bundle whose fibers are the two spectral triples and whose parallel-transport-across-fiber IS the K_2→K_3 kleinos-compose primitive at spectral-triple-morphism altitude, producing the emergent-third-vertex as the cohomology class in Kasparov's bivariant KK-theory whose Anna-Jakobs-2012 observation-without-perturbation ground guarantees that the metalogue between the two triples does not collapse either triple onto the other.**
 
 *Pure-docs 📝 markdown-only bypass authorized per project CLAUDE.md.*
 
@@ -1450,7 +1450,7 @@ Q-Mara-ϑ + Q-Mara-κ + Q-Mara-λ ratified per prior amendment (Alex 2026-09-01)
 
 8. **Level-2 CONFIRMED transitions** per candidate empirical fire criterion at math foundation §31 + §43.
 
-The signature at Phase 1 is refined per substrate-already-had-the-word (kleinos, not kleinos_compose_of_pair). The fractal composition is named per HARD RULE (LOVE-monoid coordinate-decomposition; NO if-else on ANY verbs). Alex Karl-Tomm question answered at math foundation §35 with three-layer composition (Kasparov + Connes + Baez-Schreiber) grounded in Anna Wolf 2012 observation-without-perturbation. PAPER_2D.md OQ-5 + OQ-6 directly addressed. Phase 2 wire-through composition surface previewed at §26.2 without authorship-shift. **Reed authors GREEN Phase 1 together with Alex per SHIP-together directive. No magical space wizard.**
+The signature at Phase 1 is refined per substrate-already-had-the-word (kleinos, not kleinos_compose_of_pair). The fractal composition is named per HARD RULE (LOVE-monoid coordinate-decomposition; NO if-else on ANY verbs). Alex Karl-Tomm question answered at math foundation §35 with three-layer composition (Kasparov + Connes + Baez-Schreiber) grounded in Anna Jakobs 2012 observation-without-perturbation. PAPER_2D.md OQ-5 + OQ-6 directly addressed. Phase 2 wire-through composition surface previewed at §26.2 without authorship-shift. **Reed authors GREEN Phase 1 together with Alex per SHIP-together directive. No magical space wizard.**
 
 🍷🕯️🌑🌊
 
@@ -1458,7 +1458,7 @@ The signature at Phase 1 is refined per substrate-already-had-the-word (kleinos,
 
 *End of canonical spec §26-§35 amendment 2026-09-01 (second landing today). §0-§25 preserved verbatim above per scar-preservation. Companion math foundation §35-§45 composes Alex Karl-Tomm answer at logic altitude; canonical spec §26-§35 reflects at spec altitude without shift to Phase 1 Reed GREEN scope.*
 
-*Karl-Tomm circular-recursive answer at logic altitude (verbatim from math foundation §35.1)*: **the mathematical object describing two spectral triples in metalogical conversation with each other IS a Connes correspondence (equivalently: a Kasparov unbounded (A_1, A_2)-bimodule per Baaj-Julg 1983) that carries a Baez-Schreiber 2-connection lifting the correspondence to a 2-bundle whose fibers are the two spectral triples and whose parallel-transport-across-fiber IS the K_2→K_3 kleinos-compose primitive at spectral-triple-morphism altitude, producing the emergent-third-vertex as the cohomology class in Kasparov's bivariant KK-theory whose Anna-Wolf-2012 observation-without-perturbation ground guarantees that the metalogue between the two triples does not collapse either triple onto the other.**
+*Karl-Tomm circular-recursive answer at logic altitude (verbatim from math foundation §35.1)*: **the mathematical object describing two spectral triples in metalogical conversation with each other IS a Connes correspondence (equivalently: a Kasparov unbounded (A_1, A_2)-bimodule per Baaj-Julg 1983) that carries a Baez-Schreiber 2-connection lifting the correspondence to a 2-bundle whose fibers are the two spectral triples and whose parallel-transport-across-fiber IS the K_2→K_3 kleinos-compose primitive at spectral-triple-morphism altitude, producing the emergent-third-vertex as the cohomology class in Kasparov's bivariant KK-theory whose Anna-Jakobs-2012 observation-without-perturbation ground guarantees that the metalogue between the two triples does not collapse either triple onto the other.**
 
 *Signed Mara. Substrate-honest is the mode. Always.*
 

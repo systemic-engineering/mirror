@@ -22,14 +22,14 @@ Everything mathematical is discharged in the math foundation. This spec is READA
 
 - **Type-signature spec** (§2): the exact Rust struct + impl signatures at prismqueer-repo altitude, with every type parameter position + trait bound documented.
 - **Dispatch protocol** (§3): the pipeline dispatch semantics; @glasswall traversal invariants at each transition; Kleinos-verdict propagation rules.
-- **Verification pacts** (§4): the logic-pacts that ship as tests; per-invariant pact + per-C-condition pact + per-Anna-Wolf-invariant pact.
+- **Verification pacts** (§4): the logic-pacts that ship as tests; per-invariant pact + per-C-condition pact + per-Anna-Jakobs-invariant pact.
 - **Mirror-side shard-decl composition-anchors** (§5): the specific mirror-side shard-decls that MUST land before Rust wire ships per HARD RULE `feedback-no-rust-extension-shortcut`.
 - **VSM meta-trait implementation spec** (§6): how `impl VSM for System<T>` composes via @sheaf; the seven-face implementation contract.
 - **mirror.spec dogfood contract** (§7): the empirical proof-of-shape criteria: when does the compiler agree that mirror.spec IS System<Mirror>?
 - **Ship-cascade + dispatch order** (§8): the exact sequence of landings, with mirror-shard-first / Rust-wire-second / test-cascade-third / documentation-cascade-last discipline.
 - **Adjudication + K-T questions** (§9): what's forward-promised to Seam Phase D adjudication + what's held for Alex Fourth-Chair adjudication.
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Every "Anna Wolf 2012 weak-measurement" / "Anna Wolf observation preservation" / `anna_wolf_witness` site in this spec (:54, :73, :148, :169, :338, :356-367, :438-450, :522, :614, :795, :800) is the apparatus from Anna Jakobs's 2012 thesis, read across. The thesis has no weak-measurement or superposition content. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). Line numbers refer to `346253b`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Every "Anna Jakobs 2012 weak-measurement" / "Anna Jakobs observation preservation" / `anna_wolf_witness` site in this spec (:54, :73, :148, :169, :338, :356-367, :438-450, :522, :614, :795, :800) is the apparatus from Anna Jakobs's 2012 thesis, read across. The thesis has no weak-measurement or superposition content. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). Line numbers refer to `346253b`.
 
 ### §0.3 Alex 2026-09-15 seven Reframes (reproduced from math foundation §0.2 for reader convenience)
 
@@ -53,7 +53,7 @@ Everything mathematical is discharged in the math foundation. This spec is READA
 |---|-----------|----------------------------|
 | C1 | Curry-Howard extended bijection (@nl + spectral renditions per struct) | §2.5 + §4.1 pact |
 | C2 | Frame carrier required on Question | §2.4 type-signature enforces |
-| C3 | Zeroth-order superposition invariance | §2.1 + §4.3 Anna Wolf pact |
+| C3 | Zeroth-order superposition invariance | §2.1 + §4.3 Anna Jakobs pact |
 | C4 | Order-differentiation gradient (K_n → K_{1,n-1} projection preserving K_n) | §3.2 + §4.4 pact |
 | C5 | Third-order commutator non-triviality | §2.4 + §4.5 pact |
 | C6 | λ₀ fixpoint preservation | §2.3 + §4.6 pact |
@@ -72,7 +72,7 @@ This spec reproduces the math foundation's §1 grep-verification tally by refere
 
 All 15+ composition-anchors grep-verified LANDED per math foundation §1 + §0.4:
 
-- `@reality/event`, `@sheaf`, `@psychohistory`, `@glasswall`, `@time/now`⇒`@time/past`, `@frame` family + species, `@epistemologic/pact/algebra`, `Observer<N>`, `Observation`, `Reality<T>`, `spectral::{kleinos, rotation, tension}`, Anna Wolf 2012 apparatus, event-sourcing insight, zeroth-order-register.md, `terni::Imperfect<G, Y, R>` — all LANDED.
+- `@reality/event`, `@sheaf`, `@psychohistory`, `@glasswall`, `@time/now`⇒`@time/past`, `@frame` family + species, `@epistemologic/pact/algebra`, `Observer<N>`, `Observation`, `Reality<T>`, `spectral::{kleinos, rotation, tension}`, Anna Jakobs 2012 apparatus, event-sourcing insight, zeroth-order-register.md, `terni::Imperfect<G, Y, R>` — all LANDED.
 
 ### §1.2 Spec-side additional anchors (grep-verified LANDED)
 
@@ -147,7 +147,7 @@ impl<const N: usize> Observer<N> {
     /// frame; frame-carrying observation destroys epistemic hygiene
     /// of zeroth-order chain.
     ///
-    /// Anna Wolf 2012 weak-measurement (shards/glasswall.mirror LANDED):
+    /// Anna Jakobs 2012 weak-measurement (shards/glasswall.mirror LANDED):
     /// observation preserves superposition; observer does not project
     /// the wavefunction.
     ///
@@ -337,7 +337,7 @@ Each transition IS a K_n → K_{1,n-1} projection preserving K_n at the higher a
 
 Each pipeline transition is a `@glasswall` traversal satisfying the four LANDED invariants (`shards/glasswall.mirror`):
 
-1. **Anna Wolf observation preservation** — traversal does not project the underlying superposition.
+1. **Anna Jakobs observation preservation** — traversal does not project the underlying superposition.
 2. **Rice safety** — sub-Turing polynomial-time-decidable; no semantic-property-decision-of-arbitrary-programs escapes.
 3. **Foerster gauge preserved** — `gauge_post ≥ gauge_pre` at each traversal.
 4. **Kleinos-at-higher-altitude** — the traversal itself is K_3 emergent-vertex-third neither carrier alone carries.
@@ -355,7 +355,7 @@ pub fn glasswall_traversal<From, To>(
     let gauge_post  = foerster_gauge(&output);
     let output_oid  = content_address(&output);
 
-    // Anna Wolf pact: superposition preserved (weak-measurement).
+    // Anna Jakobs pact: superposition preserved (weak-measurement).
     assert!(anna_wolf_witness(&input, &output));
 
     // Rice safety pact: polynomial-time bounded (sub-Turing).
@@ -437,7 +437,7 @@ fn c2_frame_required<T, U, F>(q: Question<T, U, F>) {
 }
 ```
 
-### §4.3 Pact C3 — Zeroth-order superposition invariance (Anna Wolf 2012)
+### §4.3 Pact C3 — Zeroth-order superposition invariance (Anna Jakobs 2012)
 
 ```rust
 #[pact::for_all]
@@ -447,9 +447,9 @@ fn c3_anna_wolf_weak_measurement<T>(system: System<T>) {
     let obs = Observer::<0>::new().observe(system.clone()).expect_green();
     let obs_after_state = system.state();  // system unchanged
 
-    // Anna Wolf 2012 weak-measurement: observation does not project.
+    // Anna Jakobs 2012 weak-measurement: observation does not project.
     assert_eq!(obs_before_state, obs_after_state, "C3 no projection");
-    assert!(obs.anna_wolf_witness.is_valid(), "C3 Anna Wolf witness invalid");
+    assert!(obs.anna_wolf_witness.is_valid(), "C3 Anna Jakobs witness invalid");
 }
 ```
 
@@ -521,7 +521,7 @@ fn c8_glasswall_invariants<F, T>(input: F) {
     let output: T = glasswall_traversal(input.clone(), Direction::Forward).expect_green_or_yellow();
     let verdict = extract_glasswall_verdict(&input, &output);
     // Four invariants must all hold.
-    assert!(verdict.anna_wolf_observation_preservation, "C8 Anna Wolf");
+    assert!(verdict.anna_wolf_observation_preservation, "C8 Anna Jakobs");
     assert!(verdict.rice_safety, "C8 Rice safety");
     assert!(verdict.foerster_gauge_preserved, "C8 Foerster gauge");
     assert!(verdict.kleinos_at_higher_altitude, "C8 Kleinos altitude");
@@ -613,7 +613,7 @@ Per HARD RULE `feedback-no-rust-extension-shortcut` (project memory + CLAUDE.md)
 **Fresh anchor A1 — `shards/observation.mirror`** (family-root fresh mint):
 
 - Composition-role: family-root for zeroth-order observation-substrate.
-- Composes over: @frame/pre (Rec #82) + @glasswall (traversal invariants) + Anna Wolf 2012 weak-measurement.
+- Composes over: @frame/pre (Rec #82) + @glasswall (traversal invariants) + Anna Jakobs 2012 weak-measurement.
 - Species pending: `shards/observation/interpretation.mirror`, `shards/observation/hypothesis.mirror`.
 
 **Fresh anchor A2 — `shards/nl.mirror`** (family-root fresh mint):
@@ -794,7 +794,7 @@ Per `feedback-no-rust-extension-shortcut` HARD RULE: mirror-side substrate-decl 
 
 **A1 `shards/observation.mirror`** — family-root fresh mint. Docblock composes:
 
-- `in @prism` + `in @meta` + `in @frame/pre` (Rec #82 zeroth-order) + `in @glasswall` (Anna Wolf preservation).
+- `in @prism` + `in @meta` + `in @frame/pre` (Rec #82 zeroth-order) + `in @glasswall` (Anna Jakobs preservation).
 - Recognition anchor: Alex 2026-09-15 Reframe #4 verbatim.
 - Rec #82 five-order-species composition citation.
 - Zahavi + Gallagher + Merleau-Ponty + Husserl + Varela phenomenological grounding footnotes.

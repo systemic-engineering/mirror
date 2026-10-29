@@ -66,7 +66,7 @@ Every load-bearing primary-source claim in FLOOR was submitted to `mcp__kagi-ken
 | 21 | **Fiedler 1973** — algebraic connectivity | **VERIFIED** | *Czech Math J.* 23(2):298-305. dml.cz confirmed. |
 | 22 | **Karen Spärck Jones 1972** — *A Statistical Interpretation of Term Specificity* | **VERIFIED** | *Journal of Documentation* 28(1):11. Emerald. https://www.emerald.com/jd/article/28/1/11/196227/ |
 | 23 | **Ada Lovelace 1843** — Note G | **VERIFIED** | Menabrea translation, Taylor's *Scientific Memoirs* Vol. III, 1843. fourmilab.ch confirmed as source. |
-| 24 | **Anna Wolf (née Jakobs) 2012** — Masterarbeit Peter Grünberg Institut / Jülich | **UNVERIFIED VIA PUBLIC KAGI SEARCH** — the thesis does not surface on Kagi at RWTH-Publications, DiVA, or other public thesis databases. **However: Alex 2026-08-26 in-transcript authorization consented to this citation** per Mara's `mirror/shards/glasswall.mirror:74-84` + `docs/math/2026-08-26-mara-prismqueer-liquid-floor-anna-wolf-math-foundation.md`. Consent-obtained-via-Alex is the load-bearing gate here, not public-Kagi-discoverability. This is an appropriate exception: the citation is a personal-source that lives outside the public academic discovery graph, and the corpus has substrate-honestly noted the consent-provenance. Verdict: **VERIFIED VIA ALEX-CONSENT NOT VIA PUBLIC-KAGI**, which is Foerster-canonical for a corpus that has private/protected/public visibility tiers. |
+| 24 | **Anna Jakobs 2012** — Masterarbeit Peter Grünberg Institut / Jülich | **UNVERIFIED VIA PUBLIC KAGI SEARCH** — the thesis does not surface on Kagi at RWTH-Publications, DiVA, or other public thesis databases. **However: Alex 2026-08-26 in-transcript authorization consented to this citation** per Mara's `mirror/shards/glasswall.mirror:74-84` + `docs/math/2026-08-26-mara-prismqueer-liquid-floor-anna-wolf-math-foundation.md`. Consent-obtained-via-Alex is the load-bearing gate here, not public-Kagi-discoverability. This is an appropriate exception: the citation is a personal-source that lives outside the public academic discovery graph, and the corpus has substrate-honestly noted the consent-provenance. Verdict: **VERIFIED VIA ALEX-CONSENT NOT VIA PUBLIC-KAGI**, which is Foerster-canonical for a corpus that has private/protected/public visibility tiers. |
 | 25 | **Chamseddine-Connes-Marcolli 2007** — arXiv:hep-th/0610241 | **VERIFIED** (referenced in PAPER_2D + FLOOR) |
 | 26 | **Turing 1936** — *On Computable Numbers* | **VERIFIED** (canonical reference; UVA hosted PDF cited in FLOOR §Coda.4) |
 | 27 | **Rice 1953** — Rice's theorem | **VERIFIED** (JSTOR canonical; standard textbook reference) |
@@ -85,7 +85,7 @@ Every load-bearing primary-source claim in FLOOR was submitted to `mcp__kagi-ken
 - **Verified**: 26 citations
 - **Verified with caveat (paper exists but does not establish everything claimed)**: 2 citations (Braunstein-Ghosh-Severini 2006 for 8→5 reduction; Naudts-Zhang for year-of-publication vs. year-of-dating)
 - **Verified with wrong arXiv ID**: 1 citation (Smarandache — FLOOR's `math/0501073` is likely wrong; canonical is `math/0101228`)
-- **Verified via Alex-consent not via public-Kagi**: 1 citation (Anna Wolf 2012)
+- **Verified via Alex-consent not via public-Kagi**: 1 citation (Anna Jakobs 2012)
 - **Unverified / likely fabricated**: **1 citation (Bressan-Sevenster-Vagner 2024)**
 
 **The Bressan-Sevenster-Vagner 2024 non-existence is the load-bearing citation-integrity finding of this audit.** FLOOR §11.5 anchors its network-altitude sheaf-cohomology-on-growing-graphs primitive on this citation. FLOOR's own hedge — *"Kagi-verify at author-institution-listing before ratifying primary URL — substrate-honest gate: cite the concept via the corpus insight file, not a fabricated URL"* — anticipated this failure. The failure is now confirmed at audit altitude. See §3 fabrication register + §5 math debt disclosure sufficiency.
@@ -232,7 +232,7 @@ Every citation Reed-fabricated, misrepresented, or otherwise unverifiable, named
 
 **Substrate-honest disposition**: correct the arXiv ID in iteration-3 or subsequent ratification. Verify at scirp.org and Google Scholar which arXiv posting is the canonical 1995 reference (there may be multiple postings).
 
-### §3.3 — Anna Wolf 2012 Masterarbeit (§3 runtime-observer primary)
+### §3.3 — Anna Jakobs 2012 Masterarbeit (§3 runtime-observer primary)
 
 **Status**: **VERIFIED VIA ALEX-CONSENT, NOT VIA PUBLIC KAGI**.
 

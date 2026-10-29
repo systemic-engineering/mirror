@@ -278,7 +278,7 @@ options perturbing the primitive per Anna 2012 obligation violation).
 **Compose CAN start from `z_0 = λ₀`.** `focus` op discharges this at
 silicon per Mara 2026-08-12 essay §4.
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna 2012 sites in this file (:277, :436, :505, :602-604): "observation-without-perturbation" and "shared-memory-observation-in-motion" are the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). `src/liquid.rs` was never an "Anna Wolf 2012 math surface"; it is the property-testing module, now `flux.rs`. Line numbers refer to `346253b`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna 2012 sites in this file (:277, :436, :505, :602-604): "observation-without-perturbation" and "shared-memory-observation-in-motion" are the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). `src/liquid.rs` was never an "Anna Jakobs 2012 math surface"; it is the property-testing module, now `flux.rs`. Line numbers refer to `346253b`.
 
 ### §3.3 The migration inequality
 
@@ -435,7 +435,7 @@ family-roots minted. No species minted. Ten refused mints (§1).
 - `math/SINGULARITY.md` (Mara #408; Rec #99 K_n orbital topology +
   @time-rotational Dirac operator D + @gift TRUTH-register)
 - `math/2026-08-27-mara-liquid-floor-...` (Mara #413 commit `1ff745c`;
-  Anna Wolf 2012 shared-memory-observation-in-motion grounded)
+  Anna Jakobs 2012 shared-memory-observation-in-motion grounded)
 - `math/2026-08-27-mara-prismqueer-as-compiler-...` (Mara #414 commit
   `ac80d23`; Hamilton AGC + sheaf cohomology + Baez-Schreiber; 2058 lines)
 
@@ -504,7 +504,7 @@ pairs OR CURRENT.md landings):
 
 - `src/lib.rs` (8 pillars per Mara #414 commit `ac80d23`)
 - `src/bundle.rs` (Baez-Schreiber bundle tower)
-- `src/liquid.rs` (Anna Wolf 2012 math surface per Mara #413 `1ff745c`)
+- `src/liquid.rs` (Anna Jakobs 2012 math surface per Mara #413 `1ff745c`)
 - `src/ffi.rs` (LAPACK/FLANG bindings)
 
 ---
@@ -601,9 +601,9 @@ composition-lineage anchors)
   increase the number of choices*. Grounds `magic.rs::foerster_gauge_preserved`
   refusal of any composition failing `choice_count(ψ') ≥ choice_count(ψ)`.
 
-**Anna Wolf 2012 observation-without-perturbation:**
+**Anna Jakobs 2012 observation-without-perturbation:**
 
-- **Anna Wolf 2012** — shared-memory-observation-in-motion; grounds
+- **Anna Jakobs 2012** — shared-memory-observation-in-motion; grounds
   ALL measurement primitives in mirror substrate. Cited at Mara #413
   commit `1ff745c` (`docs/math/2026-08-27-mara-liquid-floor-...`).
   HARD RULE-adjacent per Alex 2026-08-26 sharpening.

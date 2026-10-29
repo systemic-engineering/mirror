@@ -147,7 +147,7 @@ in @fractal/mandelbrot
 #                          `bilateral @task @fractal`).
 #   Alex 2026-09-01      Achtsam Morden: das Loch ist das Jetzt; the
 #                          fixed-point where the recursion stops moving.
-#   Wolf 2012            observation-without-perturbation (the
+#   Jakobs 2012            observation-without-perturbation (the
 #                          apparatus from Anna Jakobs's 2012 thesis, read
 #                          across; J-space is our term, not hers); @task
 #                          observation via wire-envelope preserves the

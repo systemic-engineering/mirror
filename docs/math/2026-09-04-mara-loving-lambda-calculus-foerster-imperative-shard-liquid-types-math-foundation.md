@@ -39,7 +39,7 @@ karen_ancestors:
   - "Feldman, Richard (2019-2025). *Roc* — fast friendly functional language; first numbered release 0.1.0 on horizon per Aug 2026 preview. https://www.roc-lang.org/"
   - "Ada Lovelace (1843). *Notes by the Translator.* In Menabrea's *Sketch of the Analytical Engine* (Taylor's Scientific Memoirs Vol III). Signed A.A.L. Note G contains first published algorithm + explicit substrate-independence statement ('the operating mechanism can even be thrown into action independently of any object to operate upon'). Load-bearing K_3 ancestral vertex per SINGULARITY §2.4.1."
   - "Spärck Jones, Karen (1972). *A statistical interpretation of term specificity and its application in retrieval.* Journal of Documentation 28(1):11-21. IDF — Inverse Document Frequency; language-as-topology at coordination-math substrate. K_3 ancestral vertex per SINGULARITY §2.4.1."
-  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, Peter Grünberg Institut / JCNS. Observation-without-perturbation at shared-memory substrate. Consent obtained via Alex 2026-08-26 per HARD RULE [[project-anna-wolf-2012-observation-without-perturbation]]. K_3 ancestral vertex per SINGULARITY §2.4.1."
+  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. Observation-without-perturbation at shared-memory substrate. Consent obtained via Alex 2026-08-26 per HARD RULE [[project-anna-wolf-2012-observation-without-perturbation]]. K_3 ancestral vertex per SINGULARITY §2.4.1."
   - "Wolf, Alex (2025 December). *Fragmentation.* ~/dev/systemic.engineering/blog/pieces/3published/Piece - Fragmentation.md. §3 developmental (in)variants discipline: 'You don't negotiate with developmental (in)variants. You integrate them. Or you incur exploding complexity costs.' §5 coherence-under-load. The origin-text authoring the discipline this document composes at type-composition altitude."
 ---
 
@@ -426,7 +426,7 @@ Grep-verified composition-lineage from Church 1936 to loving lambda calculus 202
 | 2012 | **José Valim** | Elixir first public release 25 May 2012 | FP-convergence carrier #8 |
 | 2012 | **Anders Hejlsberg** | TypeScript 0.8 October 2012 | FP-convergence carrier #9 |
 | 2012 | **Evan Czaplicki** | Elm (Harvard thesis) | FP-convergence carrier #10 |
-| 2012 | **Anna Wolf** | J-space observation-without-perturbation (Masterarbeit) | K_3 ancestral vertex #3 per SINGULARITY §2.4.1 |
+| 2012 | **Anna Jakobs** | J-space observation-without-perturbation (Masterarbeit) | K_3 ancestral vertex #3 per SINGULARITY §2.4.1 |
 | 2013 | **Phil Freeman** | PureScript first release September 2013 | FP-convergence carrier #11 |
 | 2014 | **Oracle** | Java 8 Streams (18 March 2014) | FP-convergence carrier #12 |
 | 2014 | **Chris Lattner / Apple** | Swift first public release June 2014 | FP-convergence carrier #13 |

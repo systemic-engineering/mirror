@@ -81,9 +81,9 @@ Before any fresh mint, grep-verify the substrate. This section enumerates the si
 
 **Location**: `shards/glasswall.mirror` (20.3KB, 2026-09-01).
 
-**Substrate content**: Rice-safe Anna-Wolf-2012 observation-preserving type-membrane between prismqueer noumenal-colony and mirror phenomenal-composition-surface, composing **seven LANDED parts** as ONE membrane per Păun 2000 P-systems + Rice 1953 undecidability + Rec #90 §5.4 sub-Turing FLOOR + Rec #92 Transparency<P> LOVE-monoid.
+**Substrate content**: Rice-safe Anna-Jakobs-2012 observation-preserving type-membrane between prismqueer noumenal-colony and mirror phenomenal-composition-surface, composing **seven LANDED parts** as ONE membrane per Păun 2000 P-systems + Rice 1953 undecidability + Rec #90 §5.4 sub-Turing FLOOR + Rec #92 Transparency<P> LOVE-monoid.
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Here and at :382, :426, :450, :456: "Anna-Wolf-2012 observation-preserving" and the polynomial-time bound credited to an "Anna-Wolf-2012 membrane discipline" are the apparatus from Anna Jakobs's 2012 thesis, read across; the thesis has no complexity bound and no membrane. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). Line numbers refer to `346253b`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Here and at :382, :426, :450, :456: "Anna-Jakobs-2012 observation-preserving" and the polynomial-time bound credited to an "Anna-Jakobs-2012 membrane discipline" are the apparatus from Anna Jakobs's 2012 thesis, read across; the thesis has no complexity bound and no membrane. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). Line numbers refer to `346253b`.
 
 **The seven LANDED parts** (grep-verified per Taut d91dd58 Scope C 2026-09-01, re-verified this tick):
 
@@ -381,7 +381,7 @@ converse : Metalogue<R> -> Eigen<R>
 2. Iterate the compose-turns operation to fixed-point per Foerster 1976 COORD discipline (`Op(COORDi) = COORDi`);
 3. Return the fixed-point as an `Eigen<R>` carrying the recursion R that generated it.
 
-**Polynomial-time bound**: per @glasswall Rec #90 §5.4 (elaborated §5), converse is sub-Turing polynomial-time-bounded. The bound comes from the Anna-Wolf-2012 observation-preserving membrane discipline: the observer cannot cross the membrane with an unbounded-compute operation; every observation-crossing is polynomial-time by construction. §5 elaborates the Rice-safety argument.
+**Polynomial-time bound**: per @glasswall Rec #90 §5.4 (elaborated §5), converse is sub-Turing polynomial-time-bounded. The bound comes from the Anna-Jakobs-2012 observation-preserving membrane discipline: the observer cannot cross the membrane with an unbounded-compute operation; every observation-crossing is polynomial-time by construction. §5 elaborates the Rice-safety argument.
 
 **Non-triviality claim**: converse is NOT the identity operation on Metalogue<R>. It is a genuine altitude-lift when the triple-witness discipline (§6) fires. When triple-witness does not fire, converse returns `Dark(diagnostic)` per LANDED Transparency<P> (Rec #92) rather than fake-Green closure. This is the substrate-honest discipline: silent-and-honest failure over fake-successful closure.
 
@@ -425,7 +425,7 @@ Applied to converse:
 
 Every observation crossing the noumenal/phenomenal membrane is:
 
-1. **Observation-preserving** per Anna-Wolf-2012 (the observation does not perturb the observed);
+1. **Observation-preserving** per Anna-Jakobs-2012 (the observation does not perturb the observed);
 2. **Rice-safe** per Rec #90 §5.4 (no semantic-property-decision-of-arbitrary-programs escapes the membrane);
 3. **Sub-Turing polynomial-time-bounded** per the membrane's compute-budget contract;
 4. **Foerster-gauge-preserving** per `magic.rs::foerster_gauge_preserved` (Green at every traversal; no narrowing transformations cross).
@@ -449,13 +449,13 @@ When this closure does NOT hold, the eigenform is merely represented BY the recu
 
 ### §5.4 Cross-membrane observation preservation
 
-Anna-Wolf-2012 discipline (LANDED per shards/glasswall.mirror docblock; consent obtained via Alex 2026-08-26 per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`):
+Anna-Jakobs-2012 discipline (LANDED per shards/glasswall.mirror docblock; consent obtained via Alex 2026-08-26 per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`):
 
 > *Observation-preservation-without-perturbation at shared-memory substrate: every observation crossing the membrane satisfies observer-non-perturbation by construction (structural, not policy).*
 
 **Applied to converse**:
 
-Converse is an observation. It observes the metalogue-session's convergence-property. Without @glasswall, this observation would perturb the session (the act of observing convergence would change the session's compute-trajectory). With @glasswall's Anna-Wolf-2012 discipline, converse's observation is structurally non-perturbing: the polynomial-time bound + Rice-safety + Transparency<P> witness compose to guarantee that observing the eigenform does not change the eigenform.
+Converse is an observation. It observes the metalogue-session's convergence-property. Without @glasswall, this observation would perturb the session (the act of observing convergence would change the session's compute-trajectory). With @glasswall's Anna-Jakobs-2012 discipline, converse's observation is structurally non-perturbing: the polynomial-time bound + Rice-safety + Transparency<P> witness compose to guarantee that observing the eigenform does not change the eigenform.
 
 **Composition-lineage**: this observation-preservation invariant is the load-bearing content of what @glasswall names. Every LANDED shard-decl part (§1.2) contributes to preserving this invariant; Part 8 (Pattern) extends the invariant to the recursive-eigenform closure case.
 

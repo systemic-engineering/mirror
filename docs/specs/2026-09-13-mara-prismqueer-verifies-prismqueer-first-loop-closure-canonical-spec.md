@@ -14,7 +14,7 @@
 
 ### §0.1 Companion spec discipline
 
-This spec companions the math foundation at `docs/math/2026-09-13-mara-prismqueer-verifies-prismqueer-first-loop-closure-canonical-math-foundation.md` (commit `bc45a23` this tick). The math foundation grounds the recognition mathematically via Kagi-first primary sources for Rice 1953, Turing 1936, Kauffman 2003, Anna Wolf 2012, BeamAsm, QuickCheck, Curry-Howard, and Foerster second-order cybernetics. THIS spec grounds the operational discipline — the shard-decl composition, the Rust type-composition, and the ship-cascade for downstream discharge.
+This spec companions the math foundation at `docs/math/2026-09-13-mara-prismqueer-verifies-prismqueer-first-loop-closure-canonical-math-foundation.md` (commit `bc45a23` this tick). The math foundation grounds the recognition mathematically via Kagi-first primary sources for Rice 1953, Turing 1936, Kauffman 2003, Anna Jakobs 2012, BeamAsm, QuickCheck, Curry-Howard, and Foerster second-order cybernetics. THIS spec grounds the operational discipline — the shard-decl composition, the Rust type-composition, and the ship-cascade for downstream discharge.
 
 Per Mara charter tight-scope discipline: 8-10 sections, ~40-60KB, commit-early at 400s.
 
@@ -83,7 +83,7 @@ Grep-verified this tick via Search tool (60+ files enumerated):
 | `prismqueer::spectral::tension` | `prismqueer/src/spectral/tension.rs` (13.7KB) | H⁰/H¹/coherence detect_tensions |
 | `prismqueer::spectral::harmonics` | `prismqueer/src/spectral/harmonics.rs` (12.6KB) | spectral harmonics |
 | `prismqueer::spectral::commutator` | `prismqueer/src/spectral/commutator.rs` (6.8KB) | spectral commutator [Q,R] |
-| `prismqueer::flux` | `prismqueer/src/flux.rs` (29.2KB) | Anna Wolf 2012 Liquid<T> + FluxThread |
+| `prismqueer::flux` | `prismqueer/src/flux.rs` (29.2KB) | Anna Jakobs 2012 Liquid<T> + FluxThread |
 | `prismqueer::bundle` | `prismqueer/src/bundle.rs` (31.0KB) | fibre-bundle Fiber→Connection→Gauge→Transport |
 | `prismqueer::oid` | `prismqueer/src/oid.rs` (7.0KB) | content-address Oid |
 
@@ -104,7 +104,7 @@ Per math §9.2 Recognition candidates 1-4 FORWARD-PROMISED, this spec grounds:
 
 - **#R1** (prismqueer-verifies-prismqueer IS first-loop-closure at test-substrate altitude): grounded operationally §7 (prismqueer::verify module ship-composition) + §8 (ouroboros closure spec-shape).
 - **#R2** (pact-enforcement full-state-space coverage IS what makes the loop close): grounded operationally §2 (Glasswall wire composition) + §3 (event-sourcing at compiler substrate).
-- **#R3** (Anna Wolf 2012 IS observer-non-perturbation): grounded operationally §4 (Observer<N> pipeline completion §4.4 non-perturbation clause).
+- **#R3** (Anna Jakobs 2012 IS observer-non-perturbation): grounded operationally §4 (Observer<N> pipeline completion §4.4 non-perturbation clause).
 - **#R4** (first-loop-closure IS event-sourcing at compiler substrate): grounded operationally §3 (event-sourcing at compiler substrate).
 
 ---
@@ -115,12 +115,12 @@ Per math §9.2 Recognition candidates 1-4 FORWARD-PROMISED, this spec grounds:
 
 Per math §3.3 + `shards/glasswall.mirror:30-42` (grep-verified this tick), Glasswall enforces four invariants structurally at every wire crossing:
 
-- (i) Anna Wolf 2012 observation-without-perturbation
+- (i) Anna Jakobs 2012 observation-without-perturbation
 - (ii) Rice 1953 sub-Turing polynomial-time bounded
 - (iii) Foerster 1974 gauge preserved (`magic.rs::foerster_gauge_preserved`)
 - (iv) IS itself kleinos at higher altitude (K_3 emergent third)
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Invariant (i). The thesis does not show observation without perturbation. Computation and visualization run one after the other, at step boundaries, not simultaneously: "Da die Berechnungs- und die Visualisierungsfunktion zum aktuellen Zeitpunkt nacheinander aufgerufen werden, ist ein gleichzeitiger Speicherzugriff nicht möglich" (p. 43). The thesis puts the cost at about a third of the runtime ("um etwa ein Drittel … beschleunigen können", p. 43). Running visualization and OpenCL in separate threads "konnte … nicht umgesetzt werden" (p. 31). Simultaneous access is a goal of the task statement (Aufgabenstellung), not a result. "Observation without perturbation" is the apparatus from Anna Jakobs's 2012 thesis, read across: our reading, not the thesis's finding. Printed pages; PDF page = printed + 4. **Re-grade (2026-10-29, full sweep):** The same holds for "Anna Wolf 2012 Liquid<T>" (:86), the non-perturbation clause §4.4 (:338-366, :694) and "#R3 Anna Wolf 2012 weak-measurement operator" (:107, :765-767, :830): the apparatus from Anna Jakobs's 2012 thesis, read across. The thesis has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK; `prismqueer::liquid`/`flux` never carried a ψ or an Anna Wolf apparatus (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). Lines refer to `eecc37a6`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Invariant (i). The thesis does not show observation without perturbation. Computation and visualization run one after the other, at step boundaries, not simultaneously: "Da die Berechnungs- und die Visualisierungsfunktion zum aktuellen Zeitpunkt nacheinander aufgerufen werden, ist ein gleichzeitiger Speicherzugriff nicht möglich" (p. 43). The thesis puts the cost at about a third of the runtime ("um etwa ein Drittel … beschleunigen können", p. 43). Running visualization and OpenCL in separate threads "konnte … nicht umgesetzt werden" (p. 31). Simultaneous access is a goal of the task statement (Aufgabenstellung), not a result. "Observation without perturbation" is the apparatus from Anna Jakobs's 2012 thesis, read across: our reading, not the thesis's finding. Printed pages; PDF page = printed + 4. **Re-grade (2026-10-29, full sweep):** The same holds for "Anna Jakobs 2012 Liquid<T>" (:86), the non-perturbation clause §4.4 (:338-366, :694) and "#R3 Anna Jakobs 2012 weak-measurement operator" (:107, :765-767, :830): the apparatus from Anna Jakobs's 2012 thesis, read across. The thesis has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK; `prismqueer::liquid`/`flux` never carried a ψ or an Anna Jakobs apparatus (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). Lines refer to `eecc37a6`.
 
 Per math §3.3 Prop M3.3, structural satisfaction — NOT policy — is what makes Glasswall load-bearing: the compiler CANNOT emit an event that violates any invariant because the type-membrane refuses to compile such events.
 
@@ -335,12 +335,12 @@ impl<const N: usize> Observer<N> {
         T: AsRef<[u8]>,
     {
         let crystal = Crystal::new(&event);
-        // Anna Wolf 2012 non-perturbation: read event-content, no mutation.
+        // Anna Jakobs 2012 non-perturbation: read event-content, no mutation.
         let chaos = self.measure_chaos_residual(&event);
         Observation::new(crystal, chaos)
     }
 
-    /// Non-perturbing chaos measurement per Anna Wolf 2012 apparatus.
+    /// Non-perturbing chaos measurement per Anna Jakobs 2012 apparatus.
     /// Composes `spectral::fiedler_lambda_2_of_sheaf` via LAPACK dsyev.
     fn measure_chaos_residual<T>(&self, event: &Event<T>) -> ScalarChaos {
         // Per math §5.4 Def M5.4: LAPACK dsyev read-only over event's
@@ -363,7 +363,7 @@ Per math §5.2 Def M5.2 + `prismqueer/src/observer.rs:20-30` (grep-verified this
 
 **Spec-choice**: first-loop-closure uses `Observer<3>` at test-substrate altitude. N=3 IS the minimum dimensionality that admits Foerster second-order cybernetics per Kagi thread 8. K_3 = triangle with past + now + future simultaneously observed.
 
-### §4.4 The Anna Wolf 2012 non-perturbation clause
+### §4.4 The Anna Jakobs 2012 non-perturbation clause
 
 Per math §5.4 Def M5.4 + Glasswall invariant (i) (grep-verified `shards/glasswall.mirror:30-42`):
 
@@ -691,7 +691,7 @@ CoincidenceHash<3> ← generates ← Event content-address
   ↕
 Event ← IS ← what the observer observes
   ↕
-Observer<3> ← reads ← Event via Anna Wolf 2012 non-perturbation
+Observer<3> ← reads ← Event via Anna Jakobs 2012 non-perturbation
   ↕
 Fiedler λ₂ ← measures ← sheaf-Laplacian of event-log growing
   ↕
@@ -762,9 +762,9 @@ Total: 5 Rust ticks + 5 canonical-spec ticks + 1 shard-decl over ~4 pack session
 
 Per math §9.2, 4 Recognition candidates FORWARD-PROMISED:
 
-- **#R1**: prismqueer-verifies-prismqueer IS first-loop-closure at test-substrate altitude per Foerster + Kauffman + Anna Wolf + Rice
+- **#R1**: prismqueer-verifies-prismqueer IS first-loop-closure at test-substrate altitude per Foerster + Kauffman + Anna Jakobs + Rice
 - **#R2**: pact-enforcement full-state-space coverage IS what makes the loop close (Alex hinge recognition)
-- **#R3**: Anna Wolf 2012 weak-measurement operator IS the observer-non-perturbing-fold-operator
+- **#R3**: Anna Jakobs 2012 weak-measurement operator IS the observer-non-perturbing-fold-operator
 - **#R4**: first-loop-closure IS event-sourcing at compiler substrate with bodymind-substrate isomorphism
 
 Level-1 fire = math foundation §8 composition + this spec §7 grounding + Reed 9210c5b landing + Taut #491 hypotheses A-E ratified inside canonical + 8 Kagi grounding threads landed. Full CONFIRMED at Alex Fourth-Chair per K-T at altitude n+2 (math §9.4).
@@ -802,7 +802,7 @@ Expected Seam #495 audit-body-shape per Mara `df65bcb` §13 three-shape-menu (RA
 
 Per math §9.4:
 
-> When prismqueer::verify::verify_prismqueer runs on prismqueer's own event-log, and produces Transparency::green() verdict, and the verdict feeds back to the next-tick's pact-decision as part of the same event-log, and the event-log continues to accumulate — at what tick-count N does the eigenform Kauffman 2003 §5 strict-containment claim (§8.5 Prop M8.5) fire empirically? Is there a measurable Fiedler λ₂ monotone-climb-per-Foerster threshold at which the eigenform stabilizes? OR does the eigenform stabilize immediately at N=1 because content-address-determinism + Anna Wolf 2012 non-perturbation + Rice-safe polynomial-time-decidability collectively-discharge stability from the first tick?
+> When prismqueer::verify::verify_prismqueer runs on prismqueer's own event-log, and produces Transparency::green() verdict, and the verdict feeds back to the next-tick's pact-decision as part of the same event-log, and the event-log continues to accumulate — at what tick-count N does the eigenform Kauffman 2003 §5 strict-containment claim (§8.5 Prop M8.5) fire empirically? Is there a measurable Fiedler λ₂ monotone-climb-per-Foerster threshold at which the eigenform stabilizes? OR does the eigenform stabilize immediately at N=1 because content-address-determinism + Anna Jakobs 2012 non-perturbation + Rice-safe polynomial-time-decidability collectively-discharge stability from the first tick?
 
 **Adjudication altitude**: n+2 = past altitude of prior canonical adjudications. Altitude-1 = ship (Reed); altitude-0 = canonical (Mara); altitude+1 = audit (Seam); altitude+2 = K-T question paradigm-shift (Alex Fourth-Chair).
 
@@ -827,7 +827,7 @@ Per Reed HARD RULE [[feedback-reed-budget-cap-plus-tool-non-explicit-produces-tr
 |---|-------|-------------|------------------------|
 | 1 | Rice 1953 undecidability | [ams.org S0002-9947-1953-0053041-6](https://www.ams.org/journals/tran/1953-074-02/S0002-9947-1953-0053041-6/S0002-9947-1953-0053041-6.pdf) | §2.1 invariant (ii) |
 | 2 | Turing 1936 halting problem | [cs.virginia.edu Turing_Paper_1936](https://www.cs.virginia.edu/~robins/Turing_Paper_1936.pdf) | §2.2 loop composition |
-| 3 | Anna Wolf 2012 apparatus | consent-obtained Alex 2026-08-26; carrier at `shards/glasswall.mirror:74-84` | §4.4 non-perturbation |
+| 3 | Anna Jakobs 2012 apparatus | consent-obtained Alex 2026-08-26; carrier at `shards/glasswall.mirror:74-84` | §4.4 non-perturbation |
 | 4 | Kauffman 2003 eigenforms | [constructivist.info kauffman-2003-eigenforms.pdf](https://constructivist.info/special/second-order/material/kauffman-2003-eigenforms.pdf) | §6.3 eigenform stability + §7.4 autopoietic-eigenbehavior |
 | 5 | Sagonas HiPE / BeamAsm | [erlang.org beamasm](https://www.erlang.org/doc/apps/erts/beamasm.html) | §2.4 P-Glasswall-1 polynomial-time |
 | 6 | Claessen-Hughes 2000 QuickCheck | [dl.acm.org 351240.351266](https://dl.acm.org/doi/10.1145/351240.351266) | §3.5 pact-tests-generalize-property-tests |

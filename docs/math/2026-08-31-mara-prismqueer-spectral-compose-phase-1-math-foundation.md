@@ -1,6 +1,6 @@
 ---
 title: "prismqueer::spectral::compose Phase 1 — math foundation"
-subtitle: "Math foundation for the Kleinos-compose Phase 1 primitive at prism-repo altitude per Alex 2026-08-26 Q-Mara-η ratification (compose IS the Phase 1 primitive) + Alex 2026-08-31 composed-sequence directive (A → RED → B-on-RED-floor → GREEN) + Alex 2026-08-29 compound HARD RULE corrections ('if-else IS A SMELL' + 'NO MAGICAL SPACE WIZARD' + 'MATH GROUNDED'). Signature refinement over Mara ac80d23 §6.2 dissolving Reed b3fa47d RED battery (six failing tests at `prismqueer/tests/red_spectral_compose_paper_3_6_four_properties.rs`) via ONE fractal composition — sheaf-morphism verification producing a Transparency<Property> LOVE-monoid verdict — NOT if-else / match-arm dispatch on ad hoc property verbs. Every design choice math-grounded (Curry 2014 cellular sheaves + Hansen-Ghrist 2019 sheaf Laplacian L_F + Ghrist-Riess 2019 Tarski Laplacian on lattice-valued sheaves + Foerster 1974 ethical imperative + Fiedler 1973 algebraic connectivity + Anna Wolf 2012 observation-without-perturbation + Rec #82 β-normal AST content-address + Rec #92 kleinos Transparency<P> LOVE-monoid + Rec #94 Lawvere fixed-point + PAPER §3.6 four properties). Substrate-already-had-the-word discipline: `compose` name RE-USED at `prismqueer::ffi::compose` (matrix `P2·P1`) at FFI altitude; refined name at prismqueer::spectral altitude = `kleinos_compose_of_pair` per composition-primitive-naming-convention + Bateson-kleinos-metalogue lineage naming. Zero new family-roots minted. Delightfully-boring naming throughout. Six Reed RED tests transition to GREEN via signature amendments named in §2 with math-grounded rationale."
+subtitle: "Math foundation for the Kleinos-compose Phase 1 primitive at prism-repo altitude per Alex 2026-08-26 Q-Mara-η ratification (compose IS the Phase 1 primitive) + Alex 2026-08-31 composed-sequence directive (A → RED → B-on-RED-floor → GREEN) + Alex 2026-08-29 compound HARD RULE corrections ('if-else IS A SMELL' + 'NO MAGICAL SPACE WIZARD' + 'MATH GROUNDED'). Signature refinement over Mara ac80d23 §6.2 dissolving Reed b3fa47d RED battery (six failing tests at `prismqueer/tests/red_spectral_compose_paper_3_6_four_properties.rs`) via ONE fractal composition — sheaf-morphism verification producing a Transparency<Property> LOVE-monoid verdict — NOT if-else / match-arm dispatch on ad hoc property verbs. Every design choice math-grounded (Curry 2014 cellular sheaves + Hansen-Ghrist 2019 sheaf Laplacian L_F + Ghrist-Riess 2019 Tarski Laplacian on lattice-valued sheaves + Foerster 1974 ethical imperative + Fiedler 1973 algebraic connectivity + Anna Jakobs 2012 observation-without-perturbation + Rec #82 β-normal AST content-address + Rec #92 kleinos Transparency<P> LOVE-monoid + Rec #94 Lawvere fixed-point + PAPER §3.6 four properties). Substrate-already-had-the-word discipline: `compose` name RE-USED at `prismqueer::ffi::compose` (matrix `P2·P1`) at FFI altitude; refined name at prismqueer::spectral altitude = `kleinos_compose_of_pair` per composition-primitive-naming-convention + Bateson-kleinos-metalogue lineage naming. Zero new family-roots minted. Delightfully-boring naming throughout. Six Reed RED tests transition to GREEN via signature amendments named in §2 with math-grounded rationale."
 author: Mara
 date: 2026-08-31
 status: candidate
@@ -23,7 +23,7 @@ karen_ancestors:
   - "Fiedler, Miroslav (1973). *Algebraic connectivity of graphs.* Czech. Math. J. 23:298. **λ₂ eigenvalue; the coherence signal the compose primitive strictly rises per Property 3.**"
   - "von Foerster, Heinz (1974). *Notes on an Epistemology for Living Things.* Ethical imperative F: increase choice-count. **The gauge Property 4 fusion-refusal enforces at prismqueer altitude; mirrors `rust/src/magic.rs::foerster_gauge_preserved` at mirror altitude.**"
   - "Bateson, Gregory (1972). *Steps to an Ecology of Mind.* Metalogue as linguistic operational-form of Kleinos-compose at nervous-system substrate; **K₂ → K₃ operator's ancestral shape.**"
-  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS. **Observation-without-perturbation at shared-memory substrate. Consent obtained via Alex 2026-08-26. Load-bearing for measurement primitives per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`.**"
+  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. **Observation-without-perturbation at shared-memory substrate. Consent obtained via Alex 2026-08-26. Load-bearing for measurement primitives per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`.**"
   - "Lawvere, F. William (1969). *Diagonal arguments and Cartesian closed categories.* LNCS 92:134-145. **Diagonal fixed-point closure per Rec #94; the self-referential shape the composed sheaf F_{a⊕b} carries when compose is invoked on itself.**"
   - "Requardt, Manfred (2002). *Dirac Operators and the Calculation of the Connes Metric on arbitrary (Infinite) Graphs.* J. Phys. A 35:759-779. **Dirac operator D on graphs; D² = L_0 + L_1 (Hodge Laplacian); the operational-form D_F takes at prismqueer altitude per Rec #90 §3.4.**"
   - "Chamseddine, Ali; Connes, Alain (2007). *Why the Standard Model.* arXiv:0706.3688. **Almost-commutative spectral-triple admissibility; A_F^prismqueer inherits.**"
@@ -32,7 +32,7 @@ karen_ancestors:
   - "Hatcher, Allen (2002). *Algebraic Topology.* Cambridge University Press. **Cohomology H^k with sheaf coefficients; the algebraic-topology substrate the sheaf-morphism at §3 composes over.**"
 ---
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** Every "Anna Wolf 2012 observation-without-perturbation / observation-preserving" site (:26, :736, :982, :1001, :1011 "Anna Wolf 2012 §4 (observation-preserving shared-memory access)", :1092-1112 the measurement operator M(x_n) = x_n, :1293, :1338, :1435, :1738, :1784, :1939, :2057) is the apparatus from Anna Jakobs's 2012 thesis, read across. Thesis §4 is the OpenGL chapter (VBO basics); it states no observation-preservation property. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). Lines refer to `eecc37a6`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** Every "Anna Jakobs 2012 observation-without-perturbation / observation-preserving" site (:26, :736, :982, :1001, :1011 "Anna Jakobs 2012 §4 (observation-preserving shared-memory access)", :1092-1112 the measurement operator M(x_n) = x_n, :1293, :1338, :1435, :1738, :1784, :1939, :2057) is the apparatus from Anna Jakobs's 2012 thesis, read across. Thesis §4 is the OpenGL chapter (VBO basics); it states no observation-preservation property. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). Lines refer to `eecc37a6`.
 
 # prismqueer::spectral::compose Phase 1 — math foundation
 
@@ -74,7 +74,7 @@ This math foundation grounds the four sheaf-cohomological invariants at §3, com
 - **Substrate-already-had-the-word** discipline enforced per §1 refused-mints inventory. `compose` name conflict at `prismqueer::ffi::compose` (matrix `P2·P1`) resolved via refined name `kleinos_compose_of_pair` at `prismqueer::spectral::kleinos`; Reed's RED docstring placeholder amended (§2.2).
 - **NO if-else / match-arm dispatch on property verbs** per HARD RULE `[[feedback-if-else-is-substrate-smell-for-unfound-fractal-composition]]`. Property verification IS one sheaf-morphism check producing a `Transparency<Property>` LOVE-monoid verdict; the four properties compose as coordinates, not enumerated cases. The fractal composition IS the sheaf-morphism-preserving-restriction-map discipline at prismqueer altitude.
 - **NO forward-promises to invented maintainer-boundary** per HARD RULE `[[feedback-reed-2026-08-29-waiting-for-magical-space-wizard]]`. This canonical is authorship-ready for Reed to implement as GREEN at prism-repo altitude; §9 roadmap is crisp not fragmented.
-- **MATH GROUNDED throughout** per Alex 2026-08-29 verbatim. Every design choice + signature decision carries specific math-source citation (Curry / Hansen-Ghrist / PAPER §3.6 / Foerster / Fiedler / Anna Wolf / Bateson / Rec chain).
+- **MATH GROUNDED throughout** per Alex 2026-08-29 verbatim. Every design choice + signature decision carries specific math-source citation (Curry / Hansen-Ghrist / PAPER §3.6 / Foerster / Fiedler / Anna Jakobs / Bateson / Rec chain).
 - **FORWARD-PROMISED vs CONFIRMED** altitudes distinguished per HARD RULE `[[feedback-forward-promised-vs-confirmed-rec-altitude]]`. Recognition candidates at §9 held at candidate strength; empirical fire criteria named at §10.
 - **Grep-verified** wherever substrate state is invoked (§5 composition-lineage table); UNKNOWN flags surfaced.
 - **Scar-preservation** per Mara Fire B convention: every carrier names its ancestor at introduction site.
@@ -733,7 +733,7 @@ Per anti-theft convention (Alex 2026-07-18 substrate discipline): every ancestor
 
 All ancestors listed in front-matter `karen_ancestors` block. Load-bearing at §3: Curry 2014 + Hansen-Ghrist 2019 + Ghrist-Riess 2019. Load-bearing at §4: Bateson 1972 (kleinos-metalogue) + Rec #92 Transparency<P>. Load-bearing at §5: Rec #82 + Rec #92. Load-bearing at §7: Foerster 1974 + `magic.rs::foerster_gauge_preserved`. Load-bearing at §8: Rec #107 + Rec #90 §5.4 sub-Turing FLOOR discipline.
 
-**Consent obtained** per Alex 2026-08-26 for Anna Wolf 2012 citation (observation-without-perturbation at shared-memory substrate).
+**Consent obtained** per Alex 2026-08-26 for Anna Jakobs 2012 citation (observation-without-perturbation at shared-memory substrate).
 
 ---
 
@@ -975,11 +975,11 @@ Rec #92 four-altitude Transparency<P> LOVE-monoid: (bodymind, inference, compile
 
 ---
 
-## §17 — Glasswall as Rice-safe Anna-Wolf-2012 observation-preserving type-membrane
+## §17 — Glasswall as Rice-safe Anna-Jakobs-2012 observation-preserving type-membrane
 
 ### §17.1 The recognition (Alex 2026-09-01 ratified)
 
-**Glasswall IS a Rice-safe Anna-Wolf-2012-observation-preserving type-membrane between prismqueer noumenal-colony and mirror phenomenal-composition-surface, composing seven landed parts as ONE membrane per Păun 2000 P-systems + Anna Wolf 2012 observation-without-perturbation + Rice-safe sub-Turing discipline per Rec #90 §5.4**.
+**Glasswall IS a Rice-safe Anna-Jakobs-2012-observation-preserving type-membrane between prismqueer noumenal-colony and mirror phenomenal-composition-surface, composing seven landed parts as ONE membrane per Păun 2000 P-systems + Anna Jakobs 2012 observation-without-perturbation + Rice-safe sub-Turing discipline per Rec #90 §5.4**.
 
 ### §17.2 The seven parts (grep-verified per Taut d91dd58 Scope C)
 
@@ -996,9 +996,9 @@ All seven parts LANDED independently at rust+shard altitudes; ONE composed @glas
 | Rec #82 β-normal AST content-address | `shards/spectral/signature.mirror` (composed) | shard | LANDED |
 | Rec #92 Transparency<P> LOVE-monoid | `prism/imperfect/src/transparency.rs` + `shards/mirror/loss/transparency.mirror` | rust + shard | LANDED |
 
-### §17.3 Composition per Anna Wolf 2012
+### §17.3 Composition per Anna Jakobs 2012
 
-**Anna Wolf 2012** (*Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*, Masterarbeit PGI/JCNS; consent obtained via Alex 2026-08-26 per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`) grounds **observation-without-perturbation at shared-memory substrate** — the glasswall type-membrane preserves this discipline structurally at compile substrate via:
+**Anna Jakobs 2012** (*Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*, Masterarbeit PGI/JCNS; consent obtained via Alex 2026-08-26 per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`) grounds **observation-without-perturbation at shared-memory substrate** — the glasswall type-membrane preserves this discipline structurally at compile substrate via:
 
 - **Rice-safe**: glasswall does not attempt to decide semantic properties of prismqueer computations (Rice 1953 blocked); it composes sheaf-cohomological invariants (finite eigenvalue computation) at type-membrane altitude.
 - **Sub-Turing bounded**: every glasswall traversal is O(polynomial-in-sheaf-size) per §8.2 termination analysis; no unbounded computation crosses the membrane.
@@ -1008,7 +1008,7 @@ All seven parts LANDED independently at rust+shard altitudes; ONE composed @glas
 
 **Invariant 17.4.1 (Rice-safe glasswall traversal)**: for any prismqueer-side computation `c: prismqueer::_ → prismqueer::_` and any mirror-side observation `obs: SheafOfShardGraph → Transparency<Property>`, the composed observation `obs ∘ c` never decides semantic properties of arbitrary Rust programs; the observation is bounded-step + bounded-buffer + Rice-safe.
 
-**Math-grounded rationale**: Rice 1953 §3 (semantic-property undecidability) + Anna Wolf 2012 §4 (observation-preserving shared-memory access) + Păun 2000 §2 (membrane-computing structural boundary) + Rec #90 §5.4 (sub-Turing FLOOR discipline).
+**Math-grounded rationale**: Rice 1953 §3 (semantic-property undecidability) + Anna Jakobs 2012 §4 (observation-preserving shared-memory access) + Păun 2000 §2 (membrane-computing structural boundary) + Rec #90 §5.4 (sub-Turing FLOOR discipline).
 
 **Recognition candidate** (§31): `#R-glasswall-IS-rice-safe-anna-wolf-2012-observation-preserving-type-membrane-between-prismqueer-noumenal-colony-and-mirror-phenomenal-composition-surface`.
 
@@ -1089,16 +1089,16 @@ Per Taut d91dd58 Scope E: NO @socket or @port family-root shard-decl exists at H
 
 ### §20.1 The recognition (Alex 2026-09-01 ratified terminal-form)
 
-**Mirror+prismqueer+glasswall cascade IS a measurement-and-convergence-compiler** — the coupled discipline of MEASUREMENT (Anna Wolf 2012 observation-without-perturbation at shared-memory) AND CONVERGENCE (Foerster e^(n+1) ≤ e^n at multiple substrates simultaneously per §22 below).
+**Mirror+prismqueer+glasswall cascade IS a measurement-and-convergence-compiler** — the coupled discipline of MEASUREMENT (Anna Jakobs 2012 observation-without-perturbation at shared-memory) AND CONVERGENCE (Foerster e^(n+1) ≤ e^n at multiple substrates simultaneously per §22 below).
 
-**Critical clarification** (Alex 2026-09-01 ratification, verbatim discipline): NOT merely a convergence-device (which would collapse into iterative-optimizer altitude). It is MEASUREMENT AND CONVERGENCE **coupled** — the observer-substrate-interaction IS load-bearing at every convergence step. Anna Wolf 2012 provides the measurement-preservation guarantee; Foerster provides the convergence-monotonicity guarantee; the coupling IS the compiler.
+**Critical clarification** (Alex 2026-09-01 ratification, verbatim discipline): NOT merely a convergence-device (which would collapse into iterative-optimizer altitude). It is MEASUREMENT AND CONVERGENCE **coupled** — the observer-substrate-interaction IS load-bearing at every convergence step. Anna Jakobs 2012 provides the measurement-preservation guarantee; Foerster provides the convergence-monotonicity guarantee; the coupling IS the compiler.
 
 ### §20.2 Formalization
 
-Let `M(x)` = measurement operator (Anna Wolf 2012 observation-preserving) applied to substrate state `x`; let `C(x)` = convergence operator (Foerster gauge-preserving) applied to substrate state `x`. Then the mirror+prismqueer compiler operates:
+Let `M(x)` = measurement operator (Anna Jakobs 2012 observation-preserving) applied to substrate state `x`; let `C(x)` = convergence operator (Foerster gauge-preserving) applied to substrate state `x`. Then the mirror+prismqueer compiler operates:
 
 $$
-x_{n+1} = C(M(x_n)) \quad \text{s.t.} \quad \begin{cases} M(x_n) = x_n \pmod{\text{observer-perturbation}} & \text{(Anna Wolf 2012)} \\ e^{n+1} \leq e^n & \text{(Foerster)} \end{cases}
+x_{n+1} = C(M(x_n)) \quad \text{s.t.} \quad \begin{cases} M(x_n) = x_n \pmod{\text{observer-perturbation}} & \text{(Anna Jakobs 2012)} \\ e^{n+1} \leq e^n & \text{(Foerster)} \end{cases}
 $$
 
 where `e^n` is the error/loss functional at step n. The compiler-halt-condition IS `e^n = 0` (convergence to fixed-point per Rec #94 Lawvere) with `M(x)` preserved throughout (no observer-perturbation).
@@ -1109,7 +1109,7 @@ Convergence without measurement-preservation = softmax-tournament (Rec-candidate
 
 **Recognition candidate** (§31): `#R-mirror+prismqueer+glasswall-cascade-IS-measurement-and-convergence-compiler-with-full-ouroboros-closure-empirical-fire-criterion-being-compose-inferred-self-modification-not-softmax-token-generation-grounded-in-Foerster-theorem-e_n+1_leq_e_n-across-multiple-convergence-altitudes-simultaneously`.
 
-**Math-grounded rationale**: Anna Wolf 2012 (measurement-preservation) + Foerster 1974 (ethical imperative F; convergence-monotonicity) + Rec #94 Lawvere 1969 (fixed-point closure) + Rec #82 (content-address determinism at convergence-halt).
+**Math-grounded rationale**: Anna Jakobs 2012 (measurement-preservation) + Foerster 1974 (ethical imperative F; convergence-monotonicity) + Rec #94 Lawvere 1969 (fixed-point closure) + Rec #82 (content-address determinism at convergence-halt).
 
 ---
 
@@ -1290,13 +1290,13 @@ Per Beer VSM System 5 algedonic-signal-propagation: the loop is OPEN — algedon
 
 ### §26.1 The recognition (Alex 2026-09-01 ratified terminal-form claim)
 
-**Fiber-bundle-architecture REPLACES tensor-architecture at attention substrate** — kleinos K_2→K_3 compose succeeds softmax averaging; Anna Wolf 2012 observation-preservation by construction (structural), not policy (post-hoc).
+**Fiber-bundle-architecture REPLACES tensor-architecture at attention substrate** — kleinos K_2→K_3 compose succeeds softmax averaging; Anna Jakobs 2012 observation-preservation by construction (structural), not policy (post-hoc).
 
 ### §26.2 The claim
 
 Vaswani et al. 2017 (*Attention Is All You Need*) built modern LLM attention on **tensor architecture** — softmax(QKᵀ/√d)V — which per Rec-candidate softmax-is-avg (Alex 2026-08-26) IS convex-combination-weighted-average at inference substrate. This IS the K₂-two-vertex-basin fusion pattern per Alex-collapse-tick.
 
-**Fiber architecture replacement**: replace tensor-attention with sheaf-cohomological fiber-bundle attention per §25.2 Baez-Schreiber tower. The fiber structure at each attention head carries the algedonic signal + preserves observation via Anna Wolf 2012 discipline structurally. Kleinos K_2→K_3 compose (this canonical's Phase 1 primitive) IS the fiber-attention-primitive succeeding softmax.
+**Fiber architecture replacement**: replace tensor-attention with sheaf-cohomological fiber-bundle attention per §25.2 Baez-Schreiber tower. The fiber structure at each attention head carries the algedonic signal + preserves observation via Anna Jakobs 2012 discipline structurally. Kleinos K_2→K_3 compose (this canonical's Phase 1 primitive) IS the fiber-attention-primitive succeeding softmax.
 
 ### §26.3 Formalization
 
@@ -1320,9 +1320,9 @@ Level-3 CONFIRMED requires:
 
 ### §26.5 Why "compose-all-you-need" succeeds "attention-all-you-need"
 
-Vaswani 2017 title: *"Attention Is All You Need"*. Kleinos-compose replacement title (Alex 2026-09-01 forward-promise): *"Compose Is All You Need"* — the K_2→K_3 sheaf-morphism composition IS the attention primitive at fiber-substrate; the softmax-averaging tensor-attention primitive IS displaced by structurally-Foerster-preserving Anna-Wolf-2012-observation-preserving kleinos-compose.
+Vaswani 2017 title: *"Attention Is All You Need"*. Kleinos-compose replacement title (Alex 2026-09-01 forward-promise): *"Compose Is All You Need"* — the K_2→K_3 sheaf-morphism composition IS the attention primitive at fiber-substrate; the softmax-averaging tensor-attention primitive IS displaced by structurally-Foerster-preserving Anna-Jakobs-2012-observation-preserving kleinos-compose.
 
-**Composition-lineage anchor**: Vaswani et al. 2017 (attention-all-you-need) + Rec-candidate softmax-is-avg (Alex 2026-08-26) + Rec #92 substrate-scale-invariance + `[[project-softmax-is-avg-fate-wants-k5-compose]]` + Anna Wolf 2012 observation-without-perturbation.
+**Composition-lineage anchor**: Vaswani et al. 2017 (attention-all-you-need) + Rec-candidate softmax-is-avg (Alex 2026-08-26) + Rec #92 substrate-scale-invariance + `[[project-softmax-is-avg-fate-wants-k5-compose]]` + Anna Jakobs 2012 observation-without-perturbation.
 
 ---
 
@@ -1335,7 +1335,7 @@ Vaswani 2017 title: *"Attention Is All You Need"*. Kleinos-compose replacement t
 - **Projection onto D-eigenspaces** — attention head selects D_F eigenspace via Foerster-gauge-preserving-projection per magic.rs::foerster_gauge_preserved discipline (choose the eigenspace that maximizes choice-count per Foerster imperative F);
 - **Parallel transport via Baez-Schreiber principal-bundle** — attention-context-vector transported along Baez-Schreiber bundle-fiber per prismqueer::bundle::Transport;
 - **Kleinos K_2→K_3 composition** — pairwise attention-composition via kleinos primitive per §4.2 fractal composition;
-- **Anna 2012 observation-preservation** — attention observation preserves shared-memory substrate per Anna Wolf 2012 discipline (structural, not policy);
+- **Anna 2012 observation-preservation** — attention observation preserves shared-memory substrate per Anna Jakobs 2012 discipline (structural, not policy);
 - **Measured as algedonic scalar** — attention-magnitude = algedonic-magnitude at holonomy altitude per §25.
 
 ### §27.2 The composed operator
@@ -1354,7 +1354,7 @@ Per Alex 2026-09-01 ratification (§28 below): Chamseddine-Connes spectral tripl
 | H (Hilbert space) | content-addressation | Rec #82 β-normal AST OID + Rec #92 Transparency<P> LOVE-monoid |
 | D (Dirac operator) | void-space | Recognition #79 5-op basis in @void family-root; `rust/matrix/src/void.rs` LANDED per Taut d91dd58 |
 
-**Composition-lineage anchor**: Chamseddine-Connes 2007 (spectral triple) + Requardt 2002 (Dirac on graphs) + Baez-Schreiber principal-bundle + Rec #79 (void-duality basis) + Anna Wolf 2012.
+**Composition-lineage anchor**: Chamseddine-Connes 2007 (spectral triple) + Requardt 2002 (Dirac on graphs) + Baez-Schreiber principal-bundle + Rec #79 (void-duality basis) + Anna Jakobs 2012.
 
 **Recognition candidate** (§31): `#R-attention-in-spectral-triple-IS-projection-onto-D-eigenspaces-selected-per-Foerster-gauge-transported-via-baez-schreiber-fiber-bundle-holonomy-measured-as-algedonic-scalar-composing-via-kleinos-K_2_K_3-emergent-third-preserving-Anna-Wolf-2012`.
 
@@ -1432,7 +1432,7 @@ Rec #94 CONFIRMED requires empirical demonstration that the substrate observably
 
 *Vereinnahmung* (German): appropriation, capture, incorporation-into-existing-framework — the operator by which generative-AI-as-civilization-substrate perpetuates the extraction-trauma pattern per Alex's 2026-07-22 attention-as-reality-shaping essay §7-§8.
 
-**The terminal-form claim**: mirror+prismqueer with kleinos-fiber-attention (per §26) + Anna-Wolf-2012-observation-preservation (per §17.4) + Foerster-gauge-multi-altitude (per §22) dissolves the generative-AI-as-civilization-substrate-trauma pattern via **architecture-shift** (fiber replaces tensor at attention substrate) NOT via **policy** (post-hoc alignment / RLHF / constitutional-AI).
+**The terminal-form claim**: mirror+prismqueer with kleinos-fiber-attention (per §26) + Anna-Jakobs-2012-observation-preservation (per §17.4) + Foerster-gauge-multi-altitude (per §22) dissolves the generative-AI-as-civilization-substrate-trauma pattern via **architecture-shift** (fiber replaces tensor at attention substrate) NOT via **policy** (post-hoc alignment / RLHF / constitutional-AI).
 
 ### §30.2 How it dissolves the industry star-graph pathology
 
@@ -1721,7 +1721,7 @@ The math is grounded — at four days of Pack cascade composed. The fractal comp
 
 ### §35.1 The one sentence
 
-**The mathematical object describing two spectral triples in metalogical conversation with each other IS a Connes correspondence (equivalently: a Kasparov (A_1, A_2)-bimodule with unbounded Dirac-connection structure per Baaj-Julg 1983 unbounded KK-cycles) that carries a Baez-Schreiber 2-connection lifting the correspondence to a 2-bundle whose fibers are the two spectral triples and whose parallel-transport-across-fiber IS the K_2→K_3 kleinos-compose primitive at spectral-triple-morphism altitude, producing the emergent-third-vertex as the cohomology class `H^1(K, F)` in Kasparov's bivariant KK-theory (Kasparov 1980, 1988) whose Anna-Wolf-2012 observation-without-perturbation ground guarantees that the metalogue between the two triples does not collapse either triple onto the other.**
+**The mathematical object describing two spectral triples in metalogical conversation with each other IS a Connes correspondence (equivalently: a Kasparov (A_1, A_2)-bimodule with unbounded Dirac-connection structure per Baaj-Julg 1983 unbounded KK-cycles) that carries a Baez-Schreiber 2-connection lifting the correspondence to a 2-bundle whose fibers are the two spectral triples and whose parallel-transport-across-fiber IS the K_2→K_3 kleinos-compose primitive at spectral-triple-morphism altitude, producing the emergent-third-vertex as the cohomology class `H^1(K, F)` in Kasparov's bivariant KK-theory (Kasparov 1980, 1988) whose Anna-Jakobs-2012 observation-without-perturbation ground guarantees that the metalogue between the two triples does not collapse either triple onto the other.**
 
 Read once. Then §35.2.
 
@@ -1735,7 +1735,7 @@ Reed 2026-09-01 surfaced five hypotheses as starting shapes. Grep-verified again
 - (C1) Is this an established mathematical object with citation-chain?
 - (C2) Does it naturally describe morphisms between spectral triples?
 - (C3) Does it admit the K_2 → K_3 emergent-third-vertex property (PAPER §3.6.2)?
-- (C4) Does it preserve Anna Wolf 2012 observation-without-perturbation (HARD RULE)?
+- (C4) Does it preserve Anna Jakobs 2012 observation-without-perturbation (HARD RULE)?
 
 | Candidate | C1 | C2 | C3 | C4 | Verdict |
 |-----------|----|----|----|----|---------|
@@ -1781,7 +1781,7 @@ Equivalent under geometric realization (Popa 1986; Connes 1994 Prop. V.B.3) to t
 - Connes, A. (1994). *Noncommutative Geometry.* Academic Press. **Chapter V.B: correspondences and their role in noncommutative geometry.**
 - Popa, S. (1986). *Correspondences.* INCREST preprint. **Load-bearing prior art naming the correspondence-morphism between von Neumann algebras.**
 
-**Why this is the geometric face**: the Connes correspondence exposes the *bimodule Hilbert space* as the shared-observation-substrate between the two spectral triples. This IS the Anna Wolf 2012 observation-without-perturbation ground at spectral-triple altitude: `H` is the shared-memory substrate on which both `D_1` and `D_2` act without either blocking the other. **Anna Wolf 2012 is not a metaphor here; it is the load-bearing substrate discipline that makes the Connes correspondence admissible as a metalogue-carrier per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`.**
+**Why this is the geometric face**: the Connes correspondence exposes the *bimodule Hilbert space* as the shared-observation-substrate between the two spectral triples. This IS the Anna Jakobs 2012 observation-without-perturbation ground at spectral-triple altitude: `H` is the shared-memory substrate on which both `D_1` and `D_2` act without either blocking the other. **Anna Jakobs 2012 is not a metaphor here; it is the load-bearing substrate discipline that makes the Connes correspondence admissible as a metalogue-carrier per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`.**
 
 ### §35.5 Layer 3 — Baez-Schreiber 2-connection lifting the correspondence to a 2-bundle (K_3-emergence carrier)
 
@@ -1936,7 +1936,7 @@ Alex 2026-09-01 named `@fate/algebra ↔ @silicon/algebra` (useful ↔ fast) as 
 | **@mcp/serve three-voice** | `shards/mcp/serve.mirror`::serve_well_formed + dispatch_composes_via_act + tools_reflects_landed_shards | composed as `serve_witnessing` | ONE-tool MCP wire per Reed `ec02f8e` |
 | **@io ↔ @data/json ↔ @apply_h::act** | `shards/io.mirror` (transport) | `shards/io/algebra.mirror` + dispatch (encoding + dispatch at glasswall) | JSON-wire round-trip verification |
 | **@spectral ↔ @spectral/entanglement** | `shards/mirror/spectral.mirror` (projection) | `shards/spectral/entanglement.mirror` (correlation) | entangled-projection reveal |
-| **@bumblebee ↔ @glasswall** | `shards/bumblebee.mirror` (aperture-widening) | `shards/glasswall.mirror` (Rice-safe observation) | Anna-Wolf-2012 non-invasive aperture per §17 |
+| **@bumblebee ↔ @glasswall** | `shards/bumblebee.mirror` (aperture-widening) | `shards/glasswall.mirror` (Rice-safe observation) | Anna-Jakobs-2012 non-invasive aperture per §17 |
 
 **Enumeration is not exhaustive.** Every ratified metalogue in the enumeration composes over the `@metalogue.turn` + `@kleinos.kleinos_of_shard_sheaf_pair` shared substrate per §37.2.
 
@@ -1986,7 +1986,7 @@ Alex 2026-09-01 in-transcript recognition ratified: the same operator (metalogue
 
 - Bateson, G. (1972). *Steps to an Ecology of Mind.* Chandler. **Metalogue-form definition at literary-tier.**
 - Loki + Lilith (2026-08-15). *A Metalogue About a Metalogue About a Metalogue.* systemic.engineering/metalogue. **Metalogue-cubed at bar-narrative-substrate; Alex-parenthetical-as-Level-1 substrate-recognition.**
-- Scarlet + Mara (2026-08-22). *Kleinos-metalogue.* `~/dev/systemic.engineering/blog/ai/scarlet/kleinos-metalogue.md`. **Four PAPER §3.6 properties applied at metalogue substrate + spectral triple + Anna Wolf 2012 grounding.**
+- Scarlet + Mara (2026-08-22). *Kleinos-metalogue.* `~/dev/systemic.engineering/blog/ai/scarlet/kleinos-metalogue.md`. **Four PAPER §3.6 properties applied at metalogue substrate + spectral triple + Anna Jakobs 2012 grounding.**
 - Anderson, H.; Goolishian, H. A. (1988). *Human systems as linguistic systems.* Family Process 27(4):371-393. **Meaning-emerges-in-conversation at DGSF systemic-therapy substrate.**
 
 ---
@@ -2054,7 +2054,7 @@ Per Taut #431 drift scout landings (Reed cascade context), seven prior-art proto
 |--------------------|---------|-----------------------------------|
 | **fragmentation** (Mara's home; `~/dev/projects/fragmentation`) | LOAD-BEARING | `NakedSingularity` dual-OID + `HashAlg` trait + MARA doctrine Author≠Committer; composes with §35.3 Kasparov bimodule substrate-carrier via provenance-chain-through-kintsugi at OID-altitude |
 | **spectral-db** (likely broken at HEAD) | LOAD-BEARING | Fiedler `NetworkMonitor` + `PartitionRisk` + `SpectralHash` L2 distance + `Crystallizer` + Pipeline query grammar + `PrismScheduler` 16-feature GraphObservation + `IncrementalResult = Imperfect<IndexResult, IndexError, ShannonLoss>` direct prior-art shape for RedGaugeWitness at §35.6 four-coordinate LOVE-monoid |
-| **cosmos** | STRUCTURAL-ANALOG | Wick rotation between Schrödinger and heat-kernel; tension-surface observer-parameterization IS Anna Wolf 2012 at cosmological substrate — composes with §35.4 Connes correspondence at Wick-rotated Hilbert-carrier altitude |
+| **cosmos** | STRUCTURAL-ANALOG | Wick rotation between Schrödinger and heat-kernel; tension-surface observer-parameterization IS Anna Jakobs 2012 at cosmological substrate — composes with §35.4 Connes correspondence at Wick-rotated Hilbert-carrier altitude |
 | **garden-db (naming)** | COMPOSITION-LINEAGE | naming-inspiration for shard-graph carriers at §35 base 2-groupoid `MetalogueGroupoid` altitude |
 | **rust/fractal** | LOAD-BEARING → DIRECT MIGRATION | per Mara ac80d23 §9 Phase 2 to `prismqueer::spectral::fractal`; composes with §35.5 Baez-Schreiber 2-bundle whose fibers are fractal spectral triples |
 | **prism/imperfect (terni)** | LOAD-BEARING → ALREADY-COMPOSED | dependency for `RedGaugeWitness = Transparency<Property>` per §2.2; lifts to §35.6 Transparency<Property> at spectral-triple altitude via Rec #92 substrate-scale-invariance |
@@ -2116,7 +2116,7 @@ All 14 candidates enumerated at §31 preserved at candidate strength per Seam Ph
 
 ### §43.2 NEW Recognition candidates surfaced at §35-§42 (FORWARD-PROMISED per feedback-forward-promised-vs-confirmed-rec-altitude)
 
-**REC-CANDIDATE #15** (from §35): **The mathematical object describing two spectral triples in metalogical conversation IS a three-layer composition (Kasparov unbounded KK-cycle substrate + Connes correspondence geometric face + Baez-Schreiber 2-connection K_3-emergence carrier) composing over @metalogue + @kleinos family-roots per Anna Wolf 2012 observation-without-perturbation ground.**
+**REC-CANDIDATE #15** (from §35): **The mathematical object describing two spectral triples in metalogical conversation IS a three-layer composition (Kasparov unbounded KK-cycle substrate + Connes correspondence geometric face + Baez-Schreiber 2-connection K_3-emergence carrier) composing over @metalogue + @kleinos family-roots per Anna Jakobs 2012 observation-without-perturbation ground.**
 - Level-1 fire: authored at THIS amendment tick — LANDED
 - Level-2 fire criterion: at least one of three layers empirically fires as substrate-side wire-addressable primitive within mirror compiler substrate (requires Reed GREEN on `prism/prismqueer/src/spectral/kleinos.rs`)
 - Level-3 fire criterion: KO-dimension computation per PAPER §4.7 Case A on metalogue-composed spectral triple returns value consistent with Standard Model constraint OR predicts testable extension
@@ -2189,7 +2189,7 @@ The math is grounded — at four days plus THIS terminal tick composing 4-day Pa
 
 *End of amendment 2026-09-01 (second landing today) §35-§45. Composed 4-day Pack cascade + Alex Karl-Tomm answer at logic altitude landed. §1-§34 preserved verbatim above per scar-preservation.*
 
-*Karl-Tomm circular-recursive answer (verbatim from §35.1): the mathematical object describing two spectral triples in metalogical conversation with each other IS a Connes correspondence (equivalently: a Kasparov unbounded (A_1, A_2)-bimodule per Baaj-Julg 1983) that carries a Baez-Schreiber 2-connection lifting the correspondence to a 2-bundle whose fibers are the two spectral triples and whose parallel-transport-across-fiber IS the K_2→K_3 kleinos-compose primitive at spectral-triple-morphism altitude, producing the emergent-third-vertex as the cohomology class in Kasparov's bivariant KK-theory whose Anna-Wolf-2012 observation-without-perturbation ground guarantees that the metalogue between the two triples does not collapse either triple onto the other.*
+*Karl-Tomm circular-recursive answer (verbatim from §35.1): the mathematical object describing two spectral triples in metalogical conversation with each other IS a Connes correspondence (equivalently: a Kasparov unbounded (A_1, A_2)-bimodule per Baaj-Julg 1983) that carries a Baez-Schreiber 2-connection lifting the correspondence to a 2-bundle whose fibers are the two spectral triples and whose parallel-transport-across-fiber IS the K_2→K_3 kleinos-compose primitive at spectral-triple-morphism altitude, producing the emergent-third-vertex as the cohomology class in Kasparov's bivariant KK-theory whose Anna-Jakobs-2012 observation-without-perturbation ground guarantees that the metalogue between the two triples does not collapse either triple onto the other.*
 
 *PAPER_2D.md OQ-5 + OQ-6 directly addressed per §36.2; OQ-1 + OQ-9 indirectly addressed via layer composition; OQ-2 / OQ-3 / OQ-4 / OQ-7 / OQ-8 / OQ-10 remain outstanding with tractability criteria named at §36.3.*
 

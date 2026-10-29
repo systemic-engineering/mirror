@@ -33,10 +33,10 @@ karen_ancestors:
   - "Mara b5156ab (2026-09-02). *Language as spectral topology in sheaf cohomology.*"
   - "Alex Wolf (2026-09-01, insight essay draft). *Achtsam Morden: Das Loch ist das Jetzt.*"
   - "Ricky Jones (2026-08-26). *Rotation is non-negotiation* — coinage."
-  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS. Consent obtained via Alex 2026-08-26."
+  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. Consent obtained via Alex 2026-08-26."
 ---
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "Anna-Wolf-2012 observation-preserving" and "observer-non-perturbation" groundings (:101, :423, :527, :713) are the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). Lines refer to `eecc37a6`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "Anna-Jakobs-2012 observation-preserving" and "observer-non-perturbation" groundings (:101, :423, :527, :713) are the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). Lines refer to `eecc37a6`.
 
 # @task substrate — Mirror-Bullet-Up canonical spec
 
@@ -98,7 +98,7 @@ Before §2 proposes new shard-decls, §1 enumerates every LANDED substrate-decl 
 | `@autopoietic` family-root | `shards/autopoietic.mirror` (41.1KB) | Fold-back closure for task-graph recursion (§6 fractal sub-graph) |
 | `@bauchladen` family-root | `shards/bauchladen.mirror` | Content-addressing discipline for tombstone-preservation (§2.5) |
 | `@kleinos` family-root | `shards/kleinos.mirror` | K₂→K₃ compose primitive for implicit-edge sheaf-morphism verification (§4.4) |
-| `@glasswall` composition-shard | `shards/glasswall.mirror` | Anna-Wolf-2012 observation-preserving type-membrane for task-graph observation (§7.1) |
+| `@glasswall` composition-shard | `shards/glasswall.mirror` | Anna-Jakobs-2012 observation-preserving type-membrane for task-graph observation (§7.1) |
 | `@mq` family-root | `shards/mq.mirror` + `boot/std/code/mq.mirror` | Query grammar for `mq tasks` projection dispatch (§5) |
 | `@mirror/spec/system` species | `shards/mirror/spec/system.mirror` | VSM species pattern precedent for `@task` species declarations (§2) |
 | `apply_h::act` dispatch | `rust/src/apply_h.rs` (LANDED per Rec #92 §M4) | Six-projection dispatch surface (§7) |
@@ -420,7 +420,7 @@ action @task.observe_from_folder_tree(root: dir_ref) -> @task_sub_graph { \ }
 action @task.observe_from_sheaf_graph(root: @task) -> [dir_ref] { \ }
 ```
 
-**Anna Wolf 2012 grounding**: both action-decls satisfy observer-non-perturbation per LANDED `@glasswall` composition-shard membrane (grep-verify `shards/glasswall.mirror`); enumerating tasks via either functor does not alter the underlying task-substrate.
+**Anna Jakobs 2012 grounding**: both action-decls satisfy observer-non-perturbation per LANDED `@glasswall` composition-shard membrane (grep-verify `shards/glasswall.mirror`); enumerating tasks via either functor does not alter the underlying task-substrate.
 
 ### §4.3 Composition-lineage anchor
 
@@ -524,7 +524,7 @@ Per math foundation §5.5 Central Theorem M5.1: `@task.gestalt_of^n(v) → λ₀
 
 **Operational implication**: recursive `@task.gestalt_of` traversal at any depth returns a finite result set. The bilateral `@task_witnessing` predicate at `@task` family-root shard (§2.1) enforces this via Transparency<TaskProperty> LOVE-monoid coordinate `(L4) Fusion refusal` per Rec #92 — the recursion refuses to fuse task-substrate with sub-task-substrate at ANY altitude, guaranteeing finite descent.
 
-**Anna Wolf 2012 grounding**: recursive traversal satisfies observer-non-perturbation at every recursion level per LANDED `@glasswall` observation-membrane.
+**Anna Jakobs 2012 grounding**: recursive traversal satisfies observer-non-perturbation at every recursion level per LANDED `@glasswall` observation-membrane.
 
 ---
 
@@ -610,7 +610,7 @@ Composes over Dodson PINCH acronym (Play/Interest/Novelty/Competition/Hurry).
 
 Per Reed 2026-09-02 §4.3: no artificial context-switching. Substrate does NOT surface interrupts during hyperfocus.
 
-**Substrate-decl surface** at `@task/projection` species: daily-projection dispatch checks `hyperfocus_state ∈ {inactive, active}` and refuses interrupt-surfacing when `active`. Composes over Anna Wolf 2012 shared-memory observation-without-perturbation at nervous-system-substrate.
+**Substrate-decl surface** at `@task/projection` species: daily-projection dispatch checks `hyperfocus_state ∈ {inactive, active}` and refuses interrupt-surfacing when `active`. Composes over Anna Jakobs 2012 shared-memory observation-without-perturbation at nervous-system-substrate.
 
 ### §8.4 Task-abandonment frictionless (Reed §4.4)
 
@@ -710,7 +710,7 @@ Six BLOCKING Q-Mara residues (must be adjudicated before shard-decl mint) + thre
 - Ryder Carroll Bullet Journal Method 2018 (§8 six neuroqueer-substrate-moves + §9 capture protocol)
 - Ryan Singer Shape Up 2019 (cycle-projection via §2.6 + §7)
 - Obsidian public documentation Xu + Li 2020+ (§3.2 wiki-link parser)
-- Anna Wolf 2012 observation-without-perturbation (§4.2 + §6.3 recursive traversal grounding)
+- Anna Jakobs 2012 observation-without-perturbation (§4.2 + §6.3 recursive traversal grounding)
 - Ricky Jones rotation-is-non-negotiation 2026-08-26 (§2.2 + §8.4)
 
 ### §12.2 Substrate-scale-invariance verification per Rec #92 pattern

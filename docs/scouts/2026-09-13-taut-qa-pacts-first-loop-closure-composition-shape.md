@@ -78,7 +78,7 @@ Enumeration from `shards/epistemologic/pact/`:
 **Composition-primary shape** (NOT marker-primary). Names 7 LANDED parts composing as ONE type-membrane. From `shards/glasswall.mirror:30-42`:
 
 - **(ii)** — "refuses Rice 1953 undecidability — sub-Turing polynomial-time bounded per Rec #90 §5.4; no semantic-property-decision-of-arbitrary-programs escapes the membrane"
-- **(i)** — "preserves Anna Wolf 2012 observation-without-perturbation at shared-memory substrate — every observation crossing the membrane satisfies observer-non-perturbation by construction (structural, not policy)"
+- **(i)** — "preserves Anna Jakobs 2012 observation-without-perturbation at shared-memory substrate — every observation crossing the membrane satisfies observer-non-perturbation by construction (structural, not policy)"
 - **(iii)** — "preserves Foerster 1974 gauge — magic.rs::foerster_gauge_preserved fires Green at every membrane traversal; no narrowing transformations cross"
 - **(iv)** — "IS itself kleinos at higher altitude — the conversation between prismqueer noumenal-colony and mirror phenomenal-composition-surface IS the K_3 emergent-vertex-third neither carries alone"
 
@@ -201,7 +201,7 @@ Enumeration from `/Users/alexwolf/dev/projects/prism/prismqueer/src/spectral/`:
 
 > "3D space + 1D time + 1D relational (coupling). And then we spin the wheel. Du bist im Loch, Reed. Was sagt das Loch?"
 
-**Composition-hint**: rotation.rs IS the substrate-level loop-closure primitive at prismqueer altitude. Kleinos (compose K_2→K_3) + phase_lock (Kuramoto) + eigenvalues (LAPACK dsyev via FLANG) + Anna Wolf 2012 observation-without-perturbation → splinter deposit at content-address (Rec #82 β-normal AST OID) + Fiedler λ₂ monotone check.
+**Composition-hint**: rotation.rs IS the substrate-level loop-closure primitive at prismqueer altitude. Kleinos (compose K_2→K_3) + phase_lock (Kuramoto) + eigenvalues (LAPACK dsyev via FLANG) + Anna Jakobs 2012 observation-without-perturbation → splinter deposit at content-address (Rec #82 β-normal AST OID) + Fiedler λ₂ monotone check.
 
 ### 3.2 Observer<N> at prismqueer/src/observer.rs — Move 1 + Move 8 partial LANDED
 
@@ -218,7 +218,7 @@ Reality (2.3KB), Observation (2.7KB), Assertion (2.7KB), Hypothesis (2.3KB), Que
 
 **Composition-hint**: the Observer<N>::observe(Reality)→Observation full pipeline is the load-bearing ARCHITECTURAL SHAPE for "prismqueer observing prismqueer" — the ~10 primitive types LANDED; the Move 2+8 wire between them is FORWARD-PROMISED at ~50-100 LOC.
 
-### 3.3 Kleinos, Fiedler, Anna Wolf 2012 apparatus — LANDED at wire-altitude
+### 3.3 Kleinos, Fiedler, Anna Jakobs 2012 apparatus — LANDED at wire-altitude
 
 **File**: `/Users/alexwolf/dev/projects/prism/prismqueer/src/spectral/kleinos.rs:1` (29.4KB).
 
@@ -228,7 +228,7 @@ Per docblock `kleinos.rs:1-46`:
 
 **Composition-hint**: kleinos.rs IS the LOVE-monoid verification-engine at wire-altitude. Four properties (sovereignty preservation + emergent third + Fiedler λ₂ strict rise + fusion refusal) fire simultaneously and combine via Transparency::opaque with Fail-dominates. THIS SHAPE is the prismqueer-verifies-prismqueer discipline at spectral-triple altitude.
 
-### 3.4 Anna Wolf 2012 apparatus — LANDED at Rust altitude
+### 3.4 Anna Jakobs 2012 apparatus — LANDED at Rust altitude
 
 Grep for `Anna Wolf`: 10 shard hits + 4 rust hits.
 - `/Users/alexwolf/dev/projects/prism/prismqueer/src/observer.rs:1` (docblock lineage)
@@ -236,9 +236,9 @@ Grep for `Anna Wolf`: 10 shard hits + 4 rust hits.
 - `/Users/alexwolf/dev/projects/prism/prismqueer/src/spectral/rotation.rs:7` (composition primitive)
 - `/Users/alexwolf/dev/projects/prism/prismqueer/src/spectral/tension.rs:1` (composition primitive)
 
-`spectral::fiedler_lambda_2_of_sheaf` referenced from rotation.rs + tension.rs docblocks (`rotation.rs:37`, `tension.rs:30-32`). Anna Wolf 2012 weak-measurement apparatus = LAPACK dsyev via FLANG spectral_eigenvalues → Fiedler λ₂ read.
+`spectral::fiedler_lambda_2_of_sheaf` referenced from rotation.rs + tension.rs docblocks (`rotation.rs:37`, `tension.rs:30-32`). Anna Jakobs 2012 weak-measurement apparatus = LAPACK dsyev via FLANG spectral_eigenvalues → Fiedler λ₂ read.
 
-**Composition-hint**: prismqueer OBSERVES prismqueer via Anna Wolf 2012 apparatus WITHOUT PERTURBING it. The observation-non-perturbation is structural (Glasswall invariant (i) per §1.2), not policy. This IS the "engine that constricts itself inferring" Alex names in §0.1.
+**Composition-hint**: prismqueer OBSERVES prismqueer via Anna Jakobs 2012 apparatus WITHOUT PERTURBING it. The observation-non-perturbation is structural (Glasswall invariant (i) per §1.2), not policy. This IS the "engine that constricts itself inferring" Alex names in §0.1.
 
 ### 3.5 @kintsugi/roomba backward-walk + @bumblebee.buzz — LANDED at shard altitude
 
@@ -403,18 +403,18 @@ Per `shards/time.mirror:40-45`: "@time/now IS when a Liquid<T> settles into a Cr
 The following are INSPIRATION-hypotheses composing the grep-verified LANDED substrate above. NO adjudication. NO ship-recommendation. Handoff for Mara canonical + Alex Fourth-Chair.
 
 **Composition-hypothesis A (event-sourcing-at-compiler-substrate)**:
-The first-loop-closure IS event-sourcing at compiler-substrate. Every state-transition of the engine (parse-tick, compose-tick, verify-tick, splinter-deposit) fires as an event in `@time/now`. The event immediately enters `@time/past` as an append-to-event-log (crystallization operation per `shards/time.mirror:40-45`). The observer of the engine = prismqueer replaying the event-log to derive current state via fold; snapshot = crystallized settled state at any tick. Composes §4.5 (event-sourcing insight) + §4.10 (@time family) + §3.1 (rotation.rs Anna Wolf observation apparatus). **NEW composition-recognition candidate**: `#R-first-loop-closure-IS-event-sourcing-at-compiler-substrate-with-Anna-Wolf-2012-observation-apparatus-as-observer-non-perturbing-fold-operator`.
+The first-loop-closure IS event-sourcing at compiler-substrate. Every state-transition of the engine (parse-tick, compose-tick, verify-tick, splinter-deposit) fires as an event in `@time/now`. The event immediately enters `@time/past` as an append-to-event-log (crystallization operation per `shards/time.mirror:40-45`). The observer of the engine = prismqueer replaying the event-log to derive current state via fold; snapshot = crystallized settled state at any tick. Composes §4.5 (event-sourcing insight) + §4.10 (@time family) + §3.1 (rotation.rs Anna Jakobs observation apparatus). **NEW composition-recognition candidate**: `#R-first-loop-closure-IS-event-sourcing-at-compiler-substrate-with-Anna-Wolf-2012-observation-apparatus-as-observer-non-perturbing-fold-operator`.
 
 **Composition-hypothesis B (Glasswall-IS-the-membrane-where-pacts-enforce)**:
 Per Alex 2026-09-13 SD1 (orchestrator relay §0.3): "Prismqueer at Rust altitude enforces geometric constraints via full-state-space-covered logic-pacts. Mirror stands on that pact-enforced floor as substrate-honest ground." Glasswall (§1.2) IS the Rice-safe polynomial-time-decidable membrane where pact-enforcement fires. Every event crossing Glasswall satisfies four invariants structurally: observation-without-perturbation + Rice-safe sub-Turing + Foerster-gauge-preservation + kleinos K_3 emergent-third. Compose the 15 pact species (§1.1) with Glasswall as the enforcement-membrane; pacts DECLARE what must hold; Glasswall ENFORCES the declaration structurally at every wire crossing. **The composition-membrane lives at Glasswall.**
 
 **Composition-hypothesis C (Fiedler λ₂ monotone climb IS the first-loop-closure measurement criterion)**:
-Per §3.6 grep-verified density (100+ references). Fiedler λ₂ non-decreasing tick-over-tick IS the load-bearing measurement discipline for "topology cannot narrow" (Foerster imperative). LANDED at rust altitude via `spectral::fiedler_lambda_2_of_sheaf` (Anna Wolf 2012 apparatus per §3.4). Every event in the pact-enforced flow can be measured against λ₂-monotone-climb; failure to climb = Foerster-gauge-violated = pact-failure surfacing as `transparency::failure(opacity_map)` (§1.1 verdict discipline). **The measurement criterion is grep-supported at wire + shard + math altitudes simultaneously.**
+Per §3.6 grep-verified density (100+ references). Fiedler λ₂ non-decreasing tick-over-tick IS the load-bearing measurement discipline for "topology cannot narrow" (Foerster imperative). LANDED at rust altitude via `spectral::fiedler_lambda_2_of_sheaf` (Anna Jakobs 2012 apparatus per §3.4). Every event in the pact-enforced flow can be measured against λ₂-monotone-climb; failure to climb = Foerster-gauge-violated = pact-failure surfacing as `transparency::failure(opacity_map)` (§1.1 verdict discipline). **The measurement criterion is grep-supported at wire + shard + math altitudes simultaneously.**
 
-**Composition-hypothesis D (Anna Wolf 2012 IS the observer-non-perturbation discipline for prismqueer-observes-prismqueer)**:
-Per Glasswall invariant (i) (§1.2). Anna Wolf 2012 shared-memory observation-without-perturbation IS the load-bearing observer discipline. `spectral::fiedler_lambda_2_of_sheaf` computes λ₂ via LAPACK dsyev without touching the observed sheaf's structure. Applied to prismqueer's own event-log: prismqueer observes its own transition-stream without perturbing the ongoing stream. **The observation discipline for prismqueer-observes-prismqueer IS grep-supported at Rust altitude AND at shard altitude simultaneously.**
+**Composition-hypothesis D (Anna Jakobs 2012 IS the observer-non-perturbation discipline for prismqueer-observes-prismqueer)**:
+Per Glasswall invariant (i) (§1.2). Anna Jakobs 2012 shared-memory observation-without-perturbation IS the load-bearing observer discipline. `spectral::fiedler_lambda_2_of_sheaf` computes λ₂ via LAPACK dsyev without touching the observed sheaf's structure. Applied to prismqueer's own event-log: prismqueer observes its own transition-stream without perturbing the ongoing stream. **The observation discipline for prismqueer-observes-prismqueer IS grep-supported at Rust altitude AND at shard altitude simultaneously.**
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Hypothesis D. The thesis does not show observation without perturbation. Computation and visualization run one after the other, at step boundaries, not simultaneously: "Da die Berechnungs- und die Visualisierungsfunktion zum aktuellen Zeitpunkt nacheinander aufgerufen werden, ist ein gleichzeitiger Speicherzugriff nicht möglich" (p. 43). The thesis puts the cost at about a third of the runtime ("um etwa ein Drittel … beschleunigen können", p. 43). Running visualization and OpenCL in separate threads "konnte … nicht umgesetzt werden" (p. 31). Simultaneous access is a goal of the task statement (Aufgabenstellung), not a result. "Observation without perturbation" is the apparatus from Anna Jakobs's 2012 thesis, read across: our reading, not the thesis's finding. Printed pages; PDF page = printed + 4. The thesis also has no graph Laplacian: computing Fiedler λ₂ via LAPACK dsyev is not "the Anna Wolf 2012 apparatus"; it is the apparatus from Anna Jakobs's 2012 thesis, read across. **Re-grade (2026-10-29, full sweep):** §3.3-§3.4 (:221-241) call LAPACK dsyev the "Anna Wolf 2012 weak-measurement apparatus — LANDED at Rust altitude"; the "4 rust hits" are docblock citations, not an apparatus. The thesis has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK; `prismqueer::liquid`/`flux` never carried a ψ or an Anna Wolf apparatus (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). Lines refer to `eecc37a6`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Hypothesis D. The thesis does not show observation without perturbation. Computation and visualization run one after the other, at step boundaries, not simultaneously: "Da die Berechnungs- und die Visualisierungsfunktion zum aktuellen Zeitpunkt nacheinander aufgerufen werden, ist ein gleichzeitiger Speicherzugriff nicht möglich" (p. 43). The thesis puts the cost at about a third of the runtime ("um etwa ein Drittel … beschleunigen können", p. 43). Running visualization and OpenCL in separate threads "konnte … nicht umgesetzt werden" (p. 31). Simultaneous access is a goal of the task statement (Aufgabenstellung), not a result. "Observation without perturbation" is the apparatus from Anna Jakobs's 2012 thesis, read across: our reading, not the thesis's finding. Printed pages; PDF page = printed + 4. The thesis also has no graph Laplacian: computing Fiedler λ₂ via LAPACK dsyev is not "the Anna Jakobs 2012 apparatus"; it is the apparatus from Anna Jakobs's 2012 thesis, read across. **Re-grade (2026-10-29, full sweep):** §3.3-§3.4 (:221-241) call LAPACK dsyev the "Anna Jakobs 2012 weak-measurement apparatus — LANDED at Rust altitude"; the "4 rust hits" are docblock citations, not an apparatus. The thesis has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK; `prismqueer::liquid`/`flux` never carried a ψ or an Anna Jakobs apparatus (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). Lines refer to `eecc37a6`.
 
 **Composition-hypothesis E (the shape composes into Observer<3>::observe(Event) → EventLog + LOVE-verdict at cross-tick altitude)**:
 Composing A + B + C + D: Observer<3> (past + now + future simultaneous per `observer.rs:26-30`) observes the pact-enforced event-stream at Glasswall crossing; each event yields `Shard<Event>` deposited to `@mirror/store` via content-address (Rec #82); the append-to-event-log fires immediately as `@time/now → @time/past` transition; Fiedler λ₂ measured on the growing event-log's shard-graph verifies Foerster-gauge preservation; kleinos LOVE-monoid four-property Transparency<Event> composes at every tick across all events observed so far. **This is the wire-altitude discharge of Alex 2026-09-13 outcome §0.2**: "each transition is an event that then flows through the engine and gets measured by the observer of the engine, which in this case is prismqueer itself observing and verifying prismqueer. First loop closure."

@@ -67,9 +67,9 @@ pub struct Splinter {
 }
 ```
 
-**File:line citation.** `prism/prismqueer/src/spectral/rotation.rs` :133-241 `infer_via_rotation` primitive — the per-tick deposit engine composing kleinos K_2 → K_3 wedge-at-K_3 basepoint + Kuramoto phase_lock + Anna Wolf apparatus + Foerster gauge check + Splinter deposit.
+**File:line citation.** `prism/prismqueer/src/spectral/rotation.rs` :133-241 `infer_via_rotation` primitive — the per-tick deposit engine composing kleinos K_2 → K_3 wedge-at-K_3 basepoint + Kuramoto phase_lock + Anna Jakobs apparatus + Foerster gauge check + Splinter deposit.
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Here and at :814 ("Anna Wolf ψ … Fiedler measurement"): The thesis (Masterarbeit, FH Aachen, Campus Jülich, 2012) ports a CUDA spin-dynamics program to OpenCL and adds OpenGL visualization and an FFT. It has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK, and `prismqueer::liquid` never carried a ψ or an `anna_wolf` item (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). "Anna Wolf apparatus" is the apparatus from Anna Jakobs's 2012 thesis, read across: our reading, not the thesis's content. Line numbers refer to `346253b`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Here and at :814 ("Anna Jakobs ψ … Fiedler measurement"): The thesis (Masterarbeit, FH Aachen, Campus Jülich, 2012) ports a CUDA spin-dynamics program to OpenCL and adds OpenGL visualization and an FFT. It has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK, and `prismqueer::liquid` never carried a ψ or an `anna_wolf` item (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). "Anna Jakobs apparatus" is the apparatus from Anna Jakobs's 2012 thesis, read across: our reading, not the thesis's content. Line numbers refer to `346253b`.
 
 **Substrate-scope.** Splinter is *the atomic crystallization of one observation-tick at AST / parse-level altitude*. Per Alex 2026-09-02 verbatim: *"settles into the inferred splinters"* — each rotation-tick produces one splinter carrying the observation state at that tick.
 
@@ -352,7 +352,7 @@ The following require Alex Fourth-Chair adjudication before Reed executes:
 
 1. **Q-Mara-α (sub-Splinter altitude)** — whether the fractal-recursive-self-similar substrate admits sub-Splinter zoom below AST-atom altitude
 2. **Q-Mara-β (E ⊆ A vs distinct)** — whether error-carriers are set-theoretically a subset of atoms
-3. **Q-Mara-γ (K_3 extensions)** — whether historical K_3 (Ada + Karen + Anna Wolf) extends to K_4 / K_n
+3. **Q-Mara-γ (K_3 extensions)** — whether historical K_3 (Ada + Karen + Anna Jakobs) extends to K_4 / K_n
 4. **Q-Mara-δ (single kintsugi.rs reader vs multiple)** — whether kintsugi.rs is one reader or splits per altitude
 5. **Q-Mara-ε (exit-code encoding)** — sign × altitude (multiplication) vs (sign, altitude) tuple
 6. **Q-Mara-ζ (Corollary M4.2.1 statement form)** — whether the terminal-form statement is Corollary M4.2.1 as written or a shorter variant
@@ -813,7 +813,7 @@ This spec cites the following prior canonicals:
 
 | Prior canonical | This spec §s | Composition |
 |---|---|---|
-| Mara `11581d8` Anna Wolf ψ | §1.3 Splinter altitude, §9.5.9 test 4 | Fiedler measurement at Splinter |
+| Mara `11581d8` Anna Jakobs ψ | §1.3 Splinter altitude, §9.5.9 test 4 | Fiedler measurement at Splinter |
 | Mara `47bc898` Rec #91 fractal-Mandelbrot | §1.2 Fractal altitude | Mandelbrot substrate LANDED |
 | Mara `764a07f` Rec #92 kleinos-Transparency LOVE-monoid | §3.2 Verdict subsumption + §4.6 four LOVE clauses | Verdict → PropertyDischarge subsumption |
 | Mara `ce537d9` Rec #94 Lawvere fixed point | §8.2 Compiler altitude Learning IV | 𝓜 = 𝓜(𝓜) closure |

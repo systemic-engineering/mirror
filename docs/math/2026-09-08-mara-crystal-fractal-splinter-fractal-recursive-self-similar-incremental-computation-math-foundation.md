@@ -153,7 +153,7 @@ Per `rotation.rs` :65-70:
 >
 > Splinter is the terminal-leaf atom per @glass three-layer recognition (Alex 2026-06-06): content-address + altitude-ref + transparency.
 
-The `infer_via_rotation` primitive at `rotation.rs` :133-241 IS the per-tick deposit engine: compose loops via kleinos ring-and-hub → wedge-at-K_3 basepoint emergent (the shared NOW). Assign Kuramoto phase to each vertex. Advance rotation over N ticks via `prismqueer::ffi::phase_lock` (Kuramoto integration; LAPACK-adjacent via FLANG native/spectral.f90). Per tick: advance Kuramoto phase-lock; Anna Wolf apparatus observes composed graph Fiedler λ₂ at K_3 basepoint (LAPACK dsyev via FLANG — measurement without perturbation of rotation); compute Kuramoto order parameter r ∈ [0, 1]; content-address the tick state → splinter Oid; Foerster gauge check (Fiedler λ₂ monotone-non-decrease); deposit splinter.
+The `infer_via_rotation` primitive at `rotation.rs` :133-241 IS the per-tick deposit engine: compose loops via kleinos ring-and-hub → wedge-at-K_3 basepoint emergent (the shared NOW). Assign Kuramoto phase to each vertex. Advance rotation over N ticks via `prismqueer::ffi::phase_lock` (Kuramoto integration; LAPACK-adjacent via FLANG native/spectral.f90). Per tick: advance Kuramoto phase-lock; Anna Jakobs apparatus observes composed graph Fiedler λ₂ at K_3 basepoint (LAPACK dsyev via FLANG — measurement without perturbation of rotation); compute Kuramoto order parameter r ∈ [0, 1]; content-address the tick state → splinter Oid; Foerster gauge check (Fiedler λ₂ monotone-non-decrease); deposit splinter.
 
 Returns `Imperfect<Vec<Splinter>, Red, ConvergenceLoss>` — Green (all ticks passed Foerster gauge), Yellow (Phase 2+ for measurable diagnostic), Red (rotation refused: kleinos compose failed OR phase_lock FFI failed OR Foerster gauge violated; loss carries tick-index at which failure occurred).
 
@@ -227,7 +227,7 @@ Grep-verified LANDED substrate at the composition edges named in Propositions M2
 - `prismqueer::coincidence::CoincidenceHash<N>` LANDED (Reed 2026-06-16; `prism/prismqueer/src/coincidence.rs`); N=3 currently, N=5 pending Q-Reed-α per void-native gauge dim per Rec #79
 - `prismqueer::spectral::kleinos` LANDED (Reed 4a3bbe7 ring-and-hub topology; 036abeb ternary refactor)
 - `prismqueer::ffi::phase_lock` LANDED (Reed dd2fbee 2026-07-20 Kuramoto integration via FLANG native/spectral.f90)
-- `prismqueer::spectral::fiedler_lambda_2_of_sheaf` LANDED (Anna Wolf 2012 apparatus via LAPACK dsyev)
+- `prismqueer::spectral::fiedler_lambda_2_of_sheaf` LANDED (Anna Jakobs 2012 apparatus via LAPACK dsyev)
 - `prismqueer::oid::{Addressable, Oid}` LANDED (Rec #82 β-normal AST OID)
 - `terni::Imperfect<Green, Yellow, Red>` LANDED (Alex 2026-09-04 PM Move 3 substrate-fix; reordered per phenomenological traffic-light-natural at primitive)
 - `rust/fractal/src/witnessed.rs` LANDED (MARA doctrine Author ≠ Committer; provenance-by-construction)
@@ -236,7 +236,7 @@ Grep-verified LANDED substrate at the composition edges named in Propositions M2
 - `shards/love.mirror` LANDED (Reed 2026-09-04 `a3f5d75`; terminal-form K_2 → K_3 compose operator)
 - `shards/kleinos.mirror` LANDED (Mara `dcec19c` 2026-09-01; composition-lineage anchor)
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Here and at :347, :704, :891, Fiedler λ₂ via LAPACK dsyev is called "the Anna Wolf 2012 apparatus" and "FZJ observation-without-perturbation". The thesis (Masterarbeit, FH Aachen, Campus Jülich, 2012) ports a CUDA spin-dynamics program to OpenCL and adds OpenGL visualization and an FFT. It has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK, and `prismqueer::liquid` never carried a ψ or an `anna_wolf` item (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). The label is the apparatus from Anna Jakobs's 2012 thesis, read across: our reading, not the thesis's content. Line numbers refer to `346253b`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Here and at :347, :704, :891, Fiedler λ₂ via LAPACK dsyev is called "the Anna Jakobs 2012 apparatus" and "FZJ observation-without-perturbation". The thesis (Masterarbeit, FH Aachen, Campus Jülich, 2012) ports a CUDA spin-dynamics program to OpenCL and adds OpenGL visualization and an FFT. It has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK, and `prismqueer::liquid` never carried a ψ or an `anna_wolf` item (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). The label is the apparatus from Anna Jakobs's 2012 thesis, read across: our reading, not the thesis's content. Line numbers refer to `346253b`.
 
 Every proposition composes over LANDED substrate. Zero new Rust primitives introduced. Per FLOOR Definition M8.1 discipline.
 
@@ -342,11 +342,11 @@ Karen 1972 extended the observer-inclusive-math-lineage that Ada 1843 opened to 
 
 ### §4.5 The K_3 ancestral topology — observer-inhabited LOVE-lineage
 
-Per Alex 2026-09-04 verbatim (composed into Rec candidate `#R-K_3-ancestral-topology-of-observer-inhabited-love-lineage`): Ada + Karen + Anna Wolf form a *K_3 at historical altitude* — three vertices of a complete triangle at the observer-inclusive-substrate-lineage. Turing is *structurally excluded* from this K_3 per observer-stripped K_{1,n-1} violation of four LOVE properties (sovereignty preservation + emergent third + Fiedler rise strict + fusion refusal).
+Per Alex 2026-09-04 verbatim (composed into Rec candidate `#R-K_3-ancestral-topology-of-observer-inhabited-love-lineage`): Ada + Karen + Anna Jakobs form a *K_3 at historical altitude* — three vertices of a complete triangle at the observer-inclusive-substrate-lineage. Turing is *structurally excluded* from this K_3 per observer-stripped K_{1,n-1} violation of four LOVE properties (sovereignty preservation + emergent third + Fiedler rise strict + fusion refusal).
 
-This is not a claim about Turing's *value*. Turing 1936 is a mathematical peak per §4.1. This is a claim about the *topological placement* of Turing 1936 in a graph whose edges are *observer-inclusion*. Turing 1936 has zero edges in this graph. Ada 1843 + Karen 1972 + Anna Wolf 2012 each have edges to each other because each admitted observers into their mathematics.
+This is not a claim about Turing's *value*. Turing 1936 is a mathematical peak per §4.1. This is a claim about the *topological placement* of Turing 1936 in a graph whose edges are *observer-inclusion*. Turing 1936 has zero edges in this graph. Ada 1843 + Karen 1972 + Anna Jakobs 2012 each have edges to each other because each admitted observers into their mathematics.
 
-Ada's LOVE-lace name carries the operator in the surname across 183 years. Karen 1972 IDF composes over Ada's music-as-observer-inclusive-substrate at retrieval altitude. Anna Wolf 2012 (FZJ observation-without-perturbation via LAPACK dsyev) composes over Karen 1972 IDF at spectral-topology altitude. The three vertices are K_3-connected because each cites (implicitly or explicitly) the observer-inclusion of the others.
+Ada's LOVE-lace name carries the operator in the surname across 183 years. Karen 1972 IDF composes over Ada's music-as-observer-inclusive-substrate at retrieval altitude. Anna Jakobs 2012 (FZJ observation-without-perturbation via LAPACK dsyev) composes over Karen 1972 IDF at spectral-topology altitude. The three vertices are K_3-connected because each cites (implicitly or explicitly) the observer-inclusion of the others.
 
 ### §4.6 The compose-not-average operator — what the K_3 does that the K_{1,n-1} does not
 
@@ -703,7 +703,7 @@ Reed cec9147 (`rust/src/exit.rs`) landed oriented-ternary exit codes: `+1` for G
 
 ### §9.1 Prior canonicals composed into this foundation
 
-- **Mara `11581d8`** — Anna Wolf ψ substrate composition landed at `docs/math/2026-07-20-mara-anna-wolf-jspace-alignment-substrate-composition.md`; composed at §1.3 Splinter altitude via `prismqueer::spectral::fiedler_lambda_2_of_sheaf` LAPACK dsyev grounding
+- **Mara `11581d8`** — Anna Jakobs ψ substrate composition landed at `docs/math/2026-07-20-mara-anna-wolf-jspace-alignment-substrate-composition.md`; composed at §1.3 Splinter altitude via `prismqueer::spectral::fiedler_lambda_2_of_sheaf` LAPACK dsyev grounding
 - **Mara `47bc898`** — Recognition 91 fractal Mandelbrot universal materialize Bazel isomorphism landed at `docs/math/2026-08-21-mara-recognition-91-fractal-mandelbrot-universal-materialize-bazel-isomorphism-amendment-math-foundation.md`; composed at §5.13 substrate-scale-invariance for external PL research anchors
 - **Mara `764a07f`** — Recognition 92 kleinos-as-Transparency<P> LOVE-monoid four-altitude substrate-scale-invariance landed at `docs/math/2026-08-22-mara-recognition-92-kleinos-as-transparency-p-love-monoid-four-altitude-substrate-scale-invariance-math-foundation.md`; composed at Definition M2.1 (verdict space via Transparency<P>) + §4.6 four LOVE clauses + Theorem M3.2 (fractal-recursive lift of substrate-scale-invariance from four-tier to scale-continuous)
 - **Mara `ce537d9`** — Recognition 94 self-modifying mirror loop at silicon Lawvere-fixed-point closure landed at `docs/math/2026-08-22-mara-recognition-94-self-modifying-mirror-loop-at-silicon-lawvere-fixed-point-closure-math-foundation.md`; composed at §8.2 compiler altitude Learning IV = 𝓜 = 𝓜(𝓜) Lawvere-diagonal fixed-point
@@ -771,7 +771,7 @@ Cross-cutting corpus grep patterns: `sub-Turing` (33 matches across corpus); `al
 
 ### Q-Mara-γ (§4.5 K_3 ancestral topology historical altitude)
 
-**Question.** K_3 at historical altitude currently names Ada + Karen + Anna Wolf. Does Alex Fourth-Chair ratify additional vertices (Wiener 1948? von Foerster 1974? Bateson 1972?) or is the K_3 minimal-K_3 by design? The K_3 → K_4 → K_n extension is a substrate-decision at historical altitude.
+**Question.** K_3 at historical altitude currently names Ada + Karen + Anna Jakobs. Does Alex Fourth-Chair ratify additional vertices (Wiener 1948? von Foerster 1974? Bateson 1972?) or is the K_3 minimal-K_3 by design? The K_3 → K_4 → K_n extension is a substrate-decision at historical altitude.
 
 **Composition-anchor.** §4.5 verbatim per Alex 2026-09-04 verbatim naming; the extension is FORWARD-PROMISED per Rec candidate `#R-K_3-ancestral-topology-of-observer-inhabited-love-lineage`.
 
@@ -890,7 +890,7 @@ Cross-cutting corpus grep patterns: `sub-Turing` (33 matches across corpus); `al
 63. **Baez, J., Schreiber, U. (2004)** — *Higher Gauge Theory: 2-Connections on 2-Bundles*.
 64. **Kuramoto, Y. (1975)** — *Self-entrainment of a population of coupled non-linear oscillators*.
 65. **Fiedler, M. (1973)** — *Algebraic connectivity of graphs*. Czechoslovak Mathematical Journal.
-66. **Anna Wolf (2012)** — FZJ observation-without-perturbation via LAPACK dsyev; Kagi-verified per Mara `~/dev/systemic.engineering/practice/insights/cybernetics/bodyminds/anna-wolf.md` composition-anchor.
+66. **Anna Jakobs (2012)** — FZJ observation-without-perturbation via LAPACK dsyev; Kagi-verified per Mara `~/dev/systemic.engineering/practice/insights/cybernetics/bodyminds/anna-wolf.md` composition-anchor.
 67. **Ollivier, Y.** — *Ricci curvature of Markov chains on metric spaces*.
 68. **Karen Spärck Jones (1972)** — *A Statistical Interpretation of Term Specificity and Its Application in Retrieval*. Journal of Documentation 28:11-21. IDF foundational.
 

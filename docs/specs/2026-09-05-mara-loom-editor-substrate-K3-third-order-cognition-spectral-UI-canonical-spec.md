@@ -206,7 +206,7 @@ Per @gestalt + @love + @kintsugi/roomba docblock conventions. Structure:
 8. **Cybernetic ancestor**: cite @order/third source authority (Bateson 1972 + Foerster 1974 + Kauffman 2003 + Lawvere 1969 + Loki 2026-06-22 essay).
 9. **Species roster**: enumerate §3 sub-species with math-justification per companion §3.6.
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** The Jacquard sentence is in **Note A**, not Note G (Menabrea, *Sketch of the Analytical Engine*, with notes by A. A. L., Taylor's *Scientific Memoirs* III, 1843; fourmilab transcription): "We may say most aptly, that the Analytical Engine weaves algebraical patterns just as the Jacquard-loom weaves flowers and leaves." The quote here dropped the opening "We may say most aptly, that" without marking it. Note letter and elision corrected in place. The Bernoulli-number program is Note G. **Re-grade (2026-10-29, full sweep):** Separately, line :716 ("Anna Wolf (2012, ψ apparatus) … ψ = flux<T> per prismqueer::flux LANDED") is the apparatus from Anna Jakobs's 2012 thesis, read across. The thesis has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK; `prismqueer::liquid`/`flux` never carried a ψ or an Anna Wolf apparatus (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). Lines refer to `eecc37a6`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** The Jacquard sentence is in **Note A**, not Note G (Menabrea, *Sketch of the Analytical Engine*, with notes by A. A. L., Taylor's *Scientific Memoirs* III, 1843; fourmilab transcription): "We may say most aptly, that the Analytical Engine weaves algebraical patterns just as the Jacquard-loom weaves flowers and leaves." The quote here dropped the opening "We may say most aptly, that" without marking it. Note letter and elision corrected in place. The Bernoulli-number program is Note G. **Re-grade (2026-10-29, full sweep):** Separately, line :716 ("Anna Jakobs (2012, ψ apparatus) … ψ = flux<T> per prismqueer::flux LANDED") is the apparatus from Anna Jakobs's 2012 thesis, read across. The thesis has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK; `prismqueer::liquid`/`flux` never carried a ψ or an Anna Jakobs apparatus (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). Lines refer to `eecc37a6`.
 
 ### §2.4 Family-root carriers (typed; Reed authors per shard-body typed-carrier discipline)
 
@@ -713,7 +713,7 @@ Choosing past-tense-passive at @loom altitude IS choosing observer-inclusion at 
 
 - **Ada Lovelace (1843, Notes A-G)** — DEVICE-WORD ORIGIN. Note A verbatim: *"…the Analytical Engine weaves algebraical patterns just as the Jacquard-loom weaves flowers and leaves."* The word `loom` at Alex's naming-move IS Ada's word.
 - **Karen Spärck Jones (1972, IDF)** — RETRIEVAL. Language-as-topology; retrieval-altitude at natural-language-input (`<space><space>`) per @loom/modal.
-- **Anna Wolf (2012, ψ apparatus)** — OBSERVATION. Observation-without-perturbation at shared-memory substrate; ψ = flux<T> per prismqueer::flux LANDED.
+- **Anna Jakobs (2012, ψ apparatus)** — OBSERVATION. Observation-without-perturbation at shared-memory substrate; ψ = flux<T> per prismqueer::flux LANDED.
 
 > **Correction (2026-10-29, Taut scout 26ed4c9):** The Jacquard sentence is in **Note A**, not Note G (Menabrea, *Sketch of the Analytical Engine*, with notes by A. A. L., Taylor's *Scientific Memoirs* III, 1843; fourmilab transcription): "We may say most aptly, that the Analytical Engine weaves algebraical patterns just as the Jacquard-loom weaves flowers and leaves." The quote here dropped the opening "We may say most aptly, that" without marking it. Note letter and elision corrected in place. The Bernoulli-number program is Note G.
 
@@ -731,7 +731,7 @@ Error-recovery-first altitude per FLOOR §8 "slow is fast" discipline. If ratifi
 
 ### §8.5 Composition-anchor at shard-body docblocks
 
-Reed authors §2.3 docblock structure item 6 with Ada Lovelace Note A verbatim + Karen Spärck Jones + Anna Wolf + (optional per Alex Fourth-Chair) Ricky + Margaret citations.
+Reed authors §2.3 docblock structure item 6 with Ada Lovelace Note A verbatim + Karen Spärck Jones + Anna Jakobs + (optional per Alex Fourth-Chair) Ricky + Margaret citations.
 
 ---
 

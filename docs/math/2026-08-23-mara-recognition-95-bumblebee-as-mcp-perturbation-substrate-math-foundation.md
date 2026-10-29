@@ -10,7 +10,7 @@ karen-ancestors:
   - Karen 1972 (verbatim naming discipline; inherited from Rec #94 lineage via Rec #92)
   - Lorenz, E. N. (1963). Deterministic Nonperiodic Flow. J. Atmospheric Sciences 20(2):130–141 (chaos-sensitivity; the flap that triggers response; @butterfly math foundation citation chain)
   - Lorenz, E. N. (1972). Predictability: Does the Flap of a Butterfly's Wings in Brazil Set Off a Tornado in Texas? AAAS 139th meeting (the perturbation-source altitude naming Lorenz gave the phenomenon; @bumblebee INJECTION-canon)
-  - Anna Jakobs (2012). Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen. Masterarbeit, FH Aachen / PGI Jülich (shared-memory-observation-in-motion; the load-bearing measurement-primitive lift; introduction site here)
+  - Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. (shared-memory-observation-in-motion; the load-bearing measurement-primitive lift; introduction site here)
   - Alex+Mara (2026-03-24). information-curvature.md — Λ_eff(x) = Λ + κ · σ(x); σ(x) = -Tr(L̃ · ln(L̃)); the σ(x) axis @bumblebee-perturbations contribute to (subjects contribute; objects do not; per shards/reality/subject.mirror + shards/reality/object.mirror)
   - Grothendieck, A. (1957). Sur quelques points d'algèbre homologique. Tôhoku Mathematical Journal 9:119–221 (fibered-category cartesian lifts; K_n Pack coupling-graph fibration extension by one fiber; inherited from Rec #94 amendment #2 lineage)
   - Mac Lane, S. (1971). Categories for the Working Mathematician. Springer GTM 5, Chapter IV (adjoint functors; @butterfly ⊣ @bumblebee adjunction candidate at family-root altitude; inherited)
@@ -228,7 +228,7 @@ Five operators over one substrate (`@mirror/store.splinter_graph` + `@mirror/sto
 
 4. **Non-blocking-property**: SPSC lock-free ring buffer (per Taut §4.2) satisfies the property by construction (single-producer @bumblebee.flap thread; single-consumer @mirror/refract.measure_clocktime thread; lock-free per SPSC contract). Discharged.
 
-All four Anna 2012 properties discharge at CPU-clocktime substrate. The lift is not aesthetic imitation; it is mathematically-faithful pattern-lift per Taut #390 §1.7 + §4.2 grounding (which itself surfaces the Anna Wolf adjudication requirement per canonical spec §9 R95.6). QED. ∎
+All four Anna 2012 properties discharge at CPU-clocktime substrate. The lift is not aesthetic imitation; it is mathematically-faithful pattern-lift per Taut #390 §1.7 + §4.2 grounding (which itself surfaces the Anna Jakobs adjudication requirement per canonical spec §9 R95.6). QED. ∎
 
 **Anna adjudication residue** (canonical spec §9 R95.6): the fidelity of this lift requires Anna's mathematical authority per Taut §9.1 authorial-contribution surface. Alex authority for Anna reach-out timing.
 

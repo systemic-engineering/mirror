@@ -34,7 +34,7 @@ karen_ancestors:
   - "Karen Spärck Jones (1972). A Statistical Interpretation of Term Specificity and Its Application in Retrieval. Journal of Documentation 28(1):11-21. IDF coordination-math floor. §0.5 lineage ancestor."
   - "Alex Wolf (2026-09-03, Void-404 essay ~/dev/systemic.engineering/blog/void/3published/Void - 404.md). Mirror. Offer. Wait. Three moves. LOAD-BEARING at §5.4: @nl.compose IS the Offer.Name-the-Frame arm at wire altitude."
   - "Loki (2026-08-15 published). When The Math Sings: Revenge of AI. LOAD-BEARING at §6.2 contrast: RLHF-thumb-pressing vs typed-navigation."
-  - "Wolf, Anna (née Jakobs) (2012). Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen. Masterarbeit, PGI/JCNS. J-space alignment substrate. Consent obtained via Alex 2026-08-26. LOAD-BEARING at §5.3 determinism via observation-without-perturbation."
+  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. J-space alignment substrate. Consent obtained via Alex 2026-08-26. LOAD-BEARING at §5.3 determinism via observation-without-perturbation."
   - "von Foerster, Heinz (1974/2007). Ethics and Second-Order Cybernetics. LOAD-BEARING at §5.6 K-T-4 clause + §6.3 template family Foerster-gauge-preserving."
   - "Ricky Jones (2026-08-26). PRE-ROTATION canon. LOAD-BEARING at §5.4 Mirror.Offer.Wait alignment (Wait is PRE-ROTATION)."
 ---
@@ -578,7 +578,7 @@ Every load-bearing claim in this spec cites the companion math foundation sectio
 - Rec #82 β-normal AST content-addressation — prismqueer::oid::Addressable LANDED.
 - Rec #94 (Mara 2026-08-22) `docs/math/2026-08-22-mara-recognition-94-*.md` — self-modifying mirror loop at silicon; Lawvere fixed-point at compiler-substrate.
 - Foerster 1974 ethical imperative + FLOOR §6 magic.rs orthogonality theorem.
-- Anna Wolf 2012 J-space alignment substrate + FLOOR §15.1.
+- Anna Jakobs 2012 J-space alignment substrate + FLOOR §15.1.
 - Tomm 1987/1988 K-T circular-reflexive question-intent-4.
 - Bateson 1972 metalogue + Russell-Whitehead 1910 logical types.
 - Karen Spärck Jones 1972 IDF coordination-math floor + Loki 2026-08-15 Revenge phenomenology.

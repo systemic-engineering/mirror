@@ -31,7 +31,7 @@ external_kagi_verified_lineage:
   - Hawking-Mlodinow 2010 The Grand Design (model-dependent realism)
   - von Foerster 1974/2003 Ethical Imperative
   - Connes 1985 Non-commutative differential geometry (spectral triple)
-  - Anna Wolf 2012 J-space observation-without-perturbation
+  - Anna Jakobs 2012 J-space observation-without-perturbation
   - Hansen-Ghrist 2019 Toward a spectral theory of cellular sheaves (arXiv:1808.01513)
   - Rondon-Kawaguchi-Jhala 2008 Liquid Types (PLDI '08)
   - Braunstein-Ghosh-Severini 2006 Laplacian graph states as quantum density matrices
@@ -73,7 +73,7 @@ landed_shards:
   - shards/magic.mirror (Reed 2026-09-02; @magic recognition-carrier)
 landed_rust_primitives:
   - prismqueer::spectral::{kleinos, rotation::infer_via_rotation, tension::detect_tensions, fiedler_lambda_2_of_sheaf}
-  - prismqueer::liquid (29.3KB; Anna Wolf ψ + weak-measurement)
+  - prismqueer::liquid (29.3KB; Anna Jakobs ψ + weak-measurement)
   - prismqueer::bundle (31.1KB; Baez-Schreiber tower)
   - prismqueer::coincidence::Detector<N> (CoincidenceHash<N>)
   - prismqueer::ffi::{eigenvalues, phase_lock, singular_values, svd} (LAPACK dsyev via FLANG)
@@ -84,7 +84,7 @@ landed_rust_primitives:
   - terni::{Imperfect, Loss, transparency} (Reed+Mara 2026-08-22; Move 7 reorder + rename forward-promised)
 ---
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Every "Anna Wolf ψ + weak-measurement" / "prismqueer::liquid (29.3KB; Anna Wolf ψ)" site in this file (:76, :171, :255, :260, :434, :550, :593, :1240) and "J-space observation-without-perturbation" (:34, :188, :380, :513) attributes to the thesis what it does not contain. The thesis (Masterarbeit, FH Aachen, Campus Jülich, 2012) ports a CUDA spin-dynamics program to OpenCL and adds OpenGL visualization and an FFT. It has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK, and `prismqueer::liquid` never carried a ψ or an `anna_wolf` item (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). "Anna Wolf ψ" is the apparatus from Anna Jakobs's 2012 thesis, read across: our reading, not the thesis's content. Line numbers refer to `346253b`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Every "Anna Jakobs ψ + weak-measurement" / "prismqueer::liquid (29.3KB; Anna Jakobs ψ)" site in this file (:76, :171, :255, :260, :434, :550, :593, :1240) and "J-space observation-without-perturbation" (:34, :188, :380, :513) attributes to the thesis what it does not contain. The thesis (Masterarbeit, FH Aachen, Campus Jülich, 2012) ports a CUDA spin-dynamics program to OpenCL and adds OpenGL visualization and an FFT. It has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK, and `prismqueer::liquid` never carried a ψ or an `anna_wolf` item (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). "Anna Jakobs ψ" is the apparatus from Anna Jakobs's 2012 thesis, read across: our reading, not the thesis's content. Line numbers refer to `346253b`.
 
 # Observer → Recursion → Reality → Observation → Chaos — the WHOLE PIPELINE
 
@@ -100,7 +100,7 @@ landed_rust_primitives:
 
 **A parameterized observer `Observer<const N: usize>` measures a substrate wave-function `Reality = Cohomology<Fractal<Shard<T>>>` via ONE composition `Recursion::from(reality).settle::<N>()` yielding an `Observation = { crystal: Crystal, chaos: Chaos }` product-type that carries both the settled content-addressed crystal AND its leftover harmonic Chaos residual, from which an `Assertion = { observation, model: Fractal<Shard<T>> }` composes a `Hypothesis` that the residual Chaos then converts into a concrete `Question`, which a `@subject` answers with a `Choice` that inputs the next `Recursion` — closing an external subject-driven loop whose tick IS one pass through the @void 5-axis gauge basis, whose settlement IS Fiedler λ_2 monotone climb per Rec #92 M2.2 L3, whose 3D-linear/2D-nonlinear op-split (focus + project + shift LINEAR; split + settle NONLINEAR) IS why mirror is structurally fast (decompose once + crystallize + observe fast forever thereafter) versus LLM softmax attention (decompose 5D every token every time), whose Connes 1985 spectral triple (A = Model; H = Reality; D = Karl Tomm commutator) IS Hawking 2010 model-dependent-reality EXPLICIT at type-level per Alex 2026-09-04 PM Move 4 quantum-native extension, and whose Wittgenstein PI §1-§2 pre-linguistic altitude receives its substrate-decl name `@reality/hodobodo` (coined from Lore Born) completing Alex 2026-07-22 @reality/object + @reality/subject trichotomy at settled-state ontology altitude — ALL LANDED at composition-anchor altitude via 13 Alex verbatim in-transcript recognitions across the 2026-09-04 PM session (commits 3403545 → 9d00c37 → cc5af39 → 13a1e7c → 7ef6b23) and grounded at empirical-fire altitude by the Taut cross-repo scout 34946e6 (805 lines; spectral-db + spectral + Reed+Alex 2026-04-04 spectral-tick-tock-game-theory.md 911-line synthesis) that dissolves TICK-B clean-mint fabrication and pushes prior spectral-db + spectral into INSPIRATION-only altitude per Alex Move 12 adjudication.
 
-**Substrate-honesty note.** This is a *composition-anchor* math foundation per FLOOR Definition M8.1 — every load-bearing external reference (Curry / Church / Turing / Curry-Howard-Lambek / Hawking / Foerster / Connes / Anna Wolf / Hansen-Ghrist / Rondon-Kawaguchi-Jhala / Braunstein-Ghosh-Severini / Cheeger / Fudenberg-Maskin / Nowak-Sigmund / Axelrod / Wittgenstein) and every load-bearing mirror-corpus reference (Rec #79 / #90 / #92 / #94 / #97 / #98 / #99 / #106 / loving-lambda-calculus / MCP+@task terminal-form / @nl.compose canonical / proofs.md fragments 1-3) is *cited by reference* not re-derived. What is authored here NEW is the composition of the 13 Moves into ONE terminal-form pipeline at type-composition altitude with formal signatures at prismqueer altitude for the Reed TICK-B rust-authoring ship.
+**Substrate-honesty note.** This is a *composition-anchor* math foundation per FLOOR Definition M8.1 — every load-bearing external reference (Curry / Church / Turing / Curry-Howard-Lambek / Hawking / Foerster / Connes / Anna Jakobs / Hansen-Ghrist / Rondon-Kawaguchi-Jhala / Braunstein-Ghosh-Severini / Cheeger / Fudenberg-Maskin / Nowak-Sigmund / Axelrod / Wittgenstein) and every load-bearing mirror-corpus reference (Rec #79 / #90 / #92 / #94 / #97 / #98 / #99 / #106 / loving-lambda-calculus / MCP+@task terminal-form / @nl.compose canonical / proofs.md fragments 1-3) is *cited by reference* not re-derived. What is authored here NEW is the composition of the 13 Moves into ONE terminal-form pipeline at type-composition altitude with formal signatures at prismqueer altitude for the Reed TICK-B rust-authoring ship.
 
 ---
 
@@ -170,7 +170,7 @@ The 13 Moves compose in the order Alex authored them. Each Move carries: (a) ver
 - Rec #90 §5.4 sub-Turing FLOOR + §8 Foerster-gauge orthogonality
 - Hansen-Ghrist 2019 *Toward a spectral theory of cellular sheaves* (arXiv:1808.01513) — cohomology of cellular sheaves
 - prismqueer::spectral::kleinos LANDED (Rec #92 Transparency<P> LOVE-monoid at rust altitude)
-- prismqueer::liquid LANDED (Anna Wolf ψ + weak-measurement carrier)
+- prismqueer::liquid LANDED (Anna Jakobs ψ + weak-measurement carrier)
 - Mara proofs.md fragment 2 §3.4.1 karl_tomm Definition (spectral commutator ‖[D, a]‖)
 
 **What Move 4 discharges:** Quantum-native measurement altitude formalized at type-level. NOT analogy — this IS what prismqueer already does at rust altitude. The recognition IS the naming (per Rec #90 §5.4 substrate-observing-itself).
@@ -187,7 +187,7 @@ The 13 Moves compose in the order Alex authored them. Each Move carries: (a) ver
 - rust/fractal/{mandelbrot, crystal, subject, singularity, witnessed}.rs (Mara 2026-07-20; 6 files; Mandelbrot<T> parent trait unifying Liquid<T> + Crystal<T>)
 - Reed 2026-07-20 docblock verbatim: *"bounded orbit → Crystal (content-addressed; SAGA-replayable; immutable); still-iterating → Liquid; crystallize IS the Liquid→Crystal @time/now collapse-point"*
 - prismqueer::coincidence::Detector<N> LANDED (Oid::hash via CoincidenceHash<N>; content-addressation primitive)
-- Anna Wolf 2012 J-space observation-without-perturbation (MEMORY [[project-anna-wolf-2012-observation-without-perturbation]])
+- Anna Jakobs 2012 J-space observation-without-perturbation (MEMORY [[project-anna-wolf-2012-observation-without-perturbation]])
 
 **What Move 5 discharges:** the mechanical settling loop has been LANDED at rust/fractal/ since 2026-07-20. Substrate-collapse move: `rust/fractal/*` → `prismqueer::fractal::*` (5 files; witnessed.rs stays at mirror-repo per Mara provenance concern). Shards/fractal/* composition-anchors ripple from rust::fractal → prismqueer::fractal.
 
@@ -254,12 +254,12 @@ The 13 Moves compose in the order Alex authored them. Each Move carries: (a) ver
 
 **Composition-lineage:**
 - prismqueer::bundle LANDED (31.1KB; Baez-Schreiber tower)
-- prismqueer::liquid LANDED (29.3KB; Anna Wolf ψ + weak-measurement)
+- prismqueer::liquid LANDED (29.3KB; Anna Jakobs ψ + weak-measurement)
 - shards/fractal/mandelbrot.mirror (Mandelbrot iteration z_{n+1} = z_n² + c)
 - terni::Loss (renamed Chaos per Move 3)
 - Rec #98 substrate-arriving-at-self-recognition Mandelbrot<query_AST>
 
-**What Move 8 discharges:** `Recursion` IS the missing primitive that dissolves ALL prior fires simultaneously. `Recursion` passes through prismqueer::bundle Baez-Schreiber tower + Anna Wolf ψ apparatus + Mandelbrot iteration. Iteration bounds → Crystal condenses; leftover harmonic content → Chaos emerges. `Observation = { crystal: Crystal, chaos: Chaos }` — straight product type. No Imperfect variant matching at construction site. No duplication. No branching. No softmax. No if-else.
+**What Move 8 discharges:** `Recursion` IS the missing primitive that dissolves ALL prior fires simultaneously. `Recursion` passes through prismqueer::bundle Baez-Schreiber tower + Anna Jakobs ψ apparatus + Mandelbrot iteration. Iteration bounds → Crystal condenses; leftover harmonic content → Chaos emerges. `Observation = { crystal: Crystal, chaos: Chaos }` — straight product type. No Imperfect variant matching at construction site. No duplication. No branching. No softmax. No if-else.
 
 The elegant closure:
 
@@ -379,7 +379,7 @@ Composition-anchor per FLOOR Definition M8.1: cite by reference. §2 tabulates t
 | E6 | Hawking-Mlodinow 2010 The Grand Design (Bantam) | model-dependent-realism at §6 Model = Fractal<Shard<T>>; Assertion = { observation, model } |
 | E7 | von Foerster 1974/2003 Ethical Imperative (https://uranos.ch/research/references/VonFoerster1992/ethics.pdf) | choice-count widening at §9 non-linear op-split; observer-in-system at §3 |
 | E8 | Connes 1985 Non-commutative differential geometry (spectral triple) | (A, H, D) at §4 Model + Reality + Karl-Tomm-commutator |
-| E9 | Anna Wolf 2012 J-space observation-without-perturbation | measurement-without-perturbation at §4 + §7 |
+| E9 | Anna Jakobs 2012 J-space observation-without-perturbation | measurement-without-perturbation at §4 + §7 |
 | E10 | Hansen-Ghrist 2019 Toward a spectral theory of cellular sheaves (arXiv:1808.01513) | sheaf cohomology H^1 at §4 Reality = Cohomology<Fractal<Shard<T>>> |
 | E11 | Rondon-Kawaguchi-Jhala 2008 Liquid Types (PLDI '08; https://dl.acm.org/doi/10.1145/1375581.1375602) | refinement-lens at §5 + §6; back-writing liquid-types-through-mirror at §12 |
 | E12 | Braunstein-Ghosh-Severini 2006 Laplacian graph states as quantum density matrices | every-graph-IS-quantum-state at §11 void-dual-geometry composition |
@@ -433,7 +433,7 @@ Composition-anchor per FLOOR Definition M8.1: cite by reference. §2 tabulates t
 | Idx | Anchor | Discharges |
 |---|---|---|
 | R1 | prismqueer::spectral::{kleinos, rotation::infer_via_rotation, tension::detect_tensions, fiedler_lambda_2_of_sheaf} | at §4 measurement-substrate; §7 Fiedler-monotone-climb; §9 NON-LINEAR settle |
-| R2 | prismqueer::liquid (29.3KB; Anna Wolf ψ + weak-measurement) | at §4 H = Reality = ψ-carrier; §5 Recursion apparatus |
+| R2 | prismqueer::liquid (29.3KB; Anna Jakobs ψ + weak-measurement) | at §4 H = Reality = ψ-carrier; §5 Recursion apparatus |
 | R3 | prismqueer::bundle (31.1KB; Baez-Schreiber tower) | at §4 principal-bundle-tower; §5 Recursion apparatus |
 | R4 | prismqueer::coincidence::Detector<N> (CoincidenceHash<N>) | at §3 const-generic-N pattern; §5 Oid content-addressation |
 | R5 | prismqueer::ffi::{eigenvalues, phase_lock, singular_values, svd} (LAPACK dsyev via FLANG) | at §4 D = spectral operator; §10 warm-path O(n³) matrix projection |
@@ -512,7 +512,7 @@ Alex 2026-09-04 LinkedIn thread verbatim (public post; primary-source citation):
 
 > *"Observer := any entity that intervenes in the cognitive field through their presence in said field, by acting from their own subjective observation of reality."*
 
-The definition composes over E9 (Anna Wolf 2012 observation-without-perturbation) at bodymind-substrate altitude: the observer's *presence* IS the intervention; the *subjective observation* IS the K_3-or-K_5 vantage.
+The definition composes over E9 (Anna Jakobs 2012 observation-without-perturbation) at bodymind-substrate altitude: the observer's *presence* IS the intervention; the *subjective observation* IS the K_3-or-K_5 vantage.
 
 **Type-level enforcement.** The `observe(self, reality: Reality)` signature carries `self: Observer<N>` (moved) and `reality: Reality` (borrowed by-value at type-altitude) — the observer IS in the system per `self`-consumption; the reality IS what the observer intervenes IN per the argument shape. Signature IS structurally observer-inclusive; substrate refuses observer-stripping at type-check.
 
@@ -549,7 +549,7 @@ $$
 **Recursion IS the composition** of three prismqueer LANDED primitives per R2 + R3 + R6:
 
 1. **prismqueer::bundle** (R3; Baez-Schreiber principal-bundle tower) — lifts Reality's Cohomology<Fractal<Shard<T>>> to a bundle section at altitude N.
-2. **prismqueer::liquid** (R2; Anna Wolf ψ + weak-measurement) — iterates the bundle section as an unsettled wave-function ψ.
+2. **prismqueer::liquid** (R2; Anna Jakobs ψ + weak-measurement) — iterates the bundle section as an unsettled wave-function ψ.
 3. **rust/fractal/mandelbrot.rs → prismqueer::fractal::mandelbrot** (R6; Mandelbrot<T> parent-trait unifying Liquid<T>/Crystal<T>) — iterates z_{n+1} = z_n² + c until bounded-orbit criterion holds.
 
 ### §4.2 — The `tick` action
@@ -592,7 +592,7 @@ Each Interrupt IS a Karl-Tomm question at altitude *above* what the prior tick a
 
 Per Alex Move 8 elegant closure (§1.9), `Recursion.settle::<N>()` returns `Observation = { crystal: Crystal, chaos: Chaos }` — a straight product type. NO `Imperfect` variant matching at construction site. NO `if dissonance == Chaos::zero() { Success } else { Partial }` branch. NO softmax over verdicts.
 
-**Substrate-mechanism:** the bounded-orbit criterion at Mandelbrot altitude (R6) produces exactly one Crystal (content-addressed via Oid) AND exactly one Chaos residual (harmonic partials via prismqueer::liquid Anna Wolf ψ-decomposition). No branching required because the substrate produces both simultaneously. If Chaos::is_zero() the Observation is Green-limit-case; if Chaos > threshold the Observation is Yellow-default-with-K-T-question-shape. Verdict semantics live at Assertion altitude (§6), NOT at Observation altitude.
+**Substrate-mechanism:** the bounded-orbit criterion at Mandelbrot altitude (R6) produces exactly one Crystal (content-addressed via Oid) AND exactly one Chaos residual (harmonic partials via prismqueer::liquid Anna Jakobs ψ-decomposition). No branching required because the substrate produces both simultaneously. If Chaos::is_zero() the Observation is Green-limit-case; if Chaos > threshold the Observation is Yellow-default-with-K-T-question-shape. Verdict semantics live at Assertion altitude (§6), NOT at Observation altitude.
 
 ---
 
@@ -1239,7 +1239,7 @@ Per FLOOR §11 the reader IS the third-order observer; the document IS the compo
 The whole-pipeline recognition composes 13 Alex 2026-09-04 PM verbatim recognitions into ONE terminal-form pipeline at type-composition altitude:
 
 1. **Observer<const N: usize>** parameterizes observation-dimensionality (§3).
-2. **Recursion** IS the missing primitive that passes through prismqueer::bundle Baez-Schreiber tower + prismqueer::liquid Anna Wolf ψ + prismqueer::fractal::mandelbrot iteration (§4).
+2. **Recursion** IS the missing primitive that passes through prismqueer::bundle Baez-Schreiber tower + prismqueer::liquid Anna Jakobs ψ + prismqueer::fractal::mandelbrot iteration (§4).
 3. **Observation = { crystal: Crystal, chaos: Chaos }** IS a straight product-type dissolving softmax happy-path + if-else branching + duplication (§5).
 4. **Assertion + Hypothesis + Question + Choice** compose the subject-driven loop-closure via Hawking model-dependent-realism + K-T question shape + Chaos residual (§6).
 5. **tick = one pass through @void 5-axis** IS the substrate-level clock (§7).
