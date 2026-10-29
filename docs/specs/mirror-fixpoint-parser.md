@@ -281,6 +281,11 @@ A review of `rust/engine/src/lib.rs` at `83fe665` against §4.1. For each runtim
 - **`Dark::Functional { pred, position }`** names the **first offending position in declaration order**: one outside `1..=arity`, or the value position when it sits inside the key.
 - **Arity mismatches** are found by `Instance::new` and reported with `expected` = the program's arity and `found` = the fact's arity.
 
+*[builder findings at slice 2, `1ae650de`; recorded 2026-10-29]*
+- **`Instance::new` is generic over a sealed `Program` trait** (`PositiveProgram`, `NormalProgram`). That adds one public name, `Program`. Accepted: the trait is sealed, so no outside implementation can exist.
+- **Arity conflicts among rules alone** (no facts involved) report the **least two** arities seen for the predicate (`expected` = least, `found` = next), so the report doesn't depend on rule order.
+- **`Run` fields are still `pub`**, so a test or caller could build a `Run<Fixed>` that no run produced, forging the typestate's guarantee. **Decision (spec-owned, Mara):** the fields become private, with read-only accessors, and `Run` is constructible only inside the engine. It lands as a 🔴/🟢 pair: a `compile_fail` doctest building `Run { … }` outside the crate. Tests that need a `Run` get one by running.
+
 **Newtypes (no bare `u64` / `usize` / `String` / `[u8; 32]` in the public API).**
 
 | type | wraps | invariant it carries | removes |
