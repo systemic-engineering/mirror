@@ -633,6 +633,10 @@ pub struct WellFounded {
     /// Sorted by `(round, addr)`.
     pub retractions: Vec<Retraction>,
     pub outcome: Outcome,
+    /// Functionality findings on `true` only: definite violations.
+    /// Undefined atoms can't violate definitively, and `γ`'s intermediate
+    /// findings are not reported (§4.1 A5).
+    pub findings: Vec<FunctionalViolation>,
 }
 
 impl WellFounded {
@@ -727,7 +731,8 @@ pub fn well_founded(instance: &Instance<'_, NormalProgram>) -> WellFounded {
     let true_atoms = addressed(&under, None);
     let undefined = addressed(&over, Some(&under));
     let outcome = if undefined.is_empty() { Outcome::Clear } else { Outcome::Opaque };
-    WellFounded { altitude: facts.altitude.clone(), true_atoms, undefined, retractions, outcome }
+    let findings = violations(&keys, &under);
+    WellFounded { altitude: facts.altitude.clone(), true_atoms, undefined, retractions, outcome, findings }
 }
 
 // ── Addressing (§5.0 bytes; §4.1 atom content) ───────────────────────────
