@@ -139,14 +139,82 @@ pub struct Withheld { atom: Addr, tick: Tick, by: NonEmpty<Addr> }
 
 ---
 
+## §6 Temperaments and intonations (Alex, 2026-10-29)
+
+Math: math §10. Alex: "A single-truth is what makes it a useful CI pipeline. A multi-truth ought to be protected and may never be collapsed into a single-truth ruler."
+
+- **Temperament (single truth):** a ruler in a lattice family (§1). When totally ordered it is a scalar metric. Gates read these.
+- **Intonation (multi-truth):** a connection on the observer graph, i.e. exact transports between frames. It has no value per reading, and its holonomy is its comma.
+- **Vector ruler (the middle):** a lattice, plural while unweighted (a Pareto front). Weighting it is a Choice, i.e. a temperament act.
+
+```rust
+/// Multi-truth: transports between observers' frames, in an exact group.
+/// Shares the envelope's provenance fields (addr, reader, approval), but is
+/// not a `Ruler<B>`: an intonation narrows nothing until it is tempered.
+pub struct Intonation<G: LoopGroup> {
+    addr: Addr,
+    frames: NonEmpty<ObserverRef>,
+    transports: Vec<(ObserverRef, ObserverRef, G)>,   // τ_vu = τ_uv⁻¹ enforced at construction
+    approval: ApprovalChain,
+}
+impl<G: LoopGroup> Intonation<G> {
+    pub fn transport(&self, path: &Path) -> G;
+    pub fn holonomy(&self, l: &Loop<G>) -> Holonomy<G>;
+    pub fn ruler_free(&self) -> RulerFree<G>;            // its gauge class (math §10.3)
+}
+// Deliberately absent: From/Into any scalar, number or Ruler; PartialOrd/Ord;
+// Sum/Product; any `summary`/`score`/`as_f64`; Display that prints a number.
+
+/// The only bridge. Borrows, never consumes; the intonation is unchanged.
+pub fn temper<G: LoopGroup>(i: &Intonation<G>, t: &Approved<'_, Choice>)
+    -> Shaped<Temperament, TemperErasure<G>>;               // #[must_use]
+pub struct TemperErasure<G> { commas: Vec<Holonomy<G>> }    // what was averaged away, around a cycle basis
+
+/// A vector ruler stays a front until a declared weighting collapses it.
+pub struct Front<const K: usize> { points: NonEmpty<[Ratio; K]> }   // an antichain
+pub fn weigh<const K: usize>(f: &Front<K>, w: &Approved<'_, Choice>) -> Shaped<Ratio, Front<K>>;
+
+/// CI gates read temperaments and the kept commas. No field can hold an Intonation.
+pub struct GateInput<'a> {
+    temperaments: &'a [Shaped<Temperament, ErasureAny>],
+    kept: &'a [KeptComma],                    // commas between voices: "a question, not a red build"
+}
+pub fn gate(input: &GateInput<'_>, ruler: &Approved<'_, Authority>) -> Shaped<Verdict, Vec<KeptComma>>;
+```
+
+**Laws.**
+- **I1 (no collapse by conversion):** `Intonation` has no conversion to a scalar, number, order or `Ruler`. Backed by math Prop 10.4: no structure-preserving collapse exists, so every collapse is a Choice.
+- **I2 (`temper` borrows):** `temper` takes `&Intonation`. The intonation is unchanged and stays addressable after any number of temperings. The result names its temperament (`shaped_by`), and its erasure is the averaged-away comma (for abelian real Γ, the harmonic part, math Prop 10.6).
+- **I3 (vector rulers):** a `Front` collapses only through `weigh` with an approved Choice. The erasure is the front itself, so the collapse is reversible by reading the erasure.
+- **I4 (gates):** `GateInput` holds temperaments and kept commas only. A gate's verdict is single-truth; the kept commas ride alongside, unchanged, in its result.
+- **I5 (provenance without narrowing):** an `Intonation` carries an address and an approval (who declared these transports), but it is not a `Ruler<B>`, because it narrows nothing. (Scarlet's and Mara's disagreement on the word is in the essay; the type is the same either way.)
+- **I6 (the ruler-free third):** `ruler_free()` returns the intonation's gauge class: holonomy for constant Γ, non-abelian H¹ for per-line groups. On a tree it is `Absorbable`, while the transports still exist.
+
+**Red tests.**
+- **IN1 (`compile_fail`):** `let x: f64 = intonation.into();`, `intonation.score()`, `intonation < other` and `let r: Ruler<Budget> = intonation.into();` all fail to compile.
+- **IN2 (temper keeps the comma):** a 12-edge fifths intonation in `PitchClassRatio`.
+  - `temper` with an approved equal-temperament Choice returns a `Temperament` whose erasure holds the Pythagorean comma `[−19, 12⟩`;
+  - `intonation.addr` and `intonation.holonomy(circle)` are unchanged afterwards;
+  - tempering twice with two different Choices gives two results, each naming its own Choice.
+- **IN3 (vector ruler):**
+  - a three-point `Front<2>` with two incomparable maxima stays a `Front` through every operation except `weigh`;
+  - `weigh` without an `Approved<Choice>` doesn't compile;
+  - with one, the result names it and its erasure is the full front.
+- **IN4 (the gate can't read an intonation):**
+  - `compile_fail`: constructing `GateInput` with an `Intonation`;
+  - a gate over two temperaments and one kept comma passes or fails on the temperaments alone, and returns the kept comma unchanged.
+- **IN5 (tree vs loop):** an intonation on one wire has `ruler_free() == Absorbable` and a non-identity `transport`; on a triangle with non-trivial holonomy, `Classes([Comma])`.
+
 ## §5 Open decisions (Reed's lean, pending Alex; the spec works either way)
+
+*D2 and D6 are decided by §6. D1, D3, D4, D5 and D7 stay open.*
 
 | # | decision | Reed's lean | the alternative, and what changes |
 |---|---|---|---|
 | D1 | approval across ruler versions | non-transitive: each new version in or approving a governance component needs a fresh human signature; a ruler never approves its successor's relaxation | transitive ("someone once signed the root"): R5 reverts to reachability, and RU4's red twin becomes green, which means a ruler can drop its own constraint |
-| D2 | is Choice meaning? | yes: declared clause-side; picking among held alternatives is always a `settle` with erasure, recorded in N | Choice as policy inside the fractal: then R9 must carry "this N was shaped by Choice R" in N's address domain, and RU5′ checks that instead |
+| D2 | is Choice meaning? | **DECIDED (Alex, 2026-10-29, via §6):** picking a Choice is a temperament act (clause-side, a `settle` with erasure, recorded in N); the un-picked structure is an `Intonation` | — |
 | D3 | sealed traits | sealed: ruler behaviour lives in mirror (E evaluates positive programs); Rust checks only the envelope | open traits: `lifted` becomes a live report, non-monotone laws need their own audit, and Seam's engine-scope audit doesn't cover it |
 | D4 | sideways booking | allowed only as a recorded act approved by both parties | forbidden (R4 lists only composite or fork), or a fourth shape |
 | D5 | the word "pact" | stays with the clause shards (`@epistemologic/pact`) and the engine altitude; the fractal gets a new name (Alex names; placeholder `RulerFractal`) | `Pact = RulerFractal`: rename the clause shards and the altitude |
-| D6 | Choice and Equivalence clause-side | yes (the same line as D2, from Taut's side) | inside the fractal, as forks |
+| D6 | Choice and Equivalence clause-side | **DECIDED (via §6):** yes, clause-side; what they choose among stays an `Intonation` | — |
 | D7 | the gate's own checks (`.githooks/commit-msg`) | the cited audit file must exist in the commit's tree, with the cited section; `[bugfix:restore]` names the guarantee it restores and its restoring test; a Seam trailer requires Seam's own signature (a derived Seam key) | the regex-only gate stays: R1's force then rests on review alone, and every bare constant can be changed by a self-authorized `[bugfix:restore]` |
