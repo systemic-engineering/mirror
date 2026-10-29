@@ -30,9 +30,19 @@ fn the_bin_never_calls_the_bare_bounded_core() {
         let text = std::fs::read_to_string(f).unwrap();
         for (i, line) in text.lines().enumerate() {
             let code = line.split("//").next().unwrap();
-            for banned in ["engine::run_bounded", "engine::Budget::new", "run_bounded(", "Budget::new("] {
+            for banned in [
+                "engine::run_bounded",
+                "engine::Budget::new",
+                "run_bounded(",
+                "Budget::new(",
+            ] {
                 if banned.starts_with("engine::") || !code.contains("ruler::run_bounded(") {
-                    assert!(!code.contains(banned), "{}:{}: {banned}", f.display(), i + 1);
+                    assert!(
+                        !code.contains(banned),
+                        "{}:{}: {banned}",
+                        f.display(),
+                        i + 1
+                    );
                 }
             }
         }

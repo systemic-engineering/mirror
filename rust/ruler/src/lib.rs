@@ -119,8 +119,16 @@ const TAU: &[u8] = b"@mirror/ruler\0\0";
 impl<B: Body> Ruler<B> {
     /// `addr = H("ruler\0" ‖ τ ‖ enc(canonical body))` (spec §1.1).
     pub fn new(body: B, reader: ReaderDependence) -> Result<Ruler<B>, ReaderRefused> {
-        let _ = (body, reader);
-        todo!("ruler address (audit §2.2)")
+        let canonical = body.canonical(&reader).ok_or(ReaderRefused { reader })?;
+        let mut h = blake3::Hasher::new();
+        h.update(b"ruler\0");
+        h.update(TAU);
+        h.update(&(canonical.len() as u64).to_be_bytes());
+        h.update(&canonical);
+        let hex: String = h.finalize().as_bytes().iter().map(|b| format!("{b:02x}")).collect();
+        // engine::Addr's only public door for outside bytes is its checked parse.
+        let addr = Addr::from_hex(&hex).expect("64 hex digits from a BLAKE3 digest");
+        Ok(Ruler { addr, reader, body })
     }
 
     pub fn addr(&self) -> Addr {
@@ -236,6 +244,21 @@ pub fn run_bounded(
     inst: &Instance<'_, PositiveProgram>,
     budget: &Ruler<Count>,
 ) -> Result<Shaped<Run<Bounded>, Truncated>, UnitMismatch> {
-    let _ = (inst, budget);
-    todo!("shaped bounded run (audit §2.3)")
+    let count = budget.body();
+    if count.unit != Unit::Ticks {
+        return Err(UnitMismatch { expected: Unit::Ticks, found: count.unit });
+    }
+    let k = Budget::new(count.n.get()).expect("NonZeroU64");
+    let run = engine::run_bounded(inst, k);
+    let erasure = match run.stop {
+        Bounded::Budget(b) => Some(Truncated { at: Tick(b.get()) }),
+        Bounded::Fixed(_) => None,
+    };
+    Ok(Shaped {
+        value: run,
+        shaped_by: NonEmpty::one(budget.addr()),
+        observed_by: Vec::new(),
+        erasure,
+        approval: Approval::Unsigned,
+    })
 }
