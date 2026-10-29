@@ -142,7 +142,8 @@ On "never an average": the models form a powerset lattice. Composition is `L`, w
 - So "compile vs kintsugi again" holds with a precise reading:
   - **compile** = each program's own W model (local sections);
   - **kintsugi** = the W model of the union;
-  - **the comma** = the set `{a : status_{Pᵢ}(a) ≠ status_{P₁∪P₂}(a)}` restricted to `Pᵢ`'s vocabulary, owned by the part–glue pair. On positive programs it is empty by Prop 2.2: **commas need negation at the engine layer** (PROVED, from Prop 2.2).
+  - ~~**the comma** = the set `{a : status_{Pᵢ}(a) ≠ status_{P₁∪P₂}(a)}` restricted to `Pᵢ`'s vocabulary~~ *[engine builder, 2026-10-29]* That definition was wrong twice. It gives `{p, q}` for K-E6, not the stated `{p}`, because `q` moves false → true. And it is non-empty on positive pairs (`r(a)` moves false → true in K-E2), contradicting "empty on positive programs". **Corrected, following Prop 2.6's own wording:**
+    **the comma** = `{a : status_{Pᵢ}(a) = true, status_{P₁∪P₂}(a) ≠ true}`: true in the part, not true in the glue, owned by the part–glue pair. For K-E6 it is `{p}`. On positive programs it is empty by Prop 2.2 (`Lᵢ ⊆ L`): **commas need negation at the engine layer** (PROVED, from Prop 2.2). Atoms that become true only in the glue are the emergent third, not commas.
 
 **CONJECTURE 2.7.** A true atom of `Pᵢ` is retracted in the union only if some negative literal of `Pᵢ` mentions a predicate whose extension the other side changes. That is a crossing **negative** edge. Test K-E6 plus a seeded search would refute it.
 

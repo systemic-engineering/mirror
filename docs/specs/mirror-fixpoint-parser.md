@@ -275,7 +275,11 @@ The core sees no negation at all.
 
 ### §4.2 The type-level contract (Alex: "No bare types. Make illegal state unrepresentable.") *[review 10-29]*
 
-A review of `rust/engine/src/lib.rs` at `83fe665` against §4.1. For each runtime check or unreachable variant, the type that removes it. The builder lands this as ♻️: no behaviour change, and E1–E7 plus the 38 existing tests stay green. The one exception is the address bytes of §4.1 A1, which change derived hex that no test pins; that lands as its own 🟢 before the ♻️.
+A review of `rust/engine/src/lib.rs` at `83fe665` against §4.1. For each runtime check or unreachable variant, the type that removes it. ~~The builder lands this as ♻️: no behaviour change~~ *[engine builder, 2026-10-29]* **§4.2 is not behaviour-preserving, so it lands as a 🔴/🟢 pair, not a ♻️.** E1–E7 and the existing tests stay green except where a decision below changes an observable outcome. The address bytes of §4.1 A1 still land as their own 🟢 first. Decisions (Reed, 2026-10-29):
+- **Negation in the core** moves from a runtime `Dark::Negation` to a `compile_fail` doctest on `PositiveRule` (its body is `Vec<Atom>`, so a negative literal can't be written).
+- **`Position::new(0)` is `None`**: the constructor checks it.
+- **`Dark::Functional { pred, position }`** names the **first offending position in declaration order**: one outside `1..=arity`, or the value position when it sits inside the key.
+- **Arity mismatches** are found by `Instance::new` and reported with `expected` = the program's arity and `found` = the fact's arity.
 
 **Newtypes (no bare `u64` / `usize` / `String` / `[u8; 32]` in the public API).**
 

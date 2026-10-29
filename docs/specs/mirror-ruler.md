@@ -214,7 +214,7 @@ pub fn gate(input: &GateInput<'_>, ruler: &Approved<'_, Authority>) -> Shaped<Ve
   - a lattice-valued field collapses by meet, and picking among several lawful collapses is a Choice;
   - a flat group field collapses up to gauge through `Flat::gauge_point`, with the gauge as erasure;
   - a curved group field collapses only through `temper`, with a non-empty `Curvature` as erasure (math §11.3).
-- **I8 (temper vs an edge settle):** for abelian real G, `temper` keeps the gradient part and erases the harmonic part. An edge-Laplacian settle keeps the harmonic part and fades the gradient part. They are complementary, so tempered field + curvature = the original (math §11.4). prism's `spectral::settle` is vertex-only today, so this pairs `temper` with a settle prism hasn't landed.
+- **I8 (temper vs an edge settle):** for abelian real G, `temper` keeps the gradient part and erases the harmonic part. An edge-Laplacian settle keeps the harmonic part and fades the gradient part. They are complementary, so tempered field + curvature = the original (math §11.4). The measuring dual is `Instrument::decay` (C⁰ ⊕ C¹, keeps H¹); prism-005 step D makes the Hodge split explicit.
 - **I6 (the ruler-free third):** `ruler_free()` returns the intonation's gauge class: holonomy for constant Γ, non-abelian H¹ for per-line groups. On a tree it is `Absorbable`, while the transports still exist.
 
 **Red tests.**
@@ -235,7 +235,7 @@ pub fn gate(input: &GateInput<'_>, ruler: &Approved<'_, Authority>) -> Shaped<Ve
 - **FP2 (flat tempers losslessly):** a triangle intonation in `Z<12>` with holonomy identity. `check_flat` is `Ok`; `temper` returns an empty `Curvature`; `gauge_point` returns the trivial class, with the transports in its erasure.
 - **FP3 (curved tempers only with the comma):** the 12-fifths intonation in `PitchClassRatio`. `check_flat` is `Err(Curved)`; `temper` returns `Curvature` = `[−19, 12⟩` (non-empty); the intonation is unchanged afterwards.
 - **FP4 (`compile_fail`):** `let s: Scalar<Ratio> = intonation.into();` and `let s: Scalar<_> = flat.into();` both fail to compile. The only routes are `temper` and `gauge_point`, each returning an erasure.
-- **FP5 (temper + settle = original, abelian real):** on a 4-cycle with real edge values, the tempered flat field plus the harmonic part (computed by the test oracle's own edge-Laplacian projection, in rational arithmetic) reconstructs the input field exactly. prism's vertex-only `settle` is not used.
+- **FP5 (temper + settle = original, abelian real):** on a 4-cycle with real edge values, the tempered flat field plus the harmonic part (computed by the test oracle's own edge-Laplacian projection, in rational arithmetic) reconstructs the input field exactly. A second oracle, once prism-005 step D lands, is `Instrument::decay`'s kept H¹ part.
 
 ## §5 Open decisions (Reed's lean, pending Alex; the spec works either way)
 
