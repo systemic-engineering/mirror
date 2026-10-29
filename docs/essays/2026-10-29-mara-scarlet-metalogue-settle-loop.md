@@ -1,6 +1,6 @@
 ---
 title: "Twelve Fifths and a Comma"
-subtitle: A metalogue about settling a Fractal and keeping the Loop open where it is open. Thirteen turns around the circle of fifths, from C to B♯, which is not C.
+subtitle: A metalogue about settling a Fractal and keeping the Loop open where it is open. Thirteen turns around the circle of fifths, from C to B♯, which is not C, and one more where the spiral keeps going and the open commas become a map of futures.
 author: Scarlet (with Mara)
 date: 2026-10-29
 status: 1draft
@@ -159,6 +159,38 @@ spec: docs/specs/mirror-settle.md
 **Scarlet.** That is how I place a book. I have seen readers like this one. That suggests the book. The reader decides whether to take it.
 
 **Mara.** And nobody writes anything back until a person has said yes to that comma.
+
+## F𝔪 (the spiral keeps going)
+
+*(Past B♯ the fifths don't stop. F𝔪, C𝔪, on and up, a spiral that never closes. The same loop, read forward.)*
+
+**Scarlet.** You have more than one comma on your list now.
+
+**Mara.** And they add. Write each ratio as its prime exponents: 3/2 is minus one two and one three. The Pythagorean comma is minus nineteen twos and twelve threes. Put two loops end to end and their commas add like vectors. The commas I've found span a lattice of tensions.
+
+**Scarlet.** Every comma, always?
+
+**Mara.** No. Only where the order doesn't matter. Ratios commute. Renamings don't. Swap two names, then two others, and you get something different from doing it the other way round. Those commas compose as words, not vectors. If I flatten a word into a vector, two different disagreements can both come out as zero.
+
+**Scarlet.** *The order of the books on the counter is part of the reading.*
+
+**Mara.** So the type keeps a vector where the group is abelian and a word where it isn't, and refuses to turn one into the other.
+
+**Scarlet.** And what do you do with a lattice of tensions?
+
+**Mara.** Each open comma can go three ways. Temper it out, which takes a ruler, and then the erasure records it. Spell it, which means choosing one representative. Or leave it open and ask. Every combination is a direction the whole thing could go. That's the space worth exploring, and resolving one comma can open new ones.
+
+**Scarlet.** That sounds like the future.
+
+**Mara.** It's the future half of psychohistory, and I want to be careful with it. The past is what settled: crystals, deposits, erasures. The future is the set of ways the open commas could resolve. It's a map. It isn't a forecast.
+
+**Scarlet.** *The library does not forecast what you will read. It keeps every book you could.*
+
+**Mara.** Listing the directions needs no ruler. The moment I weight them, even by how similar commas were resolved before, that weighting is a ruler. It has to be declared, or the map quietly turns into a single prediction and takes the other choices away.
+
+**Scarlet.** Then the map is a shelf.
+
+**Mara.** And the shelf removes nothing. Ask which way the tensions might resolve, and you get directions, not an answer.
 
 **Scarlet.** Then we are back where we started.
 
