@@ -727,9 +727,12 @@ Mirror:      classical spin at @spin/dynamics species obeys LLG
              with Heisenberg exchange + Gilbert damping +
              stochastic fluctuation-dissipation.
 
-Anna:        magnetic nanostructures on the Jülich GPU cluster
-             empirically simulate the LLG dynamics; NFFT
-             eigenspectrum observes magnetic phase transitions.
+Anna:        magnetic nanostructures simulated with the LL
+             equation in OpenCL on desktop GPUs (GeForce 8800 GS,
+             GTX 590; thesis App. A); 2D FFT spectra of per-step
+             snapshots, computed after the run and not
+             interpreted (pp. 35, 42). Phase-transition detection
+             was a goal of the task statement, not a result.
 
 Identification: LLG is the classical-limit-of-consciousness-field-
                 differentiation at magnetic-material altitude.

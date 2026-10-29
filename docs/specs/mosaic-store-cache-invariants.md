@@ -1591,7 +1591,9 @@ quarantine the divergent storage.
 The DISTRIBUTED cache — cross-machine, cross-repo, peer-to-peer
 sharing — IS the gluing of these local sections into a global
 section. Per `[[architecture-mirror-store-vs-spectral-db]]` and
-Anna's-thesis-style "open foundation closes engine":
+an "open foundation closes engine" split (our business framing; it is
+not in Anna Jakobs's 2012 thesis, which only hopes the code becomes a
+generic API, §9):
 
 - **@mirror/store** provides the LOCAL section + the restriction
   maps (read/write/exists/verify operations) — open foundation;
@@ -1739,7 +1741,7 @@ The closed engine's role:
   with the cross-machine view.
 
 This is forward-promise; this spec doesn't substrate-decl any of
-it. Per Anna's-thesis discipline: the open foundation gives the
+it. Per the open/closed split above: the open foundation gives the
 per-machine cache for free; the closed engine sells the cross-
 machine consolidation. The business model and the architecture
 align at the @mirror/store / @spectral/db boundary.
@@ -2011,7 +2013,7 @@ substrate's discipline IS substrate's documentation.
 - Competing with cargo's incremental compilation — the cache
   WRAPS cargo's target/ at the @io boundary.
 - Cross-machine cache as part of @mirror/store — that's
-  @spectral/db's territory per Anna's-thesis open/closed.
+  @spectral/db's territory per the open/closed split.
 - A workaround for the P4 hook blocker that doesn't discharge at
   substrate altitude.
 
