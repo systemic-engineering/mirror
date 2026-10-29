@@ -16,11 +16,18 @@ use std::process::{Command, Output};
 const BIN: &str = env!("CARGO_BIN_EXE_mirror");
 
 fn repo_root() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap().to_path_buf()
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .to_path_buf()
 }
 
 fn mirror(args: &[&str]) -> Output {
-    Command::new(BIN).args(args).current_dir(repo_root()).output().expect("spawn mirror")
+    Command::new(BIN)
+        .args(args)
+        .current_dir(repo_root())
+        .output()
+        .expect("spawn mirror")
 }
 
 fn eval(path: &str) -> Output {
@@ -40,31 +47,44 @@ fn code(o: &Output) -> i32 {
 }
 
 fn expected(name: &str) -> String {
-    std::fs::read_to_string(repo_root().join(format!("tests/pact/{name}.expected"))).expect("expected file")
+    std::fs::read_to_string(repo_root().join(format!("tests/pact/{name}.expected")))
+        .expect("expected file")
 }
 
 fn fixture(name: &str) -> String {
-    std::fs::read_to_string(repo_root().join(format!("tests/pact/{name}.pact-text"))).expect("fixture")
+    std::fs::read_to_string(repo_root().join(format!("tests/pact/{name}.pact-text")))
+        .expect("fixture")
 }
 
 fn assert_vector(name: &str, exit: i32) {
     let o = eval(&format!("tests/pact/{name}.pact-text"));
-    assert!(!stderr(&o).contains("panicked"), "{name}: panicked:\n{}", stderr(&o));
+    assert!(
+        !stderr(&o).contains("panicked"),
+        "{name}: panicked:\n{}",
+        stderr(&o)
+    );
     assert_eq!(stdout(&o), expected(name), "{name}: record");
     assert_eq!(code(&o), exit, "{name}: exit code; stderr:\n{}", stderr(&o));
 }
 
 /// The record without its `file` line (the path differs from the fixture's).
 fn without_file_line(record: &str) -> String {
-    record.lines().filter(|l| !l.starts_with("file ")).map(|l| format!("{l}\n")).collect()
+    record
+        .lines()
+        .filter(|l| !l.starts_with("file "))
+        .map(|l| format!("{l}\n"))
+        .collect()
 }
 
 /// All orders of the record lines (comments dropped), written one after the
 /// other to the same path, give byte-identical stdout, and that stdout is
 /// the oracle's record (up to the `file` line) with the oracle's exit.
 fn assert_permutation_invariant(name: &str, exit: i32) -> usize {
-    let lines: Vec<String> =
-        fixture(name).lines().filter(|l| !l.starts_with('#') && !l.trim().is_empty()).map(String::from).collect();
+    let lines: Vec<String> = fixture(name)
+        .lines()
+        .filter(|l| !l.starts_with('#') && !l.trim().is_empty())
+        .map(String::from)
+        .collect();
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("permuted.pact-text");
     let path = path.to_str().unwrap();
@@ -76,7 +96,11 @@ fn assert_permutation_invariant(name: &str, exit: i32) -> usize {
         let got = (stdout(&o), code(&o));
         match &first {
             None => {
-                assert_eq!(without_file_line(&got.0), without_file_line(&expected(name)), "{name}: record");
+                assert_eq!(
+                    without_file_line(&got.0),
+                    without_file_line(&expected(name)),
+                    "{name}: record"
+                );
                 assert_eq!(got.1, exit, "{name}: exit");
                 first = Some(got);
             }
@@ -148,11 +172,26 @@ fn assert_dark(label: &str, body: &[u8], at: &str) {
     std::fs::write(&path, body).unwrap();
     let o = eval(path.to_str().unwrap());
     let out = stdout(&o);
-    assert!(!stderr(&o).contains("panicked"), "{label}: panicked:\n{}", stderr(&o));
+    assert!(
+        !stderr(&o).contains("panicked"),
+        "{label}: panicked:\n{}",
+        stderr(&o)
+    );
     assert_eq!(code(&o), 2, "{label}: exit; stdout:\n{out}");
-    assert!(out.starts_with("verdict     dark\n"), "{label}: not a dark record:\n{out}");
-    let dark = out.lines().find(|l| l.starts_with("dark ")).unwrap_or_else(|| panic!("{label}: no dark line:\n{out}"));
-    assert!(dark.trim_start_matches("dark").trim_start().starts_with(&format!("{at} ")), "{label}: want {at}, got {dark:?}");
+    assert!(
+        out.starts_with("verdict     dark\n"),
+        "{label}: not a dark record:\n{out}"
+    );
+    let dark = out
+        .lines()
+        .find(|l| l.starts_with("dark "))
+        .unwrap_or_else(|| panic!("{label}: no dark line:\n{out}"));
+    assert!(
+        dark.trim_start_matches("dark")
+            .trim_start()
+            .starts_with(&format!("{at} ")),
+        "{label}: want {at}, got {dark:?}"
+    );
 }
 
 const OK: &str = "rule r p(?x) requires e(?x)\nfact e(a)\n";
@@ -211,12 +250,20 @@ fn dark_requires_as_a_constant() {
 
 #[test]
 fn dark_duplicate_rule_id() {
-    assert_dark("duplicate rule id", b"rule r p(?x) requires e(?x)\nrule r q(?x) requires e(?x)\n", "2:6");
+    assert_dark(
+        "duplicate rule id",
+        b"rule r p(?x) requires e(?x)\nrule r q(?x) requires e(?x)\n",
+        "2:6",
+    );
 }
 
 #[test]
 fn dark_non_ground_query() {
-    assert_dark("non-ground query", format!("{OK}query p(?x)\n").as_bytes(), "3:9");
+    assert_dark(
+        "non-ground query",
+        format!("{OK}query p(?x)\n").as_bytes(),
+        "3:9",
+    );
 }
 
 #[test]
@@ -226,7 +273,11 @@ fn dark_variable_in_a_fact() {
 
 #[test]
 fn dark_query_arity_mismatch() {
-    assert_dark("query arity", format!("{OK}query p(a, b)\n").as_bytes(), "3:7");
+    assert_dark(
+        "query arity",
+        format!("{OK}query p(a, b)\n").as_bytes(),
+        "3:7",
+    );
 }
 
 #[test]
@@ -266,12 +317,20 @@ fn dark_unclosed_parenthesis() {
 
 #[test]
 fn dark_position_zero() {
-    assert_dark("position 0", format!("{OK}functional p(0) -> 1\n").as_bytes(), "3:14");
+    assert_dark(
+        "position 0",
+        format!("{OK}functional p(0) -> 1\n").as_bytes(),
+        "3:14",
+    );
 }
 
 #[test]
 fn dark_functional_without_arrow() {
-    assert_dark("no arrow", format!("{OK}functional p(1) 1\n").as_bytes(), "3:17");
+    assert_dark(
+        "no arrow",
+        format!("{OK}functional p(1) 1\n").as_bytes(),
+        "3:17",
+    );
 }
 
 #[test]
@@ -294,11 +353,21 @@ fn dark_unsafe_rule_names_the_rule_and_the_variable() {
     std::fs::write(&path, "rule bad p(?x) requires not q(?x)\n").unwrap();
     let o = eval(path.to_str().unwrap());
     let out = stdout(&o);
-    assert!(!stderr(&o).contains("panicked"), "panicked:\n{}", stderr(&o));
+    assert!(
+        !stderr(&o).contains("panicked"),
+        "panicked:\n{}",
+        stderr(&o)
+    );
     assert_eq!(code(&o), 2);
     assert!(out.starts_with("verdict     dark\n"), "{out}");
-    let dark = out.lines().find(|l| l.starts_with("dark ")).expect("dark line");
-    assert!(dark.contains("bad") && dark.contains("?x"), "names rule and variable: {dark:?}");
+    let dark = out
+        .lines()
+        .find(|l| l.starts_with("dark "))
+        .expect("dark line");
+    assert!(
+        dark.contains("bad") && dark.contains("?x"),
+        "names rule and variable: {dark:?}"
+    );
 }
 
 #[test]
@@ -316,7 +385,11 @@ fn dark_arity_mismatch_between_rules_and_facts() {
 fn dark_unreadable_file() {
     let o = eval("tests/pact/does-not-exist.pact-text");
     assert_eq!(code(&o), 2);
-    assert!(stdout(&o).starts_with("verdict     dark\n"), "{}", stdout(&o));
+    assert!(
+        stdout(&o).starts_with("verdict     dark\n"),
+        "{}",
+        stdout(&o)
+    );
 }
 
 // ── Usage errors: stderr, no record, exit 2 ──────────────────────────────
@@ -327,8 +400,18 @@ fn usage_errors_print_no_record() {
         vec!["pact"],
         vec!["pact", "eval"],
         vec!["pact", "frob", "tests/pact/01-determinism.pact-text"],
-        vec!["pact", "eval", "--strict", "tests/pact/01-determinism.pact-text"],
-        vec!["pact", "eval", "tests/pact/01-determinism.pact-text", "extra"],
+        vec![
+            "pact",
+            "eval",
+            "--strict",
+            "tests/pact/01-determinism.pact-text",
+        ],
+        vec![
+            "pact",
+            "eval",
+            "tests/pact/01-determinism.pact-text",
+            "extra",
+        ],
     ] {
         let o = mirror(&args);
         assert_eq!(code(&o), 2, "{args:?}");
@@ -342,8 +425,13 @@ fn usage_errors_print_no_record() {
 
 #[test]
 fn pact_text_rs_names_no_serde() {
-    let src = std::fs::read_to_string(repo_root().join("rust/src/pact_text.rs")).expect("rust/src/pact_text.rs exists");
+    let src = std::fs::read_to_string(repo_root().join("rust/src/pact_text.rs"))
+        .expect("rust/src/pact_text.rs exists");
     for (i, line) in src.lines().enumerate() {
-        assert!(!line.contains("serde"), "rust/src/pact_text.rs:{}: {line}", i + 1);
+        assert!(
+            !line.contains("serde"),
+            "rust/src/pact_text.rs:{}: {line}",
+            i + 1
+        );
     }
 }

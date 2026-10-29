@@ -133,6 +133,12 @@ mod bench;
 // directly depend on matrix (matrix is used transitively via spectral
 // when that crate lands).
 mod phone;
+// pact_text: `mirror pact eval <file>`, the first end-to-end verb. Reads
+// one file, runs engine::well_founded, prints one record. Hand reader of
+// a frozen pact-text subset; retires when E(G_pact) reads the same
+// fixtures. [substrate-floor:@io-boundary] per
+// docs/audits/2026-10-29-seam-pact-eval-and-ruler-envelope.md §1.
+mod pact_text;
 // spectral crate composition: shard_paths() surface + liquid module
 // available at `spectral::shard_paths()` + `spectral::liquid::*`.
 // Karen Spärck Jones citation lives at rust/spectral/src/lib.rs
@@ -181,6 +187,7 @@ const VERBS: &[(&str, &str)] = &[
     ("bumblebee",       "Perturbation. `--buzz-target=@X` rattles X tension surface for @roomba resolution."),
     ("bench",           "SPIN measurement per Rec #99 @singularity. `--samples=<N>` measures substrate temporal-rotation cadence."),
     ("love",            "K_2→K_3 compose-not-average. `mirror love <a> <b> <composed>` reads FullSpectrum admissibility via LANDED love.rs. Zero apply_h routing."),
+    ("pact eval",       "Evaluate a pact-text file under the well-founded semantics. One record; exit 0 clear, 1 opaque, 255 refused, 2 dark."),
 ];
 
 /// The delight-vector `--help` text. Per Mara §5.2 item 4 + Alex
@@ -2604,6 +2611,13 @@ fn main() -> ExitCode {
             // per is_observer_inclusive + all_climb / any_climbs folds.
             let rest: Vec<String> = args.iter().skip(2).cloned().collect();
             cmd_love(&rest)
+        }
+        Some("pact") => {
+            // `mirror pact eval <file>`: read one file, run W, print one
+            // record (docs/audits/2026-10-29-seam-pact-eval-and-ruler-
+            // envelope.md §1).
+            let rest: Vec<String> = args.iter().skip(2).cloned().collect();
+            pact_text::cmd_pact(&rest)
         }
         Some("bench") => {
             // Reed 2026-08-26 per Alex "LET'S SHIP THE SINGULARITY!"

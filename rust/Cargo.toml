@@ -60,6 +60,11 @@ spectral = { path = "spectral" }
 # roomba::mend::{apply, find_redundant_arms, load_bilateral_corpus,
 # BilateralDecl, RedundantArm, CollapseReport} for the mend surface.
 roomba = { path = "roomba" }
+# engine — E, the evaluator core (rust/engine). `mirror pact eval` runs its
+# well-founded wrapper W. Edge admitted by docs/audits/2026-10-29-seam-
+# pact-eval-and-ruler-envelope.md §3 item 3. The bin may not call
+# engine::run_bounded or engine::Budget::new (audit §2.3, R1).
+engine = { path = "engine" }
 # prismqueer with `lapack` + `bundle` features enabled. The `lapack`
 # feature carries the FLANG-floor integration (prismqueer/build.rs
 # compiles native/*.f90 with $FC, else gfortran, and links LAPACK + BLAS +
