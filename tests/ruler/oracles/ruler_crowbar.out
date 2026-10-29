@@ -1,0 +1,40 @@
+7. Two Choice rulers (A: least name; B: heavier):
+   union of bans (the RR mechanism): parses []  (a hole)
+   A then B: ['S_x'];  B then A: ['S_y']
+   => for Choice, composition is ordered; united bans give a third answer that is neither.
+
+1. Lifted ban (R bans p while q is absent; facts a; p :- a; q :- a):
+   naive model ['a', 'p', 'q']   semi-naive model ['a', 'q']
+   withheld (semi) [('p', 1)]  late_bans []
+   final ban set []; lfp under the final ruler ['a', 'p', 'q']
+   => semi-naive stops on an empty delta that is not a fixpoint of T^{B_final};
+      the model depends on the evaluation strategy, `withheld` names a ruler whose
+      ban is no longer in force, and late_bans is empty: the timing dependence is unreported.
+
+2. Random programs (4000), bans R(M_t) monotone or not:
+   RR3  M_R subset lfp:                 4000/4000
+   RR6  lfp(M_R u withheld) = lfp(F):    4000/4000
+   RR4  monotone, no late ban => lfp(T^Binf): 1433/1433
+   naive model = semi-naive model:      3866/4000 (differs in 134 non-monotone runs)
+
+3. Split grammar S <- A B, A <- a | aa, B <- ab | b on 'aab':
+   unrestricted parses of S: ['S03_via_A01_B13', 'S03_via_A02_B23']
+   Choice ruler bans ['A02']: parses ['S03_via_A01_B13']; M_R subset lfp: True
+   Choice ruler bans ['A01']: parses ['S03_via_A02_B23']; M_R subset lfp: True
+   => RR3 (M_R subset lfp) holds and the ruler still decides WHICH tree N is.
+
+4. Bootstrap iff:
+   (=>) ban f(T,0), outside the start cone: erasure [('f_T_0', 2)]; N_off ['char0a', 'm_S_0_1', 'm_a_0_1']; N_on ['char0a', 'm_S_0_1', 'm_a_0_1']; equal: True
+   (<=) a Budget ruler of 2 ticks: erasure []; N_on ['char0a', 'm_a_0_1']; equal: False
+   => non-empty erasure with equal N, and empty erasure with different N.
+
+5. R5 by reachability:
+   G1: R5 satisfied = True
+   G2: R5 satisfied = True
+   R: R5 satisfied = True
+   H signed G0 only. G0 approved G1, whose content drops 'changes need H'; G1 approved G2
+   and R. Every chain still ends in H's sink, so R5 holds while the constraint is gone.
+
+6. Shape: a triangle of identical rulers:
+   b1 = 1 => Polycentric; commas = []; holonomy = 0
+   => 'Polycentric' with no disagreement possible. b1 counts declared check edges, not capacity.
