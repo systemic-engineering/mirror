@@ -1,0 +1,6 @@
+# Vector 05: functional violation on true. Transcribed by hand from
+# tests/pact/oracles.md (ef8c859e); no .json source exists for 05.
+rule  owner  owner(?d, ?p) requires claim(?d, ?p)
+fact  claim(doc, alex)
+fact  claim(doc, reed)
+functional owner(1) -> 2

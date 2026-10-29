@@ -1,0 +1,8 @@
+verdict     clear
+file        "tests/pact/05-functional-violation-control.pact-text"
+shaped_by   none
+true        1
+undefined   0
+findings    0
+
+true        owner(doc, alex)

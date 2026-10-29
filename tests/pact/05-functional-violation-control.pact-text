@@ -1,0 +1,5 @@
+# Vector 05, control: the same program without claim(doc, reed).
+# Transcribed by hand from tests/pact/oracles.md (ef8c859e).
+rule  owner  owner(?d, ?p) requires claim(?d, ?p)
+fact  claim(doc, alex)
+functional owner(1) -> 2

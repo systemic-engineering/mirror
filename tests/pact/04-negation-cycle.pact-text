@@ -1,0 +1,6 @@
+# Vector 04: negation cycle. Transcribed by hand from tests/pact/04-negation-cycle.json
+# at 5babfbad (blob 3c9df80a6777ea50bb41ad7062c219727407d467); oracle: oracles.md.
+rule p p requires not q
+rule q q requires not p
+rule r r requires not s
+rule t t requires p

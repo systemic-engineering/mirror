@@ -1,0 +1,10 @@
+verdict     refused
+file        "tests/pact/05-functional-violation.pact-text"
+shaped_by   none
+true        2
+undefined   0
+findings    1
+
+true        owner(doc, alex)
+true        owner(doc, reed)
+finding     functional owner key(doc) alex reed
