@@ -153,8 +153,52 @@ fn vector_04_every_order_of_its_lines_is_byte_identical() {
 }
 
 #[test]
-fn vector_05_functional_violation_is_refused_exit_255() {
+fn vector_05_functional_violation_is_a_selected_dark_exit_255() {
+    // Alex 2026-10-29: "refused is Dark. The illumination was declined."
+    // `verdict dark`, exit 255, and `shaped_by` names the declining
+    // declaration by its surface text.
     assert_vector("05-functional-violation", 255);
+}
+
+#[test]
+fn a_selected_dark_names_only_the_declarations_that_declined() {
+    // Two declarations; only `owner(1) -> 2` is violated on `true`.
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("two-decls.pact-text");
+    std::fs::write(
+        &path,
+        "rule owner owner(?d, ?p) requires claim(?d, ?p)\n\
+         fact claim(doc, alex)\nfact claim(doc, reed)\n\
+         functional claim(2) -> 1\nfunctional owner(1) -> 2\n",
+    )
+    .unwrap();
+    let o = eval(path.to_str().unwrap());
+    let out = stdout(&o);
+    assert_eq!(code(&o), 255, "{out}");
+    let shaped: Vec<&str> = out
+        .lines()
+        .filter(|l| l.starts_with("shaped_by "))
+        .collect();
+    assert_eq!(
+        shaped,
+        vec!["shaped_by   functional owner(1) -> 2"],
+        "{out}"
+    );
+    assert!(out.starts_with("verdict     dark\n"), "{out}");
+}
+
+#[test]
+fn refused_is_never_printed() {
+    for name in [
+        "01-determinism",
+        "03-false-with-provenance",
+        "04-negation-cycle",
+        "05-functional-violation",
+        "05-functional-violation-control",
+    ] {
+        let out = stdout(&eval(&format!("tests/pact/{name}.pact-text")));
+        assert!(!out.contains("refused"), "{name}:\n{out}");
+    }
 }
 
 #[test]
@@ -164,8 +208,23 @@ fn vector_05_control_is_clear_exit_0() {
 
 // ── Dark: the reader, one case per grammar rule broken ───────────────────
 
+/// The three lines every unreadable Dark (exit 2) opens with.
+fn assert_dark_head(label: &str, out: &str) {
+    let head: Vec<&str> = out.lines().take(3).collect();
+    assert_eq!(head.first(), Some(&"verdict     dark"), "{label}:\n{out}");
+    assert!(
+        head.get(1).is_some_and(|l| l.starts_with("file ")),
+        "{label}:\n{out}"
+    );
+    assert_eq!(
+        head.get(2),
+        Some(&"shaped_by   none"),
+        "{label}: an unreadable Dark is shaped by nothing\n{out}"
+    );
+}
+
 /// Write `body` to a temp file, run it, and require a dark record naming
-/// `line:col`, exit 2, and no panic.
+/// `line:col`, `shaped_by none`, exit 2, and no panic.
 fn assert_dark(label: &str, body: &[u8], at: &str) {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("dark.pact-text");
@@ -178,10 +237,7 @@ fn assert_dark(label: &str, body: &[u8], at: &str) {
         stderr(&o)
     );
     assert_eq!(code(&o), 2, "{label}: exit; stdout:\n{out}");
-    assert!(
-        out.starts_with("verdict     dark\n"),
-        "{label}: not a dark record:\n{out}"
-    );
+    assert_dark_head(label, &out);
     let dark = out
         .lines()
         .find(|l| l.starts_with("dark "))
@@ -359,7 +415,7 @@ fn dark_unsafe_rule_names_the_rule_and_the_variable() {
         stderr(&o)
     );
     assert_eq!(code(&o), 2);
-    assert!(out.starts_with("verdict     dark\n"), "{out}");
+    assert_dark_head("unsafe", &out);
     let dark = out
         .lines()
         .find(|l| l.starts_with("dark "))
@@ -377,7 +433,7 @@ fn dark_arity_mismatch_between_rules_and_facts() {
     std::fs::write(&path, "rule r p(?x) requires e(?x, ?y)\nfact e(a)\n").unwrap();
     let o = eval(path.to_str().unwrap());
     assert_eq!(code(&o), 2);
-    assert!(stdout(&o).starts_with("verdict     dark\n"));
+    assert_dark_head("arity", &stdout(&o));
     assert!(!stderr(&o).contains("panicked"));
 }
 
@@ -385,11 +441,7 @@ fn dark_arity_mismatch_between_rules_and_facts() {
 fn dark_unreadable_file() {
     let o = eval("tests/pact/does-not-exist.pact-text");
     assert_eq!(code(&o), 2);
-    assert!(
-        stdout(&o).starts_with("verdict     dark\n"),
-        "{}",
-        stdout(&o)
-    );
+    assert_dark_head("unreadable", &stdout(&o));
 }
 
 // ── Usage errors: stderr, no record, exit 2 ──────────────────────────────

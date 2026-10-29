@@ -1,6 +1,6 @@
-verdict     refused
+verdict     dark
 file        "tests/pact/05-functional-violation.pact-text"
-shaped_by   none
+shaped_by   functional owner(1) -> 2
 true        2
 undefined   0
 findings    1
