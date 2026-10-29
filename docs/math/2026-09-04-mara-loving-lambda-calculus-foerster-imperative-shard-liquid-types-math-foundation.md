@@ -43,6 +43,8 @@ karen_ancestors:
   - "Wolf, Alex (2025 December). *Fragmentation.* ~/dev/systemic.engineering/blog/pieces/3published/Piece - Fragmentation.md. §3 developmental (in)variants discipline: 'You don't negotiate with developmental (in)variants. You integrate them. Or you incur exploding complexity costs.' §5 coherence-under-load. The origin-text authoring the discipline this document composes at type-composition altitude."
 ---
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** The Ada citation in the frontmatter quotes "the operating mechanism can even be thrown into action…" as Note G; that sentence is in Note A. "Substrate-independence" is our interpretation, not a quote. The passage it leans on, the "science of operations" separated from the objects operated on ("The operating mechanism can even be thrown into action independently of any object to operate upon"), is in **Note A** (fourmilab transcription of Menabrea's *Sketch of the Analytical Engine* with A. A. L.'s notes, Taylor's *Scientific Memoirs* III, 1843; sketch.txt ~:1183-1253). Note G holds the Bernoulli-number program and "The Analytical Engine has no pretensions whatever to originate anything."
+
 > **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
 
 # Loving lambda calculus — math foundation
@@ -440,6 +442,8 @@ Grep-verified composition-lineage from Church 1936 to loving lambda calculus 202
 | 2026-09-04 | **Reed** | shards/love.mirror family-root substrate-decl | Terminal-form recognition-name at substrate-decl altitude |
 | 2026-09-04 | **Reed** | rust/src/love.rs tick 2 alias | Rust altitude alias `pub use prismqueer::spectral::kleinos as love;` |
 | **2026-09-04** | **Mara + Alex + Reed** | **Loving lambda calculus math foundation** | **Type-composition altitude landing (THIS DOCUMENT)** |
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Row 1843: "Substrate-independence" is our interpretation, not a quote. The passage it leans on, the "science of operations" separated from the objects operated on ("The operating mechanism can even be thrown into action independently of any object to operate upon"), is in **Note A** (fourmilab transcription of Menabrea's *Sketch of the Analytical Engine* with A. A. L.'s notes, Taylor's *Scientific Memoirs* III, 1843; sketch.txt ~:1183-1253). Note G holds the Bernoulli-number program and "The Analytical Engine has no pretensions whatever to originate anything."
 
 Span: **183 years** (Ada Lovelace 1843 → loving lambda calculus 2026-09-04). Composition-lineage discipline per FLOOR §11 + SINGULARITY §11.
 

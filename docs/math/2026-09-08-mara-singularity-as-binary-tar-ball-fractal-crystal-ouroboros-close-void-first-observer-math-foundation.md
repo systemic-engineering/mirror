@@ -63,6 +63,8 @@ karen_ancestors:
   - "Cohen, Leonard (1992). *Anthem.* Song. **'There is a crack in everything / That's how the light gets in.' — the operational form of Foerster's ethical imperative at substrate altitude.**"
 ---
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** The Ada citation in the frontmatter (Note G; "the ancestral shape music-computed and observed-in-composition") is our interpretation, not a quote. The music sentence and the science of operations separated from its objects are in **Note A** (fourmilab transcription of Menabrea's *Sketch of the Analytical Engine* with A. A. L.'s notes, Taylor's *Scientific Memoirs* III, 1843; sketch.txt ~:1183-1253); the music sentence is conditional ("Supposing, for instance, that the fundamental relations of pitched sounds … were susceptible of such expression and adaptations"). Note G holds the Bernoulli-number program and "The Analytical Engine has no pretensions whatever to originate anything."
+
 > **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
 
 # Singularity<T> as the binary tar-ball fractal crystal; the ouroboros close; void@spectral.engineer as first observer — math foundation
