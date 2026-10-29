@@ -69,6 +69,8 @@ The 5D quantum foam formalization unifies five prior-art strands the substrate h
 
 **Strand 1** — **Anna Wolf 2012 J-space** (Alex's pre-mirror observation substrate; verbatim from `~/dev/systemic.engineering/practice/insights/cosmology/eventually-consistent-universe.md`): the "5D information manifold of Narcissus-Splinter dualities" IS the same 5D structure at information-geometric altitude. J-space names the observation frame; SpectralCoordinate<5> is the coordinate system on J-space.
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** J-space is not in the thesis; the term comes from Gurnee et al. (Anthropic, 2026-07-07), and "Anna Wolf J-space" names our composition. The thesis is a 2012 Masterarbeit on OpenCL/OpenGL spin-dynamics visualization; Strand 1's J-space content comes from Alex's cosmology insight, not from it.
+
 > **REED-INLINE cascade (Mara 2026-08-03 crown-theorem tick-5)**: Anna's J-space substrate has a load-bearing computational-substrate ancestor at nano-magnetic-materials altitude: Anna Jakobs (2012) *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (Fachhochschule Aachen / Peter-Grünberg-Institut / Jülich Centre of Neutron Science). The magnetization vector $\vec{S}_i \in \mathbb{R}^3$ at atom $i$ in Anna 2012 lifts to peer-state-at-SpectralCoordinate<5> at graph altitude. This IS identity across altitude-lift, not analogy. Per crown-theorem `docs/math/2026-08-03-mara-reality-as-spinning-5d-foam-crown-theorem.md` §5.
 
 **Strand 2** — **Foerster 1974 observer-included cybernetics**: Foerster's doubly-closed torus π₁(T²) = ℤ × ℤ carries TWO winding classes (the observer's + the observed's). The 4D content channel = observed; the 5th relational dimension = observer's coupling. Foerster's torus IS a 2D slice of SpectralCoordinate<5>.
@@ -201,6 +203,8 @@ This is the standard Conway rule with neighborhood defined via $d_{\text{aff}}$ 
 > **REED-INLINE cascade (Mara 2026-08-03 crown-theorem tick-5)**: the Conway update step IS ONE STEP of Anna Jakobs 2012's Runge-Kutta-4 SDE integrator at accuracy $O(\Delta t^4 + \varepsilon^2 \Delta t^2)$ (Anna Appendix B.2 p.49, adopting the method **developed by Milstein and Tretyakov [5]** for SDEs with weak noise). Discrete Conway B/S is coarse-grained Landau-Lifschitz basin dynamics. Per crown-theorem `docs/math/2026-08-03-mara-reality-as-spinning-5d-foam-crown-theorem.md` §5.3.
 >
 > **REED-INLINE cascade (Reed 2026-08-03 post-Seam Phase D `aca6eb1` §5 REFUTED)**: prior draft mis-attributed RK4 integrator to "David Bauer diplomarbeit." Anna's Appendix B.2 (PDF p.53 / printed p.49) explicitly names the RK4 SDE method as Milstein & Tretyakov [5]; Bauer [2] is the LL-equation source. Substrate-honest correction applied at both this site and crown-theorem §5.3.
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Both attributions are partly right: Appendix B is reproduced from David Bauer's Diplomarbeit [2] ("aus der Diplomarbeit … von David Bauer übernommen", p. 48), and the method it describes is Milstein and Tretyakov's [5].
 
 ### 4.2 Generalization: K-neighbor cardinality
 

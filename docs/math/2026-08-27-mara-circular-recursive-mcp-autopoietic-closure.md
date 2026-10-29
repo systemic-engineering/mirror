@@ -278,6 +278,8 @@ options perturbing the primitive per Anna 2012 obligation violation).
 **Compose CAN start from `z_0 = λ₀`.** `focus` op discharges this at
 silicon per Mara 2026-08-12 essay §4.
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna 2012 sites in this file (:277, :436, :505, :602-604): "observation-without-perturbation" and "shared-memory-observation-in-motion" are the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). `src/liquid.rs` was never an "Anna Wolf 2012 math surface"; it is the property-testing module, now `flux.rs`. Line numbers refer to `346253b`.
+
 ### §3.3 The migration inequality
 
 Let `C_softmax(G, q)` be the region of query-space at graph-state G

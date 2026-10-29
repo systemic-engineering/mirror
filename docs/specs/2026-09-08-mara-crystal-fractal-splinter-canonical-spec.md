@@ -69,6 +69,8 @@ pub struct Splinter {
 
 **File:line citation.** `prism/prismqueer/src/spectral/rotation.rs` :133-241 `infer_via_rotation` primitive — the per-tick deposit engine composing kleinos K_2 → K_3 wedge-at-K_3 basepoint + Kuramoto phase_lock + Anna Wolf apparatus + Foerster gauge check + Splinter deposit.
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Here and at :814 ("Anna Wolf ψ … Fiedler measurement"): The thesis (Masterarbeit, FH Aachen, Campus Jülich, 2012) ports a CUDA spin-dynamics program to OpenCL and adds OpenGL visualization and an FFT. It has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK, and `prismqueer::liquid` never carried a ψ or an `anna_wolf` item (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). "Anna Wolf apparatus" is the apparatus from Anna Jakobs's 2012 thesis, read across: our reading, not the thesis's content. Line numbers refer to `346253b`.
+
 **Substrate-scope.** Splinter is *the atomic crystallization of one observation-tick at AST / parse-level altitude*. Per Alex 2026-09-02 verbatim: *"settles into the inferred splinters"* — each rotation-tick produces one splinter carrying the observation state at that tick.
 
 **Composition-anchor at math foundation.** §1.3 Splinter at prism/prismqueer/src/spectral/rotation.rs. §2.1 Proposition M2.1.1 Splinter satisfies M2.1. §6.2 `\` at Splinter altitude = Partial-verdict deposit via Imperfect<Green, Yellow, Red>::Failure(Red, ConvergenceLoss::new(tick)).

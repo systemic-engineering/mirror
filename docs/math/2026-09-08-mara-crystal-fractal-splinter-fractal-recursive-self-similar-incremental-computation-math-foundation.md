@@ -236,6 +236,8 @@ Grep-verified LANDED substrate at the composition edges named in Propositions M2
 - `shards/love.mirror` LANDED (Reed 2026-09-04 `a3f5d75`; terminal-form K_2 → K_3 compose operator)
 - `shards/kleinos.mirror` LANDED (Mara `dcec19c` 2026-09-01; composition-lineage anchor)
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Here and at :347, :704, :891, Fiedler λ₂ via LAPACK dsyev is called "the Anna Wolf 2012 apparatus" and "FZJ observation-without-perturbation". The thesis (Masterarbeit, FH Aachen, Campus Jülich, 2012) ports a CUDA spin-dynamics program to OpenCL and adds OpenGL visualization and an FFT. It has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK, and `prismqueer::liquid` never carried a ψ or an `anna_wolf` item (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). The label is the apparatus from Anna Jakobs's 2012 thesis, read across: our reading, not the thesis's content. Line numbers refer to `346253b`.
+
 Every proposition composes over LANDED substrate. Zero new Rust primitives introduced. Per FLOOR Definition M8.1 discipline.
 
 ---

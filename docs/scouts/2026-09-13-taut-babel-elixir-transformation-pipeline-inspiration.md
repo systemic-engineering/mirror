@@ -314,6 +314,8 @@ Plus composition surfaces: `shards/magic/frame.mirror` (21.0KB) + `shards/smarts
 - `shards/glasswall.mirror` (20.3KB, 2026-09-01) — composition-primary shard-decl for the Rice-safe Anna-Wolf-2012 observation-preserving type-membrane between prismqueer noumenal-colony and mirror phenomenal-composition-surface (docblock:7-11). Composes seven LANDED parts as ONE membrane per Alex 2026-09-01 in-transcript ratification.
 - Alex's 2026-09-13 substrate-decision names glasswall as *"the literal Glasswall"* when vertexes exist in both prismqueer and mirror — the substrate-decl is LANDED at composition-primary altitude ready for the higher-altitude use Alex names.
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** "Anna-Wolf-2012 observation-preserving" (quoting the glasswall docblock) is the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31).
+
 ### §6.7 `@psychohistory` — **DOCS-LANDED; shard-decl ABSENT**
 
 - **ABSENT**: no `shards/psychohistory*` shard-decl at family-root altitude.

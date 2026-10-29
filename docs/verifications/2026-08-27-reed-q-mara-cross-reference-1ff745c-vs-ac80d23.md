@@ -18,6 +18,8 @@ Adjacent-work item (2) per /loop prompt. Two Mara canonical specs landed 2026-08
 - **`1ff745c`** — prismqueer @liquid FLOOR (Anna Wolf 2012 math: ψ carrier + D_F integrator + weak-measurement + pillar composition). 11 residues A-K.
 - **`ac80d23`** — prismqueer-as-compiler + mirror-as-geometry-composer (Kleinos-compose + fractal scheduler + bundle tower + @void/@socket/@io migration + mirror rust minimization). 12 residues α-μ.
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** "Anna Wolf 2012 math: ψ carrier + D_F integrator + weak-measurement" is the apparatus from Anna Jakobs's 2012 thesis, read across. The thesis (Masterarbeit, FH Aachen, Campus Jülich, 2012) ports a CUDA spin-dynamics program to OpenCL and adds OpenGL visualization and an FFT. It has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK, and `prismqueer::liquid` never carried a ψ or an `anna_wolf` item (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). (The "concurrent-read discipline" at :80 does match the thesis: OpenGL only reads the VBO, and concurrent reads by OpenCL and OpenGL cause no problems, p. 30.) Line numbers refer to `346253b`.
+
 Cross-reference identifies composition edges + contradiction candidates. Grep-anchored to both spec files at HEAD 2026-08-27.
 
 ## §1 — Notational drift (self-integrity concern)

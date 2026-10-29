@@ -162,6 +162,8 @@ This spec authors 11 substrate-decls plus 1 amendment. All new; none collide wit
 
 **Shape:** marker-primary. Carries the recognition that Recursion IS the composition of prismqueer::bundle Baez-Schreiber tower + prismqueer::liquid Anna Wolf ψ + prismqueer::fractal::mandelbrot iteration per R2 + R3 + R6.
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** The thesis (Masterarbeit, FH Aachen, Campus Jülich, 2012) ports a CUDA spin-dynamics program to OpenCL and adds OpenGL visualization and an FFT. It has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK, and `prismqueer::liquid` never carried a ψ or an `anna_wolf` item (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). "Anna Wolf ψ" is the apparatus from Anna Jakobs's 2012 thesis, read across: our reading, not the thesis's content.
+
 **Composition-anchors:** `in @prism`, `in @meta`, `in @void`, `in @autopoietic`, `in @uuid/spectral`.
 
 **Sub-species (forward-promised species-mints):**

@@ -88,6 +88,8 @@ For mirror's CPU/GPU boundary specifically (when the Scheduler Tower mediates be
 - **Anna's VBO + OpenCL interop** (Jakobs 2012 §4.4, §7.2.1) is the equivalent for separate-memory architectures: a shared buffer between OpenGL rendering and OpenCL computation. The host explicitly synchronizes; the backpressure signal is buffer-write completion.
 - **OpenCL command queues** (Jakobs 2012 §3) ARE the backpressure mechanism at the OpenCL layer: the device's queue depth limits how much work is in flight; submitting more blocks until the queue drains.
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Thesis §3 introduces OpenCL host, kernels and the command queue; it does not discuss queue depth, blocking enqueues or backpressure. "Command queues ARE the backpressure mechanism" is the apparatus from Anna Jakobs's 2012 thesis, read across. The VBO bullet above is right: acquire/release brackets the kernel (Listing 17, p. 29).
+
 The Scheduler Tower's CPU/GPU specialization isn't a new design — it's the GenStage protocol implemented over a shared-memory bus instead of BEAM mailboxes. Anna's thesis is the architectural reference for the bus; GenStage is the protocol reference for the demand handshake.
 
 ---

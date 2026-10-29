@@ -125,6 +125,8 @@ Seam gate discipline: Rust `.rs` commit-msg prelude hook rejects staged `.rs` ad
 - `/Users/alexwolf/dev/projects/prism/prismqueer/src/liquid/` — Anna Wolf 2012 ψ apparatus + weak-measurement operator LANDED (module directory RESIDENT).
 - `/Users/alexwolf/dev/projects/prism/prismqueer/src/reality.rs` — RESIDENT (Reality<T> sum-type Fractured/Flux/Settled per Move 16).
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Here and at :198, :383, :386: there is no `prismqueer/src/liquid/` directory and no Anna Wolf ψ or weak-measurement operator in prism (Taut 2026-09-16 scout §11, same week). The thesis (Masterarbeit, FH Aachen, Campus Jülich, 2012) ports a CUDA spin-dynamics program to OpenCL and adds OpenGL visualization and an FFT. It has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK, and `prismqueer::liquid` never carried a ψ or an `anna_wolf` item (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). The ADMIT verdict at Test 7' rests on that claim. Line numbers refer to `346253b`.
+
 ### §1.6 Prior Seam audit precedents
 
 - `docs/audits/2026-09-11-seam-phase-d-adjudication-of-mara-triple-witness-canonical-df65bcb.md` — `c9c3e34` triple-witness precedent LANDED.
