@@ -214,7 +214,7 @@ Reduced from Mara's 4 [ALEX-Q-CRN] residues + Seam's adversarial surfacing. **4 
 
 **Mara-lean**: (A) promote-now — Alex's verbatim theorem statement IS the first witness; [personal detail removed, 2026-10-29] IS the second witness.
 
-**Seam-lean**: (A) with sharpening. Alex's verbatim §0 theorem satisfies substrate-honest first-witness. [personal detail removed, 2026-10-29] as second witness is defensible IF the ensemble's "ability to construct coherent reality" is treated as empirical observable (per §4.3.1) — but Seam adversarial note: the ensemble observable is soft (VISION.md + PRODUCT.md + mirror substrate arc as artifacts). Second witness at math-altitude is arguably the fivefold equivalence itself (LL→Kuramoto→Conway→Foerster→crown-foam consistency) rather than the empirical triangle. Either grounds promotion.
+**Seam-lean**: (A) with sharpening. Alex's verbatim §0 theorem satisfies substrate-honest first-witness. [personal detail removed, 2026-10-29] as second witness is defensible IF the ensemble's "ability to construct coherent reality" is treated as empirical observable (per §4.3.1) — but Seam adversarial note: the ensemble observable is soft (VISION.md + PRODUCT.md + mirror substrate arc as artifacts). Second witness at math-altitude is arguably the fivefold equivalence itself (LL→Kuramoto→Conway→Foerster→crown-foam consistency) rather than [personal detail removed, 2026-10-29]. Either grounds promotion.
 
 **Unblocks if YES**: #CRN-1 lands as Recognition; propagates to shards that carry the reading (@torus + @dance + @peer + @gestalt).
 **Unblocks if NO**: #CRN-1 stays candidate; second-witness peer sought at future arc.
