@@ -176,9 +176,12 @@ pre-commit:
     # default features: the RED-by-design batteries sit behind the
     # `red-claims` feature (`just test-red` runs them).
     #
-    # Not a fallback. The commit that makes `mirror kintsugi` dispatch
-    # (`mirror compile` → fixpoint-parser T1) restores the kintsugi gate
-    # here; that is part of T1's definition of done.
+    # Not a fallback. Since the compile/kintsugi split (2026-10-29),
+    # `mirror compile` is one shard (T1) and `mirror kintsugi` glues.
+    # The commit that makes `mirror kintsugi` dispatch (kintsugi v0, after
+    # T1 and K0; docs/specs/mirror-kintsugi.md) restores the kintsugi gate
+    # here, with `ruler @mirror/gate` in mirror.spec saying what it
+    # tolerates.
     #
     # Own target dir: the shared CARGO_TARGET_DIR is locked by any other
     # session's cargo run, and the gate must not wait on another repo.
