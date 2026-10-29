@@ -253,7 +253,7 @@ merge:
     git pull --ff-only origin main
     if ! git merge --ff-only "$branch" 2>/dev/null; then
         echo "→ ff-only failed; creating merge commit"
-        git merge --no-ff --no-gpg-sign "$branch" -m "🔀 merge $branch into main"
+        git merge --no-ff "$branch" -m "🔀 merge $branch into main"
     fi
     echo "→ running pre-commit gate"
     just pre-commit
