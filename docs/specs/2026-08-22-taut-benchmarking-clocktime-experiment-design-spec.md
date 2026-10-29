@@ -13,10 +13,10 @@ composition-anchors:
   - shards/reality/subject.mirror (26.1KB, LANDED 2026-07-22; H¹-non-linear + σ(x) contribution)
   - shards/reality/object.mirror (16.7KB, LANDED 2026-07-22; H¹-linear + σ(x)-invariant)
   - /Users/reed/dev/systemic.engineering/practice/insights/cosmology/information-curvature.md (42.4KB Alex+Mara 2026-03-24)
-  - /Users/reed/dev/systemic.engineering/practice/collaborators/peers/anna-wolf/master_jakobs.pdf (1.8MB Anna Jakobs 2012 Diplomarbeit)
+  - /Users/reed/dev/systemic.engineering/practice/collaborators/peers/anna-wolf/master_jakobs.pdf (1.8MB Anna Jakobs 2012 Masterarbeit)
   - docs/specs/2026-08-22-mara-recognition-94-self-modifying-mirror-loop-at-silicon-rust-floor-fixed-point-closure-canonical-spec.md (Mara Rec #94 spec)
   - docs/math/2026-08-22-mara-recognition-94-self-modifying-mirror-loop-at-silicon-lawvere-fixed-point-closure-math-foundation.md (Mara Rec #94 math)
-  - docs/math/FLOOR.md §5.8 (Anna Diplomarbeit at runtime-level ancestor)
+  - docs/math/FLOOR.md §5.8 (Anna Masterarbeit at runtime-level ancestor)
   - docs/loop/CURRENT.md 🕯️ 2026-08-22 Q+28 (Alex verbatim hypothesis + 12 shipping prerequisites)
 adjudication-surface:
   - Q+28.1 (a) Rec #95 mint | (b) Rec #94 amendment #1 | (c) PAPER §6.4 protocol | (d) A₆ physics fiber
@@ -24,6 +24,8 @@ adjudication-surface:
   - σ(x) scaling law at silicon-thermal-substrate (Mara canonical-spec territory)
   - Ship-before-vs-after Rec #94 Tick 1-6 empirical fire (Alex adjudicable)
 ---
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
 
 # Clocktime experiment — design spec (Taut #390 return)
 
@@ -232,7 +234,7 @@ scale (§7 surfaces this as Mara canonical-spec territory). The doc
 establishes the framework at cosmological altitude; the MacBook-scale
 prediction requires an additional derivation.
 
-### §1.7 Anna 2012 Diplomarbeit — the observation-in-computation pattern
+### §1.7 Anna 2012 Masterarbeit — the observation-in-computation pattern
 
 LANDED at `~/dev/systemic.engineering/practice/collaborators/peers/anna-wolf/master_jakobs.pdf` (1.8MB, Anna Jakobs 2012, PGI/Jülich Centre for Neutron Science).
 
@@ -816,7 +818,7 @@ Per Q+28 prerequisite #12 verbatim:
 
 ### §9.1 Anna's authorial contribution surface
 
-Anna authored the load-bearing measurement-primitive: 2012 Diplomarbeit's
+Anna authored the load-bearing measurement-primitive: 2012 Masterarbeit's
 stochastic-Runge-Kutta-with-OpenGL-observation-in-shared-GPU-memory pattern.
 Lifting to CPU-clocktime substrate is not verbatim application; it requires
 Anna's mathematical authority to adjudicate fidelity of the lift.
@@ -1078,7 +1080,7 @@ rather than at empirical-firing altitude.
 - Solar-system information profile tabulated (Sun ~10⁵⁷ bits; Earth biosphere ~10⁴⁰⁻⁴⁴ bits; Pioneer anomaly onset near Saturn's orbit)
 - Does NOT contain silicon-thermal-substrate σ(x) scaling law (§7 gap)
 
-### A.7 Anna 2012 Diplomarbeit LANDED
+### A.7 Anna 2012 Masterarbeit LANDED
 
 `/Users/reed/dev/systemic.engineering/practice/collaborators/peers/anna-wolf/master_jakobs.pdf` (1.8MB Anna Jakobs 2012):
 - **Verified existence** (grep-verified via Search; path differs slightly from dispatch expectation — actual path is `.../collaborators/peers/anna-wolf/...` not `.../collaborators/anna-wolf/...`; both symlink to same file)

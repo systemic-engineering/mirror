@@ -228,6 +228,8 @@ without perturbing the computation.** The observer sees exactly what
 the computer computes, in the same memory the computer writes to, at
 the frame-rate of the visualization loop.
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Item 4 above is correct: Listing 17 (p. 29) locks the VBO to OpenCL while the kernel runs (`glFinish` → `clEnqueueAcquireGLObjects` → kernel → `clFinish` → release). The summary sentence is not. **Not zero-copy** for the drawing that matters: arrows are not GL primitives, so "mussten zunächst die Spindaten wieder aus dem VBO ausgelesen werden" (`glGetBufferSubData`, pp. 29–30). **Not without perturbing**: computation and visualization alternate, "nacheinander" (p. 43), at a cost of about a third of the runtime. **Not live in the concurrent sense**: the separate-thread design "konnte … nicht umgesetzt werden" (p. 31). The pattern the thesis does show is a shared buffer read at step boundaries. Printed pages; PDF page = printed + 4.
+
 Anna states her generalization intent in §9 Ausblick (AW2012:46
 verbatim):
 

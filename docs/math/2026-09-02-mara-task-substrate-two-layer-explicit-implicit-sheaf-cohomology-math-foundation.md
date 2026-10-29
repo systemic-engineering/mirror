@@ -30,7 +30,7 @@ karen_ancestors:
   - "Lawvere, F. William (1969). *Diagonal arguments and Cartesian closed categories.* LNCS 92:134-145. **Diagonal fixed-point; grounds the recursion-termination-at-λ₀ theorem at §5 per Rec #94 anchor.**"
   - "von Foerster, Heinz (1974). *Notes on an Epistemology for Living Things.* Ethical imperative: increase choice-count. **Grounds the compile-time gauge invariant on all task-transformations at §7; the substrate refuses to compose extractive task-transformations per rust/src/magic.rs::foerster_gauge_preserved LANDED.**"
   - "Bateson, Gregory (1972). *Steps to an Ecology of Mind.* **Metalogue as substrate for the task-body-carries-conversation-about-the-task shape at §3.4.**"
-  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Diplomarbeit, PGI/JCNS. **Observation-without-perturbation at shared-memory substrate; consent obtained via Alex 2026-08-26. Load-bearing at every measurement site per HARD RULE [[project-anna-wolf-2012-observation-without-perturbation]]: enumerating tasks in the task-graph, computing Fiedler λ₂ over the task-corpus sheaf-Laplacian, and rendering a projection all satisfy observer-non-perturbation.**"
+  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS. **Observation-without-perturbation at shared-memory substrate; consent obtained via Alex 2026-08-26. Load-bearing at every measurement site per HARD RULE [[project-anna-wolf-2012-observation-without-perturbation]]: enumerating tasks in the task-graph, computing Fiedler λ₂ over the task-corpus sheaf-Laplacian, and rendering a projection all satisfy observer-non-perturbation.**"
   - "Miserandino, Christine (2003). *The Spoon Theory.* butyoudontlooksick.com. **Neuroqueer canonical prior art for energy-budget-as-first-class-carrier at §3.5; composed with Dodson interest-based-nervous-system framing.**"
   - "Dodson, William (multi-year). *Interest-Based Nervous System* framing / PINCH acronym (Play/Interest/Novelty/Competition/Hurry). neurodivergentinsights.com. **Neuroqueer canonical prior art for driver-based-task-visibility at §3.5.**"
   - "Ricky Jones (2026-08-26, systemic.engineering Signal group chat). *Rotation is non-negotiation.* Coinage. **HARD RULE lineage per Reed memory graph [[feedback-rotation-is-non-negotiation]]; grounds the migration-as-first-class-graph-operation discipline at §3.3 — task-abandonment IS PRE-ROTATION not negotiation-basin.**"
@@ -45,6 +45,8 @@ karen_ancestors:
   - "Braunstein, S. L.; Ghosh, S.; Severini, S. (2006). *The Laplacian of a graph as a density matrix.* Ann. Comb. 10:291. **Void-duality enumeration; grounds A_F^prismqueer at FLOOR §2 the compose primitive at §4.4 inherits.**"
   - "Chamseddine, Ali; Connes, Alain (2007). *Why the Standard Model.* J. Geometry and Physics 58:38-47. arXiv:0706.3688. **Almost-commutative spectral-triple admissibility.**"
 ---
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
 
 # @task substrate — two-layer explicit/implicit sheaf-cohomology math foundation
 
@@ -112,7 +114,7 @@ Read once. Then §1.
 | Foerster-gauge invariant | rust/src/magic.rs::foerster_gauge_preserved LANDED | Applied at §7 all task-transformations |
 | Bujo four primitives | Ryder Carroll 2018 | Lift to migration-as-edge + tombstone-as-node §3.3 |
 | Shape-Up six primitives | Ryan Singer 2019 | Lift to cycle-projection §6.3 |
-| Anna Wolf 2012 observation-without-perturbation | Anna Wolf 2012 Diplomarbeit; Alex 2026-08-26 consent | Load-bearing at every measurement site |
+| Anna Wolf 2012 observation-without-perturbation | Anna Wolf 2012 Masterarbeit; Alex 2026-08-26 consent | Load-bearing at every measurement site |
 
 ---
 
@@ -155,7 +157,7 @@ Before §2 names the mathematical objects, §1 enumerates every candidate mint c
 - `V_task = T` — one vertex per task-artifact (content-addressed per FLOOR §4 β-normal-AST OID); duplicate detection is O(1) via OID-equality
 - `E_task = E_explicit ∪ E_implicit ∪ E_migration ∪ E_supersedes ∪ E_shapes ∪ E_blocks ∪ E_authored` — the union of seven edge-type sub-graphs enumerated in §2.4
 
-**Anna Wolf 2012 observation-without-perturbation grounding**: `G_task` is a shared-memory substrate; enumerating its vertices and edges does not alter the graph-topology. Every measurement below (Fiedler λ₂ over `L_{F_task}`; H¹(F_task) cohomology class enumeration; sub-graph traversal at each node) satisfies observer-non-perturbation per Anna 2012 Diplomarbeit's shared-buffer measurement primitive.
+**Anna Wolf 2012 observation-without-perturbation grounding**: `G_task` is a shared-memory substrate; enumerating its vertices and edges does not alter the graph-topology. Every measurement below (Fiedler λ₂ over `L_{F_task}`; H¹(F_task) cohomology class enumeration; sub-graph traversal at each node) satisfies observer-non-perturbation per Anna 2012 Masterarbeit's shared-buffer measurement primitive.
 
 **Grounding.** Curry 2014 §2.1 (cellular complex over undirected graph) + Hansen-Ghrist 2019 §2.2 (base graph for sheaf-Laplacian construction) + Reed 2026-09-02 §2.2 (graph-native edges as first-class per mirror substrate).
 

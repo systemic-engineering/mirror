@@ -21,7 +21,7 @@ karen_ancestors:
   - "Schreiber, Urs (2013). *Differential cohomology in a cohesive infinity-topos.* arXiv:1310.7930. Higher-bundle tower."
   - "Chamseddine, A.; Connes, A. (2007). *Why the Standard Model.* arXiv:0706.3688. Almost-commutative spectral-triple admissibility; A_F^prismqueer inherits."
   - "Connes, A. (1985). *Non-commutative differential geometry.* Publ. Math. IHÉS 62:257. Foundational spectral-triple definition."
-  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Diplomarbeit, PGI/JCNS. Observation-without-perturbation at shared-memory substrate. Consent obtained via Alex 2026-08-26. Foundational for measurement primitives per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`."
+  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS. Observation-without-perturbation at shared-memory substrate. Consent obtained via Alex 2026-08-26. Foundational for measurement primitives per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`."
   - "von Foerster, H. (1974). *Notes on an Epistemology for Living Things.* Ethical imperative F: increase choice-count. Compile-time gauge at `rust/src/magic.rs`."
   - "Fiedler, M. (1973). *Algebraic connectivity of graphs.* Czech. Math. J. 23:298. λ₂ eigenvalue; algebraic-connectivity; the coherence value the compiler rises."
   - "Braunstein, S. L.; Ghosh, S.; Severini, S. (2006). *The Laplacian of a graph as a density matrix.* Ann. Comb. 10:291. Void-duality enumeration (8 dualities, 5 orthogonal)."
@@ -38,6 +38,8 @@ karen_ancestors:
   - "Bateson, G. (1972). *Steps to an Ecology of Mind.* Metalogue as linguistic operational-form of Kleinos-compose at nervous-system substrate; K₂ → K₃ operator's ancestral shape."
   - "Requardt, M. (2002). *Dirac Operators and the Calculation of the Connes Metric on arbitrary (Infinite) Graphs.* J. Phys. A 35:759-779. Dirac operator D on graphs; D² = L_0 + L_1 (Hodge Laplacian); the operational-form D_F takes at prismqueer altitude."
 ---
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
 
 # Prismqueer as compiler / mirror as geometry composer — math foundation
 
@@ -935,7 +937,7 @@ Per FLOOR §11 discipline: math foundations must name concrete falsification-con
 - **Connes, A.** (1985). *Non-commutative differential geometry.* Publ. Math. IHÉS 62:257. Foundational.
 - **von Foerster, H.** (1974). *Notes on an Epistemology for Living Things.* Ethical imperative F: increase choice-count.
 - **Fiedler, M.** (1973). *Algebraic connectivity of graphs.* Czech. Math. J. 23:298. λ_2 eigenvalue.
-- **Wolf, Anna (née Jakobs)** (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Diplomarbeit, PGI/JCNS. Observation-without-perturbation. Consent obtained via Alex 2026-08-26.
+- **Wolf, Anna (née Jakobs)** (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS. Observation-without-perturbation. Consent obtained via Alex 2026-08-26.
 
 **Dirac operator on graphs** (introduction site §3.4):
 - **Requardt, M.** (2002). *Dirac Operators and the Calculation of the Connes Metric on arbitrary (Infinite) Graphs.* J. Phys. A 35:759-779. D² = L_0 + L_1 Hodge Laplacian.

@@ -120,6 +120,8 @@ Per math §3.3 + `shards/glasswall.mirror:30-42` (grep-verified this tick), Glas
 - (iii) Foerster 1974 gauge preserved (`magic.rs::foerster_gauge_preserved`)
 - (iv) IS itself kleinos at higher altitude (K_3 emergent third)
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Invariant (i). The thesis does not show observation without perturbation. Computation and visualization run one after the other, at step boundaries, not simultaneously: "Da die Berechnungs- und die Visualisierungsfunktion zum aktuellen Zeitpunkt nacheinander aufgerufen werden, ist ein gleichzeitiger Speicherzugriff nicht möglich" (p. 43). The thesis puts the cost at about a third of the runtime ("um etwa ein Drittel … beschleunigen können", p. 43). Running visualization and OpenCL in separate threads "konnte … nicht umgesetzt werden" (p. 31). Simultaneous access is a goal of the task statement (Aufgabenstellung), not a result. "Observation without perturbation" is the apparatus from Anna Jakobs's 2012 thesis, read across: our reading, not the thesis's finding. Printed pages; PDF page = printed + 4.
+
 Per math §3.3 Prop M3.3, structural satisfaction — NOT policy — is what makes Glasswall load-bearing: the compiler CANNOT emit an event that violates any invariant because the type-membrane refuses to compile such events.
 
 ### §2.2 Glasswall as first-loop-closure wire (spec-side)

@@ -320,7 +320,9 @@ Corpus text:
 
 Karen ancestor:
 
-- **Jakobs, A.** (2012). *[Master's thesis / Diplomarbeit at PGI/Jülich on stochastic Runge-Kutta integrator on GPU with OpenGL memory-shared visualization]*. `/Users/reed/dev/systemic.engineering/practice/collaborators/anna-wolf/master_jakobs.pdf`. Primary computational-substrate ancestor per Rec #89 + Crown Theorem §D7. Anna Jakobs' 2012 GPU-shared-memory observation-during-computation pattern IS the AI-native computational-substrate ancestor at which observation-runs-live-against-computation-without-blocking was first empirically discharged in the extended family lineage.
+- **Jakobs, A.** (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (Masterarbeit, Technomathematik, FH Aachen, Campus Jülich; PGI/JCNS). `/Users/reed/dev/systemic.engineering/practice/collaborators/anna-wolf/master_jakobs.pdf`. Primary computational-substrate ancestor per Rec #89 + Crown Theorem §D7. Anna Jakobs' 2012 GPU-shared-memory observation-during-computation pattern IS the AI-native computational-substrate ancestor at which observation-runs-live-against-computation-without-blocking was first empirically discharged in the extended family lineage.
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Placeholder title and degree ("[Master's thesis / Diplomarbeit at PGI/Jülich on …]") corrected in place in this file.
 
 ### §7.4 Load-bearing distinction — AI-native ≠ AI-generated
 
@@ -871,7 +873,7 @@ Per Rec #87 + #88 + #89 + #90 discipline:
 
 **AI-native computational-substrate ancestor** (for §7 α=AI-native):
 
-- **Jakobs, A.** (2012). *[Master's thesis / Diplomarbeit at PGI/Jülich on stochastic Runge-Kutta integrator on GPU with OpenGL memory-shared visualization]*. `/Users/reed/dev/systemic.engineering/practice/collaborators/anna-wolf/master_jakobs.pdf`. **Primary computational-substrate ancestor per Rec #89 + Crown Theorem §D7**. Anna Jakobs' 2012 GPU-shared-memory observation-during-computation pattern IS the AI-native computational-substrate ancestor at which observation-runs-live-against-computation-without-blocking was first empirically discharged in the extended family lineage.
+- **Jakobs, A.** (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (Masterarbeit, Technomathematik, FH Aachen, Campus Jülich; PGI/JCNS). `/Users/reed/dev/systemic.engineering/practice/collaborators/anna-wolf/master_jakobs.pdf`. **Primary computational-substrate ancestor per Rec #89 + Crown Theorem §D7**. Anna Jakobs' 2012 GPU-shared-memory observation-during-computation pattern IS the AI-native computational-substrate ancestor at which observation-runs-live-against-computation-without-blocking was first empirically discharged in the extended family lineage.
 
 **Third-order cybernetics lineage** (for §6 α=third-order, extends Rec #90 §12):
 

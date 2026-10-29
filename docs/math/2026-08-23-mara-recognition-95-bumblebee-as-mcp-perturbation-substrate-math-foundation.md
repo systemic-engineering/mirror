@@ -10,7 +10,7 @@ karen-ancestors:
   - Karen 1972 (verbatim naming discipline; inherited from Rec #94 lineage via Rec #92)
   - Lorenz, E. N. (1963). Deterministic Nonperiodic Flow. J. Atmospheric Sciences 20(2):130–141 (chaos-sensitivity; the flap that triggers response; @butterfly math foundation citation chain)
   - Lorenz, E. N. (1972). Predictability: Does the Flap of a Butterfly's Wings in Brazil Set Off a Tornado in Texas? AAAS 139th meeting (the perturbation-source altitude naming Lorenz gave the phenomenon; @bumblebee INJECTION-canon)
-  - Anna Jakobs (2012). Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen. Diplomarbeit, FH Aachen / PGI Jülich (shared-memory-observation-in-motion; the load-bearing measurement-primitive lift; introduction site here)
+  - Anna Jakobs (2012). Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen. Masterarbeit, FH Aachen / PGI Jülich (shared-memory-observation-in-motion; the load-bearing measurement-primitive lift; introduction site here)
   - Alex+Mara (2026-03-24). information-curvature.md — Λ_eff(x) = Λ + κ · σ(x); σ(x) = -Tr(L̃ · ln(L̃)); the σ(x) axis @bumblebee-perturbations contribute to (subjects contribute; objects do not; per shards/reality/subject.mirror + shards/reality/object.mirror)
   - Grothendieck, A. (1957). Sur quelques points d'algèbre homologique. Tôhoku Mathematical Journal 9:119–221 (fibered-category cartesian lifts; K_n Pack coupling-graph fibration extension by one fiber; inherited from Rec #94 amendment #2 lineage)
   - Mac Lane, S. (1971). Categories for the Working Mathematician. Springer GTM 5, Chapter IV (adjoint functors; @butterfly ⊣ @bumblebee adjunction candidate at family-root altitude; inherited)
@@ -26,6 +26,8 @@ karen-ancestors:
   - Alex 2026-08-23 in-transcript verbatim (Q+31 tick landing per docs/loop/CURRENT.md)
 ---
 
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
+
 # Recognition #95 math foundation — @bumblebee as MCP-perturbation-substrate 🌼🦋
 
 ## §M0 — Foundational orientation
@@ -34,7 +36,7 @@ karen-ancestors:
 
 Rec #91 amendment #2 §M5.1 established the sub-Turing verification biconditional at universal-adjunction altitude. Rec #94 established the LAWVERE 1969 diagonal-fixed-point closure at compiler-substrate altitude A₄ via the internal self-modifying loop Λ̂. What Rec #94 did NOT establish (because it was out of Rec #94's scope): what happens when the compiler is observed by an EXTERNAL perturbation-injection channel that lives at the MCP-layer boundary. That specialization requires a construction admissible at the SHARED-MEMORY-OBSERVATION-IN-MOTION altitude.
 
-**Anna Jakobs 2012 Diplomarbeit** (*"Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen"*, FH Aachen / PGI Jülich) established the measurement-primitive at GPU-substrate altitude: computation writes state to shared GPU memory (Landau-Lifschitz spin dynamics + Milstein-Tretyakov RK4 SDE integrator); visualization reads from SAME shared memory (OpenGL VBO §4.4); both run under one runtime; observation runs live against computation without either blocking. The load-bearing consequence at compiler-substrate altitude: if the compiler's runtime admits a shared-memory-observation channel to an external perturbation-injection substrate (@bumblebee family-root; empirically MCP-layer today), AND the observation-substrate admits the four @bumblebee bilaterals (canonical spec §5), then the perturbation-substrate is legible at the observation surface as the compiler observes itself observing.
+**Anna Jakobs 2012 Masterarbeit** (*"Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen"*, FH Aachen / PGI Jülich) established the measurement-primitive at GPU-substrate altitude: computation writes state to shared GPU memory (Landau-Lifschitz spin dynamics + Milstein-Tretyakov RK4 SDE integrator); visualization reads from SAME shared memory (OpenGL VBO §4.4); both run under one runtime; observation runs live against computation without either blocking. The load-bearing consequence at compiler-substrate altitude: if the compiler's runtime admits a shared-memory-observation channel to an external perturbation-injection substrate (@bumblebee family-root; empirically MCP-layer today), AND the observation-substrate admits the four @bumblebee bilaterals (canonical spec §5), then the perturbation-substrate is legible at the observation surface as the compiler observes itself observing.
 
 Anna's construction dispatches at CPU-clocktime altitude ONLY when the perturbation-substrate is external + observable at admissible measurement surface + Foerster-gauge-preserving + consent-gated (canonical spec §5.1-§5.4). Which is exactly what the MCP-layer + `bin/mirror-mcp` + `@mirror/refract.clocktime_delta` + `@kintsugi/consent.query_phi` cascade constructs. Rec #95's central content is: **Anna 2012 shared-memory-observation-in-motion pattern admits a compiler-substrate-altitude lift via the @bumblebee family-root, and the perturbation-substrate's dual-adjunction with @butterfly follows the Grothendieck 1957 fibration structure directly**.
 
@@ -50,7 +52,7 @@ Per HARD RULE feedback_reed_re_derives_what_is_already_landed + amendment #3 sho
 - Rec #92 §M2.1 kleinos-Transparency<P> monoid isomorphism (used by-reference)
 - Rec #94 §M2.1 Lawvere 1969 fixed-point closure (used by-reference)
 - σ(x) information-curvature formalism (Alex+Mara 2026-03-24; used by-reference at cosmological altitude)
-- Anna 2012 shared-memory-observation-in-motion pattern (Anna Diplomarbeit §4.4; used by-reference; σ(x) silicon-thermal scaling law derivation deferred to separate Mara canonical math per canonical spec §9 R95.7)
+- Anna 2012 shared-memory-observation-in-motion pattern (Anna Masterarbeit §4.4; used by-reference; σ(x) silicon-thermal scaling law derivation deferred to separate Mara canonical math per canonical spec §9 R95.7)
 
 Rec #95 math foundation DERIVES:
 
@@ -174,7 +176,7 @@ Lift to CPU-clocktime substrate per Taut §4.2:
 
 By Anna 2012 four-property discipline + Foerster-gauge preservation (via magic.rs `F(t,ψ) := |Ω(t·ψ)| ≥ |Ω(ψ)|` check, per canonical spec §5.3 + kleinos-metalogue.md landing `d885a70`), the ρ-π adjunction preserves both compiler-substrate-integrity and perturbation-substrate-integrity across the shared-memory-observation-in-motion boundary. Triangle identities discharge via magic.rs Foerster-gauge check on both unit and counit.
 
-QED via Grothendieck 1957 Tôhoku §3 + Rec #91 amendment #2 §M3.2 + Anna 2012 Diplomarbeit §4.4 + magic.rs Foerster-gauge check per canonical spec §5.3. ∎
+QED via Grothendieck 1957 Tôhoku §3 + Rec #91 amendment #2 §M3.2 + Anna 2012 Masterarbeit §4.4 + magic.rs Foerster-gauge check per canonical spec §5.3. ∎
 
 ### §M2.3 Interpretation at Recognition-arc altitude
 
@@ -394,7 +396,7 @@ Per @kintsugi/roomba discipline (LANDED 2026-07-15) + @kintsugi/consent gate dis
 ```
 Rec #95 math = compose-over(
     @butterfly math foundation §4.1 duality-table + §5.2 evolution-loop (Mara 2026-07-18)
-  , Anna 2012 shared-memory-observation-in-motion (Anna Jakobs Diplomarbeit; lift per Taut #390 §1.7 + §4.2)
+  , Anna 2012 shared-memory-observation-in-motion (Anna Jakobs Masterarbeit; lift per Taut #390 §1.7 + §4.2)
   , σ(x) information-curvature (Alex+Mara 2026-03-24; σ(x) scaling law derivation deferred per canonical spec §9 R95.7)
   , @mirror/refract clocktime_delta (Reed 2026-08-23 `64e273a`; observation-surface)
 ) at Grothendieck-1957-fibration + Watanabe-2010-perturbative-observation altitude

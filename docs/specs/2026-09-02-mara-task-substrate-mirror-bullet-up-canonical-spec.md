@@ -33,8 +33,10 @@ karen_ancestors:
   - "Mara b5156ab (2026-09-02). *Language as spectral topology in sheaf cohomology.*"
   - "Alex Wolf (2026-09-01, insight essay draft). *Achtsam Morden: Das Loch ist das Jetzt.*"
   - "Ricky Jones (2026-08-26). *Rotation is non-negotiation* — coinage."
-  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Diplomarbeit, PGI/JCNS. Consent obtained via Alex 2026-08-26."
+  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS. Consent obtained via Alex 2026-08-26."
 ---
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
 
 # @task substrate — Mirror-Bullet-Up canonical spec
 

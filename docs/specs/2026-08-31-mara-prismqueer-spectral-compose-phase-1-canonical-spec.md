@@ -18,10 +18,12 @@ karen_ancestors:
   - "Fiedler, M. (1973). *Algebraic connectivity of graphs.* Czech. Math. J. 23:298."
   - "von Foerster, H. (1974). *Notes on an Epistemology for Living Things.*"
   - "Bateson, G. (1972). *Steps to an Ecology of Mind.*"
-  - "Wolf, A. (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Diplomarbeit, PGI/JCNS. Consent obtained via Alex 2026-08-26."
+  - "Wolf, A. (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS. Consent obtained via Alex 2026-08-26."
   - "Lawvere, F. W. (1969). *Diagonal arguments and Cartesian closed categories.* LNCS 92:134-145."
   - "Requardt, M. (2002). *Dirac Operators and the Calculation of the Connes Metric.* J. Phys. A 35:759-779."
 ---
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
 
 # prismqueer::spectral::compose Phase 1 — canonical spec
 

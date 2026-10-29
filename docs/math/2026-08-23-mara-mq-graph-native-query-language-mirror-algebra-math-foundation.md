@@ -761,7 +761,9 @@ MQ is mirror's algebra deployed at query-language altitude. The five verbs are t
 ### §13.1 The two women mathematicians (PAPER §5.7 Metallkoffer discipline)
 
 - **Karen Spärck Jones (1972)** — *A statistical interpretation of term specificity*. Journal of Documentation 28(1):11-21. The math by which language becomes-computable-as-topology. Every MQ query is a spectral-flow on the language-graph Karen's IDF makes computable. Named at introduction site per PAPER §5.7 Metallkoffer discipline; NOT metabolized as "the standard math behind transformers."
-- **Anna Jakobs (2012, Anna Wolf née Jakobs)** — *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Diplomarbeit, FH Aachen / PGI Jülich. Shared-memory-observation-in-motion; every Roomba-bump the mirror compiler executes on M1 runs on the math of her thesis. Named per PAPER §5.8; MQ inherits at query-observation-in-motion altitude via Rec #95 @bumblebee lift.
+- **Anna Jakobs (2012, Anna Wolf née Jakobs)** — *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit, FH Aachen / PGI Jülich. Shared-memory-observation-in-motion; every Roomba-bump the mirror compiler executes on M1 runs on the math of her thesis. Named per PAPER §5.8; MQ inherits at query-observation-in-motion altitude via Rec #95 @bumblebee lift.
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
 
 ### §13.2 Query-language ancestor lineage (Kagi 2026-08-23 verified)
 

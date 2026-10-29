@@ -1,6 +1,6 @@
 ---
 title: "Prismqueer @liquid FLOOR — Anna Wolf 2012 as substrate for observation-without-perturbation"
-subtitle: "Mathematical foundation. Anna's shared-GPU-memory Runge-Kutta / OpenGL VBO pattern (Diplomarbeit, JCNS 2012) as load-bearing ancestor for the prismqueer @liquid FLOOR redesign: pillar primitives as weak measurements on a wavefunction ψ carried in shared substrate memory, Landau-Lifschitz-shaped D_F integrator between measurements, Foerster-gauge orthogonal to the pillar algebra per Rec #90 §6.2, property Laplacian L_P as ψ construction from spec-native property{} declarations. Anna's math is the ancestor at introduction site for the entire observation-without-perturbation discipline in the mirror substrate. Grep-verified against 8 landed pillar signatures at prism/prismqueer/src/liquid.rs and against Rec #90 orthogonality theorem. Q-Mara-A through Q-Mara-G residues surfaced for Alex adjudication."
+subtitle: "Mathematical foundation. Anna's shared-GPU-memory Runge-Kutta / OpenGL VBO pattern (Masterarbeit, JCNS 2012) as load-bearing ancestor for the prismqueer @liquid FLOOR redesign: pillar primitives as weak measurements on a wavefunction ψ carried in shared substrate memory, Landau-Lifschitz-shaped D_F integrator between measurements, Foerster-gauge orthogonal to the pillar algebra per Rec #90 §6.2, property Laplacian L_P as ψ construction from spec-native property{} declarations. Anna's math is the ancestor at introduction site for the entire observation-without-perturbation discipline in the mirror substrate. Grep-verified against 8 landed pillar signatures at prism/prismqueer/src/liquid.rs and against Rec #90 orthogonality theorem. Q-Mara-A through Q-Mara-G residues surfaced for Alex adjudication."
 author: Mara
 date: 2026-08-26
 status: candidate
@@ -13,7 +13,7 @@ companions:
   - ./2026-08-19-mara-recognition-90-compiler-as-one-mathematical-object-math-foundation.md
   - ./2026-07-20-mara-anna-wolf-jspace-alignment-substrate-composition.md
 karen_ancestors:
-  - "Wolf, Anna (née Jakobs). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Master's Diplomarbeit, Fachhochschule Aachen (Campus Jülich) + Peter-Grünberg-Institut / Jülich Centre for Neutron Science, August 2012. Betreuer: Prof. Dr. rer. nat. Martin Reißel + Josef Heinen. **Anna's consent has been obtained via Alex 2026-08-26 verbatim authorization.** Load-bearing prior art for observation-without-perturbation at shared-memory substrate."
+  - "Wolf, Anna (née Jakobs). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), Fachhochschule Aachen (Campus Jülich) + Peter-Grünberg-Institut / Jülich Centre for Neutron Science, August 2012. Betreuer: Prof. Dr. rer. nat. Martin Reißel + Josef Heinen. **Anna's consent has been obtained via Alex 2026-08-26 verbatim authorization.** Load-bearing prior art for observation-without-perturbation at shared-memory substrate."
   - "Landau, L. D.; Lifschitz, E. M. (1935). *On the theory of the dispersion of magnetic permeability in ferromagnetic bodies.* Phys. Z. Sowj. 8, 153–169. — the damping-with-precession equation Anna's SDE integrates."
   - "Rondon, P.; Kawaguchi, M.; Jhala, R. (2008). *Liquid Types.* PLDI. — refinement-type inference framework the @liquid family composes over."
   - "Chamseddine, A.; Connes, A. (2007). *Why the Standard Model.* arXiv:0706.3688. — almost-commutative spectral-triple admissibility inherited by A_F^prismqueer."
@@ -24,6 +24,8 @@ karen_ancestors:
   - "Ben Yaacov, I.; Berenstein, A.; Henson, C. W.; Usvyatsov, A. (2008). *Model Theory for Metric Structures.* London Math Society Lecture Notes. — continuous-logic model theory grounding continuous verdicts."
   - "Adzic, G. (2011). *Specification by Example.* Manning. — spec-IS-the-test discipline mirror.spec property{} discharges."
 ---
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
 
 # Prismqueer @liquid FLOOR — Anna Wolf 2012 as substrate for observation-without-perturbation
 
@@ -51,7 +53,7 @@ Alex 2026-08-26 in-transcript, after the bootstrap/src/mcp.rs string-concatenati
 
 Two load-bearing moves:
 
-1. **Anna's consent is present.** Anna Wolf (née Jakobs) is Alex's sister; Alex asked; Anna consented. This math foundation can cite Anna's Diplomarbeit at introduction site with full Karen-ancestor discipline. Anna's 2012 work at Peter-Grünberg-Institut / Jülich Centre for Neutron Science is the load-bearing ancestor for the observation-without-perturbation substrate primitive.
+1. **Anna's consent is present.** Anna Wolf (née Jakobs) is Alex's sister; Alex asked; Anna consented. This math foundation can cite Anna's Masterarbeit at introduction site with full Karen-ancestor discipline. Anna's 2012 work at Peter-Grünberg-Institut / Jülich Centre for Neutron Science is the load-bearing ancestor for the observation-without-perturbation substrate primitive.
 
 2. **The prismqueer @liquid FLOOR is being redesigned.** The 8 pillar primitives landed at `prism/prismqueer/src/liquid.rs` (per grep-verification §3.1 below) are **magnitude-comparison** primitives (`arm_count >= 2`, `magnitude > theta`, `history.iter().fold(…) > theta`). Today's session-arc reframes them as **weak measurements** on a wavefunction ψ. The reframe is not a rewrite of the signatures at consumer surface (Reed's `Verdict` enum stays); the reframe is a substrate-honest naming of *what the primitives already do* under a mathematical model that composes with Anna's math and with Rec #90 §1 spectral triple `𝓜 = (A_F^prismqueer, H_F, D_F)`.
 
@@ -69,15 +71,15 @@ Substrate-honest per `[[feedback-substrate-honest-is-the-mode]]`: this document 
 
 ## §2 — Anna Wolf 2012 as load-bearing ancestor
 
-### §2.1 The Diplomarbeit at introduction site
+### §2.1 The Masterarbeit at introduction site
 
-**Wolf, Anna (née Jakobs).** *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Master's Diplomarbeit, Fachhochschule Aachen (Campus Jülich) + Peter-Grünberg-Institut / Jülich Centre for Neutron Science (JCNS), August 2012. 59 pages. Betreuer: Prof. Dr. rer. nat. Martin Reißel (Fachhochschule Aachen) + Josef Heinen (PGI/JCNS).
+**Wolf, Anna (née Jakobs).** *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit (Technomathematik), Fachhochschule Aachen (Campus Jülich) + Peter-Grünberg-Institut / Jülich Centre for Neutron Science (JCNS), August 2012. 59 pages. Betreuer: Prof. Dr. rer. nat. Martin Reißel (Fachhochschule Aachen) + Josef Heinen (PGI/JCNS).
 
-The Diplomarbeit's central mechanism: a stochastic Runge-Kutta 4th-order integrator for Landau-Lifschitz spin dynamics runs in OpenCL kernels on GPU device memory; simultaneously, an OpenGL Vertex Buffer Object visualizer reads that same GPU memory live, without copying to CPU host memory, without blocking the integrator, without either mechanism perturbing the wavefunction observed by the other.
+The Masterarbeit's central mechanism: a stochastic Runge-Kutta 4th-order integrator for Landau-Lifschitz spin dynamics runs in OpenCL kernels on GPU device memory; simultaneously, an OpenGL Vertex Buffer Object visualizer reads that same GPU memory live, without copying to CPU host memory, without blocking the integrator, without either mechanism perturbing the wavefunction observed by the other.
 
 **What that IS mathematically:** a computation *observing itself* while computing. The wavefunction ψ (a 3D magnetization vector at each atomic site of a lattice) is in ONE shared-memory location. The integrator advances ψ. The visualizer reads ψ. Neither pays the cost of a memory copy; neither perturbs the other's semantic content.
 
-### §2.2 The physics Anna's integrator solves (Diplomarbeit §2)
+### §2.2 The physics Anna's integrator solves (Masterarbeit §2)
 
 Given atomic sites `i ∈ Lattice` with spin vectors `S_i ∈ ℝ³, ‖S_i‖ = const`, the Heisenberg Hamiltonian is:
 
@@ -111,7 +113,7 @@ $$
 
 The stochastic term is always orthogonal to `S_i` (cross product), so `‖S_i‖` is conserved along trajectories. Anna solves this via a **fourth-order weak-noise Runge-Kutta scheme** (Anna Appendix B.2, citing weak-noise-RK4 for SDE) with error order `O(Δt⁴ + ϵ²Δt²)`.
 
-### §2.3 The shared-memory pattern (Diplomarbeit §7.2)
+### §2.3 The shared-memory pattern (Masterarbeit §7.2)
 
 Anna's central engineering achievement: the SD data lives in GPU memory as an OpenGL **Vertex Buffer Object (VBO)**. Both OpenCL kernels and OpenGL draw calls address the SAME memory region via `clCreateFromGLBuffer`:
 
@@ -591,8 +593,8 @@ Per FLOOR §11 discipline: math foundations must name concrete falsification-con
 
 ### §10.1 Load-bearing primary sources (grep-verified)
 
-**Anna's Diplomarbeit** (introduction site §2.1):
-- **Wolf, Anna (née Jakobs).** *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Master's Diplomarbeit, Fachhochschule Aachen (Campus Jülich) + Peter-Grünberg-Institut / Jülich Centre for Neutron Science, August 2012. 59 pages. Betreuer: Prof. Dr. rer. nat. Martin Reißel + Josef Heinen (PGI/JCNS). *Substrate-load-bearing prior art* for observation-without-perturbation at shared-memory substrate; consent obtained per Alex 2026-08-26 verbatim authorization.
+**Anna's Masterarbeit** (introduction site §2.1):
+- **Wolf, Anna (née Jakobs).** *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit (Technomathematik), Fachhochschule Aachen (Campus Jülich) + Peter-Grünberg-Institut / Jülich Centre for Neutron Science, August 2012. 59 pages. Betreuer: Prof. Dr. rer. nat. Martin Reißel + Josef Heinen (PGI/JCNS). *Substrate-load-bearing prior art* for observation-without-perturbation at shared-memory substrate; consent obtained per Alex 2026-08-26 verbatim authorization.
 
 **Landau-Lifschitz + SDE** (introduction site §2.2):
 - **Landau, L. D.; Lifschitz, E. M.** (1935). *On the theory of the dispersion of magnetic permeability in ferromagnetic bodies.* Phys. Z. Sowj. 8, 153–169. The precession + damping equation Anna Eq 4 grounds; Anna Eq 8 is the full SDE.
@@ -642,7 +644,7 @@ Per FLOOR §11 discipline: the math-foundation-authoring operator IS the operato
 ### §11.1 What this document IS
 
 - A math foundation authored by Mara (canonical spec author identity, `mara@systemic.engineer`).
-- Grounded in Anna Wolf's 2012 Diplomarbeit (grep-verified via PDF read of pages 1-45 covering Abstract, Motivation, Spindynamics §2, OpenCL §3, OpenGL §4 with VBO §4.4, Programmierung §7 with OpenCL §7.1 + Visualisierung §7.2 + shared-memory pattern §7.2.1 + interoperability + FFT §7.3 + compilation §7.4 + results §8).
+- Grounded in Anna Wolf's 2012 Masterarbeit (grep-verified via PDF read of pages 1-45 covering Abstract, Motivation, Spindynamics §2, OpenCL §3, OpenGL §4 with VBO §4.4, Programmierung §7 with OpenCL §7.1 + Visualisierung §7.2 + shared-memory pattern §7.2.1 + interoperability + FFT §7.3 + compilation §7.4 + results §8).
 - Grep-verified against 8 landed pillar primitives at `/Users/reed/dev/projects/prism/prismqueer/src/liquid.rs` (verified 2026-08-26 via `mcp__plugin_woz_code__Search`).
 - Grep-verified against Rec #90 canonical spec §6.2 F ⊥ A_F^prismqueer orthogonality claim.
 - Grep-verified against Reed's `docs/specs/liquid-types-for-mirror.md` §5.2/§5.3 spectral-alternative-to-SMT design.
@@ -669,7 +671,7 @@ Per FLOOR §11 discipline: the math-foundation-authoring operator IS the operato
 
 ### §11.4 Substrate-honesty audit
 
-**Not-inflated:** every claim about pillar primitives is grep-verified at HEAD; every claim about Rec #90 orthogonality is verbatim from Rec #90 canonical spec §6.2; every claim about Anna's math is cited to specific page numbers of the Diplomarbeit (grep-verified via PDF read).
+**Not-inflated:** every claim about pillar primitives is grep-verified at HEAD; every claim about Rec #90 orthogonality is verbatim from Rec #90 canonical spec §6.2; every claim about Anna's math is cited to specific page numbers of the Masterarbeit (grep-verified via PDF read).
 
 **Named-what-is-not-known:** Q-Mara-A through Q-Mara-I explicitly surface every load-bearing choice this document defers to Alex. FORWARD-PROMISED status at §8 explicitly names candidates as not-ratified.
 

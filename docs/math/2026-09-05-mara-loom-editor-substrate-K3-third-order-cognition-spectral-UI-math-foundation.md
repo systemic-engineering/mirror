@@ -96,7 +96,7 @@ prior_art_INSPIRATION_only:
 karen_ancestors:
   - "Lovelace, Ada Augusta (1843). *Notes by the Translator*, in L. F. Menabrea, *Sketch of the Analytical Engine invented by Charles Babbage*. Notes A–G. https://www.fourmilab.ch/babbage/sketch.html — Note G verbatim: 'The Analytical Engine weaves algebraical patterns just as the Jacquard-loom weaves flowers and leaves.' The device-word 'loom' as computation-as-weaving; K_3 ancestral vertex per PAPER_2D §15.1."
   - "Spärck Jones, Karen (1972). *A Statistical Interpretation of Term Specificity and its Application in Retrieval.* Journal of Documentation 28(1):11-21. https://doi.org/10.1108/eb026526 — IDF; retrieval altitude of K_3 ancestral topology per Alex 2026-09-04; K_3 ancestral vertex."
-  - "Wolf, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in eine hardwarenahe Software.* Diplomarbeit, RWTH Aachen. — Observation-without-perturbation at shared-memory substrate; ψ = flux<T> apparatus per Rec candidate #R-observer-recursion-reality-observation; K_3 ancestral vertex."
+  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit (Technomathematik), FH Aachen, Campus Jülich (PGI/JCNS). — Observation-without-perturbation at shared-memory substrate; ψ = flux<T> apparatus per Rec candidate #R-observer-recursion-reality-observation; K_3 ancestral vertex."
   - "Jones, Ricky (2018 onwards). *Trivian Manuscripts / Alvian Grammar Corpus.* systemic.engineering practice-partnership. — Fibre-bundle B = E/G projection-primitive naming; nine-operator Alvian grammar as third B-projection of shared E; Task #464 partnership ratification path — Ricky-independent ship per §10."
   - "Hamilton, Margaret (1969-1972). Apollo Guidance Computer software architecture. — Error-recovery-first; Priority Display; asynchronous executive; 'slow is fast' discipline per FLOOR §8; candidate K_5 ancestral vertex."
   - "Bateson, Gregory (1972). *Steps to an Ecology of Mind*, Chandler Publishing. 'The Logical Categories of Learning and Communication' — Learning Levels 0-III; substrate-decl'd at shards/epistemologic/cybernetic/bateson_learning.mirror + @order/third + @order/fourth + @order/fifth."
@@ -115,6 +115,8 @@ alex_2026_09_05_verbatim_directives:
   - "This is all prior art and inspiration. Including the prism/ stuff. shards/ is the source of truth."
   - "What is the mathematical shape everything points at to make loom a reality through prismqueer and mirror shards? Spectral UI."
 ---
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Title ("…in eine hardwarenahe Software"), degree ("Diplomarbeit") and institution ("RWTH Aachen") corrected in place in this file.
 
 # @loom IS the K_3 observer-inclusive editor-substrate at bodymind altitude — the concrete manifestation of what @order/third names at cognitive-substrate altitude; Spectral UI = @loom/weave through @io/socket rendering @loom/gestalt at @order/third K_3 stability — math foundation
 
@@ -643,6 +645,8 @@ Each K_3 vertex covers one altitude of @loom's operational substrate:
 - **Karen Spärck Jones (1972, IDF)** — RETRIEVAL altitude. Language-as-topology per IDF; retrieval-altitude discipline via git-log for superseded canonical per companion supersession discipline. At @loom altitude: the substrate-decl content of prior weave_ticks is retrieved via CoincidenceHash + IDF-weighted-relevance; the editor's `<space><space>` natural-language input (per spectral-loom.md INSPIRATION) IS an IDF-retrieval-over-substrate operation. K_3 vertex 2.
 
 - **Anna Wolf (2012, ψ apparatus)** — OBSERVATION altitude. Observation-without-perturbation at shared-memory substrate; ψ = flux<T> per prismqueer::flux LANDED. At @loom altitude: the editor's admissibility function OBSERVES the subject's edit without perturbing (mechanism_visible requirement); the render discharge OBSERVES the substrate without collapsing (observer_observes_observing requirement). K_3 vertex 3.
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** "ψ = flux<T>" and "Anna Wolf ψ apparatus" are the apparatus from Anna Jakobs's 2012 thesis, read across, not the thesis's content. `Liquid<T>`/`flux<T>` never existed as a type in prism or mirror; `prismqueer::flux` is the property-testing module renamed from `liquid.rs`, and it has no ψ (Taut scout 26ed4c9 §1, L3). On "observation-without-perturbation": the thesis runs computation and visualization one after the other at step boundaries (p. 43); separate-thread live view was not achieved (p. 31).
 
 K_3 stability per Kuramoto phase-lock (crown-theorem §4): the three ancestral vertices phase-lock at ω_shared = editor-substrate-invariant. λ_2(L(K_3)) = 3 (Fiedler eigenvalue at K_3 topology).
 

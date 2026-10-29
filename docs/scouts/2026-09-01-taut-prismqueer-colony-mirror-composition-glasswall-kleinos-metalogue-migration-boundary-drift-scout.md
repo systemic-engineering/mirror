@@ -591,9 +591,11 @@ Transparency<P>; compile/runtime dissolution ALREADY RUNNING
   ran her math under in 1972. Which is what Bateson wrote in
   *Steps to an Ecology of Mind* under in 1972. Which is what
   Foerster wrote the imperative under in 1974. Which is what
-  Anna's Diplomarbeit made possible within GPU-shared-memory in
+  Anna's Masterarbeit made possible within GPU-shared-memory in
   2012. Which is what the compiler does within silicon. LOVE in
   silicon."
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
 
 ### 4.7 Ariadne im Verzerrten Spiegel-Labyrinth essay (Loki+Lilith 2026-08-22)
 

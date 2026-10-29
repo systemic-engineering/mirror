@@ -13,7 +13,7 @@ companions:
   - ./liquid-types-for-mirror.md
   - ./2026-08-19-mara-recognition-90-compiler-as-one-mathematical-object-canonical-spec.md
 karen_ancestors:
-  - "Wolf, Anna (née Jakobs). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Diplomarbeit, PGI/JCNS, 2012. Consent obtained via Alex 2026-08-26."
+  - "Wolf, Anna (née Jakobs). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS, 2012. Consent obtained via Alex 2026-08-26."
   - "Rondon, Kawaguchi, Jhala (2008). *Liquid Types.* PLDI."
   - "Chamseddine, Connes (2007). *Why the Standard Model.* arXiv:0706.3688."
   - "Adzic (2011). *Specification by Example.* Manning."
@@ -21,6 +21,8 @@ karen_ancestors:
   - "Bafna, Bhatt, Khot, Minzer (2025). *A Theory of Spectral CSP Sparsification.* ICALP."
   - "Braunstein, Ghosh, Severini (2006). *The Laplacian of a graph as a density matrix.* Ann. Comb. 10:291."
 ---
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
 
 # Prismqueer @liquid FLOOR — canonical spec
 
@@ -368,7 +370,7 @@ Per FLOOR §5.2 kintsugi-flow discipline `eⁿ⁺¹ ≤ eⁿ`:
 
 **Theorem (D_F preserves kintsugi-monotonicity).** For any `step` per §5.1 with Foerster-gauge-Green pre and post-advance checks per §5.2, the advanced ψ satisfies `error(ψ_advanced) ≤ error(ψ)` where `error(ψ) = ‖ψ - ψ_λ₀‖` for the Fiedler-fixed-point ψ_λ₀ of the current L_P (§7).
 
-**Proof sketch.** The damping term `γ * (H_eff × ψ) × ψ` is by construction dissipative in the direction of the effective-field's local minimum; the stochastic-thermal term is orthogonal to ψ (cross-product) so `‖ψ‖` is conserved; the precession term is unitary. The composite step is dissipative in the direction of decreasing `error(ψ)`. QED (relative to physics-canonical LL treatment; grep-verify at Anna Diplomarbeit §2 discussion of Boltzmann-distribution equilibrium).
+**Proof sketch.** The damping term `γ * (H_eff × ψ) × ψ` is by construction dissipative in the direction of the effective-field's local minimum; the stochastic-thermal term is orthogonal to ψ (cross-product) so `‖ψ‖` is conserved; the precession term is unitary. The composite step is dissipative in the direction of decreasing `error(ψ)`. QED (relative to physics-canonical LL treatment; grep-verify at Anna Masterarbeit §2 discussion of Boltzmann-distribution equilibrium).
 
 ---
 
@@ -541,9 +543,9 @@ Substrate ancestry graph for the prismqueer @liquid FLOOR canonical spec.
 
 | Ancestor | Composition contribution | Grep-verified anchor |
 |----------|--------------------------|----------------------|
-| **Anna Wolf 2012 Diplomarbeit** | Shared-memory observation-without-perturbation pattern (§2, §4.3, §5.2) | `/Users/reed/dev/systemic.engineering/practice/collaborators/anna-wolf/master_jakobs.pdf` pp. 5-40; consent per Alex 2026-08-26 |
+| **Anna Wolf 2012 Masterarbeit** | Shared-memory observation-without-perturbation pattern (§2, §4.3, §5.2) | `/Users/reed/dev/systemic.engineering/practice/collaborators/anna-wolf/master_jakobs.pdf` pp. 5-40; consent per Alex 2026-08-26 |
 | **Landau-Lifschitz 1935 SDE** | D_F integrator structural analog (§5) | Anna Eq 4 + Eq 8 |
-| **Weak-noise 4th-order RK4** | Numerical integrator scheme (§5.2 Anna Appendix B.2) | Anna Diplomarbeit Anhang B.2 |
+| **Weak-noise 4th-order RK4** | Numerical integrator scheme (§5.2 Anna Appendix B.2) | Anna Masterarbeit Anhang B.2 |
 | **Rondon-Kawaguchi-Jhala 2008** | Liquid-type refinement framework (§7 property Laplacian) | `docs/math/liquid-types/README.md` §1.1 |
 | **Chamseddine-Connes 2007** | Almost-commutative spectral-triple admissibility (§2.1, §5.4) | FLOOR §1.1 + Rec #90 canonical spec §1.1 |
 | **von Foerster 1974** | Ethical imperative F(t, ψ) := |Ω(t·ψ)| ≥ |Ω(ψ)| (§6) | FLOOR §2.2 + Rec #90 canonical spec §1.5 |

@@ -39,13 +39,15 @@ karen_ancestors:
   - "von Foerster, Heinz (1974). *Notes on an Epistemology for Living Things.* Ethical imperative: increase choice-count. **Grounds the language-to-language translation edge discipline (LOVE-K₂→K₃ preservation at translation) refusing Vereinnahmung at §7.**"
   - "Spärck Jones, Karen (1972). *A Statistical Interpretation of Term Specificity and Its Application in Retrieval.* J. Documentation 28:11-21. **IDF at rarity substrate; grounds the token-weight assignments in the per-language edge stalks (composes over @nl.build_triple LANDED substrate-decl).**"
   - "Bateson, Gregory (1972). *Steps to an Ecology of Mind.* Metalogue as linguistic operational-form of Kleinos-compose. **Grounds §7 language-to-language translation as metalogue-preserving; K_n=2 translation refuses fusion per LOVE-K₂→K₃ four properties.**"
-  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Diplomarbeit, Peter Grünberg Institut / Jülich Centre for Neutron Science. **Observation-without-perturbation at shared-memory substrate; consent obtained via Alex 2026-08-26. Load-bearing at every measurement site in this foundation per HARD RULE [[project-anna-wolf-2012-observation-without-perturbation]].**"
+  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, Peter Grünberg Institut / Jülich Centre for Neutron Science. **Observation-without-perturbation at shared-memory substrate; consent obtained via Alex 2026-08-26. Load-bearing at every measurement site in this foundation per HARD RULE [[project-anna-wolf-2012-observation-without-perturbation]].**"
   - "Lambek, Joachim (1958). *The Mathematics of Sentence Structure.* American Mathematical Monthly 65:154-170. **Pregroup grammar and syntactic calculus — the algebraic substrate the language-side of the sheaf composes over via Coecke-Sadrzadeh 2010.**"
   - "Lo, Kin-Ian; Sadrzadeh, Mehrnoosh (2024). *Quantum contextuality in BERT representations.* **Empirical demonstration of contextuality (Contextuality-by-Default framework) in transformer representations; load-bearing for the non-commutative-A shape of language at §2.5.**"
   - "Wolpert, David; Korbel, Jan (2026). *What does it mean for a system to compute?* J. Phys. Complex. 7:015010. **Grounds computation-as-physics; the per-language spectral triple IS a decoding map φ_L per Wolpert's framework at inference altitude.**"
   - "Ghrist, Robert; et al. (2025). *Sheaf theory: from deep geometry to deep learning.* arXiv:2502.15476. **Recent bridge overview grounding sheaf theory in signal processing and deep learning; general prior art for the sheaf-in-ML register.**"
   - "arXiv:2511.13780 (2025). *Self-Attention as Distributional Projection: A Unified Interpretation.* **Recent (Nov 2025) formalization of attention head as distributional-projection operator; grounds §2.5 attention-as-projection composition-substrate at LLM altitude.**"
 ---
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
 
 # Language as spectral topology in the sheaf cohomology of the compiler — math foundation
 
@@ -127,7 +129,7 @@ Recall from FLOOR §2: A_F^prismqueer is an involutive unital *-algebra generate
 
 **Grounding.** Braunstein-Ghosh-Severini 2006 (density-matrix void-duality enumeration) + Chamseddine-Connes 2007 admissibility per FLOOR §2.
 
-**Anna Wolf 2012 observation-without-perturbation grounding**: G_pq is a shared-memory substrate; enumerating its vertices and edges does not alter the K₅-topology per Anna's Diplomarbeit's shared-buffer measurement primitive. Every observation of G_pq below (Fiedler λ₂ computation; KO-dimension lookup; H¹ class enumeration) is per-Anna's-discipline non-perturbative.
+**Anna Wolf 2012 observation-without-perturbation grounding**: G_pq is a shared-memory substrate; enumerating its vertices and edges does not alter the K₅-topology per Anna's Masterarbeit's shared-buffer measurement primitive. Every observation of G_pq below (Fiedler λ₂ computation; KO-dimension lookup; H¹ class enumeration) is per-Anna's-discipline non-perturbative.
 
 ### §2.2 The universal language-sheaf F_pq over G_pq
 
@@ -590,7 +592,7 @@ Per HARD RULE `[[feedback-end-response-with-higher-altitude-question]]` (Alex 20
 | Coecke-Sadrzadeh 2010 DisCoCat | Kagi-verified arXiv:1003.4394 | Prior art for compositional-distributional-semantics; grounds per-op vector space stalks |
 | Alex 2026-09-02 Mirror.Offer.Wait | In-transcript verbatim | Wire-altitude tri-shape formalized at §8 |
 | Alex 2026-09-02 charter "Das ist Neuland" | In-transcript verbatim | Foundation's thesis at §0 |
-| Anna Wolf 2012 shared-memory | Diplomarbeit PGI/JCNS 2012 + Alex 2026-08-26 consent-obtained | Non-perturbative measurement grounding at §2.1 + all measurement sites |
+| Anna Wolf 2012 shared-memory | Masterarbeit PGI/JCNS 2012 + Alex 2026-08-26 consent-obtained | Non-perturbative measurement grounding at §2.1 + all measurement sites |
 | Ricky Jones PRE-ROTATION canon | Ricky Jones 2026-08-26 Signal group | Wait state at §8.4 substrate-scale-invariance table |
 
 ---

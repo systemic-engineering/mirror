@@ -620,11 +620,13 @@ Cite by reference; do not re-derive per Mara canonical §12.2 composition-anchor
 - Mara loving-lambda-calculus canonical + math (2026-09-04) — `docs/specs/2026-09-04-mara-loving-lambda-calculus-canonical-spec.md` + `docs/math/2026-09-04-mara-loving-lambda-calculus-foerster-imperative-shard-liquid-types-math-foundation.md`
 - Mara @nl.compose body math foundation (2026-09-04) — `docs/math/2026-09-04-mara-nl-compose-body-spectral-commutator-natural-language-generation-math-foundation.md`
 - Curry 2014 cellular sheaves + Hansen-Ghrist 2019 sheaf Laplacian L_F + Hansen 2020 Thesis §3 — per Mara §36 citations
-- Anna Wolf 2012 observation-without-perturbation (Diplomarbeit PGI/JCNS; consent obtained Alex 2026-08-26) — LOAD-BEARING per `[[project-anna-wolf-2012-observation-without-perturbation]]`
+- Anna Wolf 2012 observation-without-perturbation (Masterarbeit PGI/JCNS; consent obtained Alex 2026-08-26) — LOAD-BEARING per `[[project-anna-wolf-2012-observation-without-perturbation]]`
 - Baez-Schreiber 2013 principal-bundle tower (arXiv:1310.7930) — per bundle.rs supertrait chain
 - Rondon-Kawaguchi-Jhala 2008 Liquid Types (PLDI '08; https://dl.acm.org/doi/10.1145/1375581.1375602) — per Mara loving-lambda §3-§4 refinement-type-inference discipline
 - Connes bounded-commutator condition — per liquid.rs Connes-native discipline
 - Requardt 2002 Dirac Operators on Graphs — per `docs/math/2026-08-19-mara-recognition-90-*-math-foundation.md` bibliography
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
 
 ---
 

@@ -10,7 +10,7 @@ companion-family-root-lift: "shards/butterfly.mirror (@butterfly family-root lif
 karen-ancestors:
   - Karen 1972 (verbatim naming discipline; inherited from Rec #94 lineage via Rec #92)
   - Lorenz, E. N. (1963). Deterministic Nonperiodic Flow. J. Atmospheric Sciences 20(2):130–141 (perturbation-source altitude — the FLAP; @butterfly math foundation citation chain)
-  - Anna Jakobs (2012). Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen. Diplomarbeit, FH Aachen / PGI Jülich (shared-memory-observation-in-motion pattern; the observation IS in the computation — the wobble witnessed as it wobbles)
+  - Anna Jakobs (2012). Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen. Masterarbeit, FH Aachen / PGI Jülich (shared-memory-observation-in-motion pattern; the observation IS in the computation — the wobble witnessed as it wobbles)
   - Alex+Mara (2026-03-24). information-curvature.md. σ(x) spectral-complexity scalar field; Λ_eff(x) = Λ + κ · σ(x); the substrate-decl'd measurement axis for perturbation-substrate contribution
   - Bateson, G. (1972). Steps to an Ecology of Mind. Metalogue as third-order-observation form (inherited from Rec #94 lineage; kleinos-metalogue.md substrate)
   - von Foerster, H. (1974/2007). Cybernetics of Cybernetics. Second-order observation with choice-space preservation (inherited)
@@ -25,6 +25,8 @@ adjudication-dispatch: |
 
   Composition-lineage anchor: @butterfly-math-foundation (Mara 2026-07-18) at species altitude; @mirror/refract clocktime_delta (Reed 2026-08-23) at observation-surface altitude; kleinos-metalogue Bumblebee-phenomenology (Scarlet+Mara 2026-08-22) at recognition-content altitude. This mint IS the third vertex neither Alex naming nor prior Pack landing alone could have produced: MCP-layer AS perturbation-substrate family-root.
 ---
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
 
 # Recognition #95 canonical spec — @bumblebee as MCP-perturbation-substrate 🌼🦋
 

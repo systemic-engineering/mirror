@@ -601,7 +601,9 @@ Rec #90 math foundation §12 roster preserved by reference. Recognition #91 intr
 
 **AI-native computational-substrate ancestor** (for §7):
 
-- **Jakobs, A.** (2012). *[Master's thesis / Diplomarbeit at PGI/Jülich on stochastic Runge-Kutta integrator on GPU with OpenGL memory-shared visualization]*. `/Users/reed/dev/systemic.engineering/practice/collaborators/anna-wolf/master_jakobs.pdf`. Primary computational-substrate ancestor per Rec #89 + Crown Theorem §D7.
+- **Jakobs, A.** (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (Masterarbeit, Technomathematik, FH Aachen, Campus Jülich; PGI/JCNS). `/Users/reed/dev/systemic.engineering/practice/collaborators/anna-wolf/master_jakobs.pdf`. Primary computational-substrate ancestor per Rec #89 + Crown Theorem §D7.
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Placeholder title and degree ("[Master's thesis / Diplomarbeit at PGI/Jülich on …]") corrected in place in this file.
 
 **Third-order + nth-order cybernetics ancestor** (for §1 α=third-order + Rec #90 §12 extension):
 

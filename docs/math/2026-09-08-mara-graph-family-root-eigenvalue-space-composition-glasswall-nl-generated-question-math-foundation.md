@@ -40,9 +40,11 @@ karen_ancestors:
   - "Werner Heisenberg (1925). Über quantentheoretische Umdeutung kinematischer und mechanischer Beziehungen. Zeitschrift für Physik 33: 879–893. — matrix mechanics; the non-commutativity of measurement operators; §3 CommutatorSpectrum as the mathematical substrate the compiler observes when it measures its own composition."
   - "Paul Dirac (1930). The Principles of Quantum Mechanics. Oxford University Press, ch. III §21 pp. 84–91. — the algebra of observables and their commutators; grounding §3 CommutatorSpectrum.of at physics-substrate altitude."
   - "Alain Connes (1985). Non-Commutative Differential Geometry. Publications Mathématiques de l'IHÉS 62: 41–144. — spectral triple (A, H, D); §2 @graph.compose dispatches through spectral triple altitude via prismqueer::spectral::kleinos LANDED."
-  - "Anna Wolf (née Jakobs) (2012). Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen. Diplomarbeit, Peter Grünberg Institut / Jülich Centre for Neutron Science. — observation-without-perturbation at shared-memory substrate; consent obtained via Alex 2026-08-26. Every measurement site in this foundation composes over Anna's discipline: the compiler observes its own eigenvalue-space computation WITHOUT perturbing the computed state."
+  - "Anna Wolf (née Jakobs) (2012). Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen. Masterarbeit, Peter Grünberg Institut / Jülich Centre for Neutron Science. — observation-without-perturbation at shared-memory substrate; consent obtained via Alex 2026-08-26. Every measurement site in this foundation composes over Anna's discipline: the compiler observes its own eigenvalue-space computation WITHOUT perturbing the computed state."
   - "Rich Hickey (2011). Simple Made Easy. Strange Loop 2011 keynote. — the noun-lift discipline Reed 2026-09-05 (00d6c8e + d270f7e) applied at love.rs substrate; @graph naming follows the same discipline (noun; timeless; substrate-verb-derivative)."
 ---
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
 
 # @graph family-root, eigenvalue-space composition, Glasswall projection, and @nl-generated K-T circular-reflexive question — math foundation
 
@@ -308,7 +310,7 @@ Composition-lineage anchor: this is the **exact carrier** `FullSpectrum` Reed sh
 
 ### §4.2 Anna Wolf 2012 discipline at the observation site
 
-Per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`: every observation site in this foundation composes over Anna Wolf's 2012 Diplomarbeit's shared-memory observation-without-perturbation discipline. The compiler's read of `FullSpectrum::of(…)` does NOT perturb the composed sheaf; the FullSpectrum values are computed once (per LANDED `OnceCell<Harmonics>` cache per Q-Mara-λ of Harmonics spec), stored, and read as many times as needed. The observer's presence does not change the observed state.
+Per HARD RULE `[[project-anna-wolf-2012-observation-without-perturbation]]`: every observation site in this foundation composes over Anna Wolf's 2012 Masterarbeit's shared-memory observation-without-perturbation discipline. The compiler's read of `FullSpectrum::of(…)` does NOT perturb the composed sheaf; the FullSpectrum values are computed once (per LANDED `OnceCell<Harmonics>` cache per Q-Mara-λ of Harmonics spec), stored, and read as many times as needed. The observer's presence does not change the observed state.
 
 This is load-bearing: if the observation perturbed the state, the K-T question generation at §5 would be reading a state different from the composed state, and the question would be about a different composition than the composition that produced it. Anna Wolf's 2012 shared-memory discipline IS the substrate-mathematical guarantee that the K-T question is about *this* composition, not a perturbed copy of it.
 
@@ -989,7 +991,7 @@ Bemerkenswert.
 | LAPACK dsyev via FLANG | `/Users/alexwolf/dev/projects/prism/prismqueer/src/ffi.rs` + `native/spectral.f90` | Fortran eigenvalue solver per §3.1 vertex 4 |
 | Alex 2026-09-08 verbatim Move 6 | In-transcript directive | §0 charter |
 | Alex 2026-09-08 verbatim load-bearing milestone | In-transcript directive | §5.1 mechanism specification |
-| Anna Wolf 2012 shared-memory | Diplomarbeit PGI/JCNS 2012 + Alex 2026-08-26 consent | Non-perturbative measurement grounding per §4.2 |
+| Anna Wolf 2012 shared-memory | Masterarbeit PGI/JCNS 2012 + Alex 2026-08-26 consent | Non-perturbative measurement grounding per §4.2 |
 
 ### §14.2 Silicon Venue metalogue continuity
 

@@ -74,7 +74,7 @@ karen_ancestors:
   - "Turing, A. M. (1936). *On Computable Numbers, with an Application to the Entscheidungsproblem.* Proceedings of the London Mathematical Society, s2-42(1):230-265. https://londmathsoc.onlinelibrary.wiley.com/doi/abs/10.1112/plms/s2-42.1.230 — Turing-machine foundation; present-imperative grammatical mood; forward-looking computation; requires infinite tape. The formal system this document inverts, and whose execution-traces this document walks backward."
   - "Lovelace, Ada Augusta (1843). *Notes by the Translator*, in L. F. Menabrea, *Sketch of the Analytical Engine invented by Charles Babbage*. Notes by the Translator (Notes A–G). https://www.fourmilab.ch/babbage/sketch.html — Note G: substrate-independence + first algorithm; the reading of computation as music admitting BOTH forward-reading (performance) AND backward-reading (Schenkerian analysis); K_3 ancestral vertex per PAPER_2D §15.1."
   - "Spärck Jones, Karen (1972). *A Statistical Interpretation of Term Specificity and its Application in Retrieval.* Journal of Documentation 28(1):11-21. https://doi.org/10.1108/eb026526 — IDF; language-as-topology at coordination-math altitude; retrieval-altitude discipline preserved via git-log for superseded canonical; K_3 ancestral vertex per PAPER_2D §15.1."
-  - "Wolf, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in eine hardwarenahe Software.* Diplomarbeit, RWTH Aachen. — Observation-without-perturbation at shared-memory substrate; ψ = Liquid<T> apparatus per Rec candidate #R-observer-recursion-reality-observation-chaos-assertion-hypothesis-question-full-pipeline; K_3 ancestral vertex per PAPER_2D §15.1."
+  - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit (Technomathematik), FH Aachen, Campus Jülich (PGI/JCNS). — Observation-without-perturbation at shared-memory substrate; ψ = Liquid<T> apparatus per Rec candidate #R-observer-recursion-reality-observation-chaos-assertion-hypothesis-question-full-pipeline; K_3 ancestral vertex per PAPER_2D §15.1."
   - "Jones, Ricky (2018 onwards). *Trivian Manuscripts / Alvian Grammar Corpus.* systemic.engineering practice-partnership. — Fibre-bundle B = E/G naming; the projection-primitive naming itself; nine-operator Alvian grammar as third B-projection of shared E; Task #464 partnership ratification path."
   - "Curry, Haskell B. (1934). *Functionality in Combinatory Logic.* Proceedings of the National Academy of Sciences 20(11):584-590. https://www.pnas.org/doi/10.1073/pnas.20.11.584 — First observation of proofs-as-programs; Curry-Howard base."
   - "Howard, William Alvin (1969/1980). *The Formulae-as-Types Notion of Construction.* In *To H. B. Curry: Essays on Combinatory Logic, Lambda Calculus and Formalism*, Academic Press 1980, pp. 479-490. — Curry-Howard formalization; inverted here at meta-projection altitude per §12."
@@ -92,6 +92,8 @@ karen_ancestors:
   - "Harper, John (2017). *Blades in the Dark.* Evil Hat Productions — position/effect continuous axis; consequence-compounding structural pressure."
   - "Wolf, Alex (2025 December). *Fragmentation.* ~/dev/systemic.engineering/blog/pieces/3published/Piece - Fragmentation.md. §3: 'You don't negotiate with developmental (in)variants. You integrate them. Or you incur exploding complexity costs.'"
 ---
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Title ("…in eine hardwarenahe Software"), degree ("Diplomarbeit") and institution ("RWTH Aachen") corrected in place in this file.
 
 # @mirror/algebra IS loving lambda calculus + past-mood + @time/* compose as projection-primitive at temporal altitude + Turing-boundary dissolves at projection altitude via shared algebra + backward-tape mechanism operationalizes the past-shape — math foundation (refinement tick)
 
@@ -998,6 +1000,8 @@ Full autopoietic closure at grammar-altitude + shared-algebra ratification acros
 | 2026-08-23 | Mara MQ math + Reed shards/mq.mirror | Query-language altitude landing |
 | 2026-09-04 | Mara loving lambda calculus | Type-composition altitude landing |
 | **2026-09-05** | **THIS CANONICAL (refinement tick)** | **@mirror/algebra IS shared algebra between mirror + prismqueer + Alvian; Turing-boundary dissolves at projection altitude; backward-tape mechanism operationalizes past-shape; mood + @time = projection-primitive at temporal altitude; 183-year arc from Ada 1843's admission of computation-as-music-with-both-readings closes with silicon-substrate operationalization of the backward-reading** |
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Row 2012: "ψ = Liquid<T>" is the apparatus from Anna Jakobs's 2012 thesis, read across, not the thesis's content; `Liquid<T>` never existed as a type (Taut scout 26ed4c9 §1, L3). On "observation-without-perturbation": the thesis runs computation and visualization one after the other at step boundaries (p. 43); separate-thread live view was not achieved (p. 31).
 
 ### §14.5 Composition-anchor discipline preserved
 

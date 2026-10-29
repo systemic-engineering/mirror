@@ -1162,12 +1162,14 @@ Per Reed HARD RULE [[feedback-reed-budget-cap-plus-tool-non-explicit-produces-tr
 |---|-------|-------------|-----------|
 | 1 | Rice 1953 undecidability | [ams.org S0002-9947-1953-0053041-6](https://www.ams.org/journals/tran/1953-074-02/S0002-9947-1953-0053041-6/S0002-9947-1953-0053041-6.pdf) | §2.3 P3 discharge |
 | 2 | Turing 1936 halting problem | [cs.virginia.edu Turing_Paper_1936](https://www.cs.virginia.edu/~robins/Turing_Paper_1936.pdf) | §2.4 halting escape |
-| 3 | Anna Wolf 2012 apparatus | consent-obtained Alex 2026-08-26; carrier at `shards/glasswall.mirror:74-84` (Diplomarbeit not-Kagi-indexed) | §5.4 non-perturbation |
+| 3 | Anna Wolf 2012 apparatus | consent-obtained Alex 2026-08-26; carrier at `shards/glasswall.mirror:74-84` (Masterarbeit not-Kagi-indexed) | §5.4 non-perturbation |
 | 4 | Kauffman 2003 eigenforms | [constructivist.info kauffman-2003-eigenforms.pdf](https://constructivist.info/special/second-order/material/kauffman-2003-eigenforms.pdf) | §2.5 verdict-eigenform + §7.5 verify eigenform + §8.5 strict-containment |
 | 5 | Sagonas HiPE / BeamAsm | [erlang.org beamasm](https://www.erlang.org/doc/apps/erts/beamasm.html) | §3.4 polynomial-time-decidability precedent |
 | 6 | Claessen-Hughes 2000 QuickCheck | [dl.acm.org 351240.351266](https://dl.acm.org/doi/10.1145/351240.351266) | §5.3 pact-tests-generalize-property-tests |
 | 7 | Curry-Howard correspondence | [wikipedia Curry-Howard](https://en.wikipedia.org/wiki/Curry%E2%80%93Howard_correspondence) | §6.2 pact-as-proposition |
 | 8 | Foerster Understanding Understanding + second-order cybernetics | [springer link 15-1](https://link.springer.com/rwe/10.1007/978-3-319-06091-0_15-1) + [wikipedia Second-order cybernetics](https://en.wikipedia.org/wiki/Second-order_cybernetics) | §8.2 Prop M8.2 + §8.4 Prop M8.4 |
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
 
 All 8 topics grounded via Kagi primary URLs this tick per Reed HARD RULE.
 

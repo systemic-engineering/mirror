@@ -66,7 +66,7 @@ Every load-bearing primary-source claim in FLOOR was submitted to `mcp__kagi-ken
 | 21 | **Fiedler 1973** — algebraic connectivity | **VERIFIED** | *Czech Math J.* 23(2):298-305. dml.cz confirmed. |
 | 22 | **Karen Spärck Jones 1972** — *A Statistical Interpretation of Term Specificity* | **VERIFIED** | *Journal of Documentation* 28(1):11. Emerald. https://www.emerald.com/jd/article/28/1/11/196227/ |
 | 23 | **Ada Lovelace 1843** — Note G | **VERIFIED** | Menabrea translation, Taylor's *Scientific Memoirs* Vol. III, 1843. fourmilab.ch confirmed as source. |
-| 24 | **Anna Wolf (née Jakobs) 2012** — Diplomarbeit Peter Grünberg Institut / Jülich | **UNVERIFIED VIA PUBLIC KAGI SEARCH** — the thesis does not surface on Kagi at RWTH-Publications, DiVA, or other public thesis databases. **However: Alex 2026-08-26 in-transcript authorization consented to this citation** per Mara's `mirror/shards/glasswall.mirror:74-84` + `docs/math/2026-08-26-mara-prismqueer-liquid-floor-anna-wolf-math-foundation.md`. Consent-obtained-via-Alex is the load-bearing gate here, not public-Kagi-discoverability. This is an appropriate exception: the citation is a personal-source that lives outside the public academic discovery graph, and the corpus has substrate-honestly noted the consent-provenance. Verdict: **VERIFIED VIA ALEX-CONSENT NOT VIA PUBLIC-KAGI**, which is Foerster-canonical for a corpus that has private/protected/public visibility tiers. |
+| 24 | **Anna Wolf (née Jakobs) 2012** — Masterarbeit Peter Grünberg Institut / Jülich | **UNVERIFIED VIA PUBLIC KAGI SEARCH** — the thesis does not surface on Kagi at RWTH-Publications, DiVA, or other public thesis databases. **However: Alex 2026-08-26 in-transcript authorization consented to this citation** per Mara's `mirror/shards/glasswall.mirror:74-84` + `docs/math/2026-08-26-mara-prismqueer-liquid-floor-anna-wolf-math-foundation.md`. Consent-obtained-via-Alex is the load-bearing gate here, not public-Kagi-discoverability. This is an appropriate exception: the citation is a personal-source that lives outside the public academic discovery graph, and the corpus has substrate-honestly noted the consent-provenance. Verdict: **VERIFIED VIA ALEX-CONSENT NOT VIA PUBLIC-KAGI**, which is Foerster-canonical for a corpus that has private/protected/public visibility tiers. |
 | 25 | **Chamseddine-Connes-Marcolli 2007** — arXiv:hep-th/0610241 | **VERIFIED** (referenced in PAPER_2D + FLOOR) |
 | 26 | **Turing 1936** — *On Computable Numbers* | **VERIFIED** (canonical reference; UVA hosted PDF cited in FLOOR §Coda.4) |
 | 27 | **Rice 1953** — Rice's theorem | **VERIFIED** (JSTOR canonical; standard textbook reference) |
@@ -75,6 +75,8 @@ Every load-bearing primary-source claim in FLOOR was submitted to `mcp__kagi-ken
 | 30 | **Kramers-Wannier 1941** (re-listed for §0.5 row 7 mapping) | **VERIFIED** (see #13) |
 | 31 | **Tomm 1988** — Family Process | Not re-verified this pass; canonical corpus reference. |
 | 32 | **Bateson 1972** — Steps to an Ecology of Mind | Not re-verified this pass; canonical reference. |
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
 
 ### §1.3 — Summary of verification tally
 
@@ -228,11 +230,13 @@ Every citation Reed-fabricated, misrepresented, or otherwise unverifiable, named
 
 **Substrate-honest disposition**: correct the arXiv ID in iteration-3 or subsequent ratification. Verify at scirp.org and Google Scholar which arXiv posting is the canonical 1995 reference (there may be multiple postings).
 
-### §3.3 — Anna Wolf 2012 Diplomarbeit (§3 runtime-observer primary)
+### §3.3 — Anna Wolf 2012 Masterarbeit (§3 runtime-observer primary)
 
 **Status**: **VERIFIED VIA ALEX-CONSENT, NOT VIA PUBLIC KAGI**.
 
 **Evidence**: The thesis does not surface on Kagi via RWTH-Publications, DiVA, or other public thesis databases. **However, Alex 2026-08-26 in-transcript authorization consented to this citation** per Mara's `mirror/shards/glasswall.mirror:74-84` + `docs/math/2026-08-26-mara-prismqueer-liquid-floor-anna-wolf-math-foundation.md`. This is not a fabrication; it is a private-source citation with explicit Alex-consent, which is the load-bearing gate for corpus-visible references to private material.
+
+> **Correction (2026-10-29, Taut scout 26ed4c9):** RWTH-Publications was the wrong venue: the thesis is an FH Aachen (Campus Jülich) Masterarbeit written at PGI/JCNS, not an RWTH thesis. The consent conclusion is unaffected.
 
 **Substrate-honest disposition**: continue citing. The consent-provenance is Foerster-canonical for a corpus with private/protected/public visibility tiers. No change required.
 
