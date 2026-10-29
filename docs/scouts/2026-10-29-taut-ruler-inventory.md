@@ -31,7 +31,7 @@
 
 - **Every disguised ruler is in code.** All 17 spec rows are declared, and none has landed as `@ruler`. There is no `@ruler` shard, and no `ruler` keyword in `mirror.spec` (grep: zero hits in `shards/`, `boot/`, `mirror.spec`; the one mention is the comment at `Justfile:184`).
 - **Outcome recorded vs. ruler recorded.** 34 of 64 code rulers leave their *outcome* somewhere (a verdict, a `Wall`, a commit). Only **5 of 64 put their own identity or value next to that outcome**: `k_max` (`Dark::Budget { k_max }`), the two FROZEN bypass markers (in the commit message), the prism pin (`Cargo.lock`), and the default start rule (`start` field). For every other ruler you can see what got narrowed but not which ruler did it.
-- **Cross vs. up:** 6 of 81 rulers have a route *across* to a peer who can check them. 5 more have nobody who can overrule them, or only the actor itself. Everything else routes *up* (§3).
+- **Cross vs. up:** 6 of 81 rulers have a route *across* to a peer who can check them. 8 have nobody who can overrule them, or only the actor itself; 11 are set by a caller or a program author. The other 56 route *up* (§3).
 
 ---
 
@@ -177,7 +177,7 @@ Columns: **site** · **what it narrows** · **kind** · **D/d** (declared / disg
 
 | family | members | named? | recorded? | revocable? | composes how | reader-dependent? |
 |---|---|---|---|---|---|---|
-| **Resolution** (is it zero / visible?) | P1–P10, P12, P13, P19, P20, P27, M9, M18, S16 | mostly no | outcome sometimes (commutator, settle have a don't-know band); value never | per call only for Noise, Precision, theta | **max-of-coarseness**; three-valued where honest | **yes by design** ("the observer's resolution", `settle.rs:46`) |
+| **Resolution** (is it zero / visible?) | P1–P10, P12, P13, P19, P20, P27, M9, M18, S16 | mostly no | outcome sometimes (commutator, settle have a don't-know band); value never | per call only for Noise, Precision, theta | **max-of-coarseness**; three-valued where honest | **yes by design** ("the observer's resolution", `settle.rs:47`) |
 | **Budget** (how long) | P18, P29, M1, M11, M22, S3 | yes except M11 | **yes when done right** (`Dark::Budget{k_max}`, gate `moving`) | per call | **min**, commutative; more budget never changes a settled answer, only turns "moving" into settled | no |
 | **Choice** (which one wins) | M5/S6 PEG order, P22, P23, P24, M7, M15, S8, S10 | spec yes, code no | spec: `Erasure` with ruler addr; code: silent | spec: by re-settling under another ruler | **does not commute**: order of application is the meaning (PEG is exactly this) | yes |
 | **Equivalence / quantization** (what counts as the same) | P14, P15, P28, P30, M12, M16, M21, M23, S4, S7, S9, S14 | mixed | mostly silent | no (baked into identity in P12/P14/P28) | **partition meet/join** (refinement lattice) | the spec says `active` must *not* be (one ruler, every issuer) |
