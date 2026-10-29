@@ -156,9 +156,64 @@ Fixtures are data in the test, or mirror-text. No serde.
 
 ---
 
-## §4 Open
+## §4 Tensions, resolutions, futures (the same loop, forward)
+
+Math: Part C.
+
+```rust
+/// Marker: the group's operation commutes. Implemented for Ratio,
+/// PitchClassRatio and Z<N>; never for Rename.
+pub trait Abelian: LoopGroup {}
+
+/// A tension, kept as honest as its group allows.
+pub enum Tension<G: LoopGroup> {
+    /// Only constructible through `Tension::vector`, which requires G: Abelian.
+    Vector(TensionVector),               // prime-exponent vector, exact
+    /// Any group: the ordered word of generators around the loop.
+    Word(NonEmpty<Generator<G>>),
+}
+impl<G: Abelian + Lattice> Tension<G> { pub fn vector(l: &Loop<G>) -> Self; }
+impl<G: LoopGroup>          Tension<G> { pub fn word(l: &Loop<G>) -> Self; }
+
+/// The commas found, spanning a sublattice (abelian case only).
+pub struct TensionLattice { generators: Vec<TensionVector> }
+
+/// Tempering out K: only with a ruler; the erasure is K.
+pub struct Temperament { kernel: NonEmpty<TensionVector>, ruler: Ruler }
+pub fn temper(t: &Temperament, h: Holonomy<Ratio>) -> (Holonomy<PitchClassRatio>, Erasure); // #[must_use]
+
+/// The future half of @psychohistory: directions over the open commas.
+pub struct Futures { open: Vec<CommaId>, directions: Vec<Direction> }
+/// A direction: one resolution per open comma.
+pub struct Direction(BTreeMap<CommaId, Resolution>);
+pub enum Resolution { TemperOut, Spell { representative: Addr }, LeaveOpen }
+impl Futures {
+    pub fn enumerate(open: &[CommaId]) -> Futures;               // no ruler
+    pub fn weigh<'r>(&self, ruler: &'r Ruler) -> Weighted<'_, 'r>; // a ruler, always
+}
+/// Weights attached to every direction; no method removes a direction.
+pub struct Weighted<'f, 'r> { futures: &'f Futures, ruler: &'r Ruler, weights: Vec<(DirectionId, Weight)> }
+```
+
+**Laws.**
+- **T1 (abelian composition):** `Tension::vector(γ₁ · γ₂) = Tension::vector(γ₁) + Tension::vector(γ₂)`. Vectors depend only on the homology class.
+- **T2 (no flattening):** there is no `From<Tension<G>>` into `TensionVector` unless `G: Abelian`. A word stays a word. The only route from words to vectors is an explicit `abelianize`, which returns the lost commutator part as an `Erasure` (`#[must_use]`).
+- **T3 (temperament is a ruler):** a `Temperament` can't be built without a `Ruler`. `temper` returns the kernel as erasure. Exploring temperaments applies none.
+- **T4 (a map, not a prediction):** `Futures::enumerate` takes no ruler and lists every direction. `weigh` requires a `Ruler`. No method on `Futures` or `Weighted` drops a direction, and there is no `predict` or `most_likely`. Choosing one direction is a `settle`, with a ruler and an erasure.
+- **T5 (re-run after resolving):** applying a direction rewrites the corpus and may create new commas, so a direction's consequences are known only after kintsugi runs again (convergence loop). No type claims to know them in advance.
+
+**Red tests.**
+- **S8 (non-abelian order matters).** Two kintsugi mend loops with `Rename` holonomies `a·b` and `b·a`, with a = (f g) and b = (g h) on {f, g, h}:
+  - `Tension::word` gives two different words, both `Holonomy::Comma`, with different group elements (the two 3-cycles);
+  - `Tension::vector` on `Rename` is a compile error (`compile_fail` doctest);
+  - `abelianize` maps both to the identity of `ℤ₂` and returns a non-empty erasure, so the flattening is visible, never silent.
+- **S9 (abelian lattice).** The Pythagorean comma `(−19, 12)` and the syntonic comma `(−4, 4, −1)` span a rank-2 sublattice of the 5-limit. Tempering out `(−19, 12)` in the 3-limit leaves `ℤ` (12-EDO), and with the octave, `ℤ₁₂`. The temperament carries a ruler, and `temper` returns the kernel as its erasure.
+- **S10 (futures are a map).** Two open commas: `enumerate` returns all `3² = 9` kinds of direction (before representatives), with no ruler. `weigh` without a ruler doesn't compile. After `weigh`, all 9 are still present. Picking one goes through `settle` and produces an erasure listing the other 8.
+
+## §5 Open
 
 - **CONJECTURE (math A.10):** W component by component equals W on the whole program. Test: E5 vectors both ways.
+- **Futures (§4):** parked in code (Alex, 2026-10-29). §5 is their type theory, and nothing implements it until the light-cone flip. Which ruler measure should restrict the resolution space (cents, Tenney height, a spectral reading) is OPEN.
 - **Twist:** only the constant-group twist is a `Loop` (math B.7). The tree twist needs the gauge solve of kintsugi math Prop 3.6, a separate type (`GaugeProblem`), not specced here.
 - **For Alex:** the name `Flux::Dark` (Reed's "Unknown → Dark") versus a separate fourth state. And `pitch_class = u32` → `Z<12>` in `interval.mirror` (the bare type).
 - **For Seam:** L5's boundary between contained and named dependencies in mirror's normal form (is every intra-shard reference contained?), and S4's fixture.
