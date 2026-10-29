@@ -146,6 +146,58 @@ pub enum Dark {
     Functional { pred: String },
     /// A run that exceeded Prop. 5.4's bound. A bug in `E` if ever seen.
     Bound { ticks: u64, bound: u64 },
+    /// A core call inside `W` stopped at its budget: `γ` is not a least
+    /// model, so no status can be read.
+    Budget { k_max: u64 },
+}
+
+/// A well-founded status (closed world for facts only).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Status {
+    True,
+    Undefined,
+    False,
+}
+
+/// `clear` iff nothing is undefined, else `opaque`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Outcome {
+    Clear,
+    Opaque,
+}
+
+/// A status splinter: `fact` moved from undefined to false at `round`
+/// (an atom of `over_{round−1}` missing from `over_round`). Nothing is deleted.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct Retraction {
+    pub addr: Addr,
+    pub fact: Fact,
+    pub round: u64,
+}
+
+/// The well-founded model: `true = under`, `undefined = over ∖ under`,
+/// `false` = the rest.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct WellFounded {
+    pub altitude: String,
+    pub true_atoms: BTreeMap<Addr, Fact>,
+    pub undefined: BTreeMap<Addr, Fact>,
+    /// Sorted by `(round, addr)`.
+    pub retractions: Vec<Retraction>,
+    pub outcome: Outcome,
+}
+
+impl WellFounded {
+    /// The status of any ground atom, queried or not.
+    pub fn status(&self, _fact: &Fact) -> Status {
+        todo!("W: status")
+    }
+}
+
+/// `W(P, F, k_max)`: the alternating fixpoint (math §5.3), two core calls
+/// per round, stopping at consecutive equality of `under`.
+pub fn well_founded(_program: &Program, _facts: &Facts, _k_max: u64) -> Result<WellFounded, Dark> {
+    todo!("W: alternating fixpoint (audit §3.4)")
 }
 
 // ── Addressing (§5.0 bytes; §4.1 atom content) ───────────────────────────
