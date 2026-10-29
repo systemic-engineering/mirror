@@ -56,6 +56,39 @@ pub trait Body: sealed::Sealed { type Erasure; type Composite; }
 - `tension.rs` `1e-9` absolute;
 - `coincidence.rs` `f64::EPSILON` absolute.
 
+### §1.1 A ruler's address: canonical bytes *[2026-10-29, for Seam's pact-eval audit §2.2]*
+
+```text
+addr(ruler) = H("ruler\0" ‖ τ ‖ enc(canonical body))
+```
+
+- `H` = BLAKE3, default mode, 32 bytes. `enc(b) = u64_be(len(b)) ‖ b` (fixpoint §5.0).
+- `τ` = UTF-8 `@mirror/ruler` ‖ `0x00` ‖ `0x00`: an engine-side altitude, root-grammar flag (fixpoint §4.1 A2).
+- The kind prefix `ruler\0` keeps ruler addresses disjoint from atom (`splinter\0`), fragment and lens addresses (fixpoint math Cor 1.3).
+
+**Canonical body bytes**, every field fixed-width or length-prefixed, so the encoding is prefix-free:
+
+| offset | bytes | field | values |
+|---|---|---|---|
+| 0 | 1 | family tag | `0x01` Budget (`0x02` Choice, `0x03` Resolution, `0x04` Equivalence, `0x05` Authority, `0x06` Identity root: reserved, not admitted in this slice) |
+| 1 | 1 | body tag | `0x01` Count (the only Budget body) |
+| 2 | 1 | reader tag | `0x00` Independent (`0x01` Dependent, followed by the 32-byte reader address: reserved; refused for Count) |
+| 3 | 8 | `n` | `NonZeroU64`, 8 bytes big-endian |
+| 11 | 1 | unit tag | `0x01` Ticks, `0x02` Rounds |
+
+So a `Count` body is exactly 12 bytes, and the hashed preimage is `"ruler\0"` (6) ‖ τ (15) ‖ `u64_be(12)` (8) ‖ body (12).
+
+Worked example (preimage bytes, not a digest; tests may pin the digest from this commit on): `Count { n: 100, unit: Ticks }`, Independent. The body is
+
+```text
+01 01 00 00 00 00 00 00 00 00 64 01
+```
+
+That is family Budget, body Count, Independent, `n = 100` = `0x64`, unit Ticks.
+
+- **Not in the address:** approval (`Approval::Unsigned` today), revocation records, anything about who applied it. These are provenance beside the ruler, like witnesses beside a splinter (fixpoint §5: "not in the address").
+- **In the address:** the reader tag. A reader-dependent ruler is a different ruler from the independent one with the same numbers (R3).
+
 **Not families** *[S 10]*:
 - **Ban** is the mechanism by which a Choice-by-elimination reaches E (§3).
 - **Weighting** narrows nothing. It is `Weights`, an input that a Choice consumes, carried under the Choice's envelope (the coda's comma lives on that Choice's `reader` field).
