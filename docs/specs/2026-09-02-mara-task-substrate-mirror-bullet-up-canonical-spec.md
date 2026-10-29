@@ -36,7 +36,7 @@ karen_ancestors:
   - "Wolf, Anna (née Jakobs) (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS. Consent obtained via Alex 2026-08-26."
 ---
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "Anna-Wolf-2012 observation-preserving" and "observer-non-perturbation" groundings (:101, :423, :527, :713) are the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). Lines refer to `eecc37a6`.
 
 # @task substrate — Mirror-Bullet-Up canonical spec
 

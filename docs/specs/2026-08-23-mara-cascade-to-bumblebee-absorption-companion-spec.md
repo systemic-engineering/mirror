@@ -160,7 +160,7 @@ spec's @cascade-adjacent citations (found via grep audit; two locations):
    @cascade citation contamination in Rec #95 spec is not @dance's
    responsibility to preserve; better dissolved cleanly.
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "Shared-memory-observation-in-motion pattern" (:137-155, :522-526, :612) is the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). Lines refer to `eecc37a6`.
 
 3. **Rec #95 spec citation audit (grep-verified 2026-08-23)**: only ONE
    substantive @cascade-adjacent citation exists in the spec at

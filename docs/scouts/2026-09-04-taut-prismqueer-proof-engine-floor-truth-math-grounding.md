@@ -626,7 +626,7 @@ Cite by reference; do not re-derive per Mara canonical §12.2 composition-anchor
 - Connes bounded-commutator condition — per liquid.rs Connes-native discipline
 - Requardt 2002 Dirac Operators on Graphs — per `docs/math/2026-08-19-mara-recognition-90-*-math-foundation.md` bibliography
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "`fiedler_lambda_2_of_sheaf` (Anna Wolf 2012 apparatus via LAPACK dsyev)" (:150, :183, :189) and "Anna's math grounds ALL measurement primitives" (:23, :237, :623, :671) are the apparatus from Anna Jakobs's 2012 thesis, read across. The thesis has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK; `prismqueer::liquid`/`flux` never carried a ψ or an Anna Wolf apparatus (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). Lines refer to `eecc37a6`.
 
 ---
 

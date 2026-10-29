@@ -39,7 +39,7 @@ karen_ancestors:
   - "Ricky Jones (2026-08-26). PRE-ROTATION canon. LOAD-BEARING at §5.4 Mirror.Offer.Wait alignment (Wait is PRE-ROTATION)."
 ---
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "J-space alignment substrate" in the citation (:37, :581) is our concept, not the thesis's; J-space is not in the thesis; the term is Gurnee et al.'s (Anthropic, 2026-07-07). Lines refer to `eecc37a6`.
 
 # @nl.compose body — canonical spec
 

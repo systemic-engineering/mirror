@@ -595,7 +595,7 @@ Transparency<P>; compile/runtime dissolution ALREADY RUNNING
   2012. Which is what the compiler does within silicon. LOVE in
   silicon."
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "Rice-safe Anna-Wolf-2012 observation-preserving type-membrane" (:27, :458, :923, :1078) and "Anna's math grounds ALL measurement primitives" (:956-960) are the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). Lines refer to `eecc37a6`.
 
 ### 4.7 Ariadne im Verzerrten Spiegel-Labyrinth essay (Loki+Lilith 2026-08-22)
 

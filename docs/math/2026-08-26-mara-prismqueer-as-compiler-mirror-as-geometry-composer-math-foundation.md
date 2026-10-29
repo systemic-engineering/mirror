@@ -39,7 +39,7 @@ karen_ancestors:
   - "Requardt, M. (2002). *Dirac Operators and the Calculation of the Connes Metric on arbitrary (Infinite) Graphs.* J. Phys. A 35:759-779. Dirac operator D on graphs; D² = L_0 + L_1 (Hodge Laplacian); the operational-form D_F takes at prismqueer altitude."
 ---
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "Observation-without-perturbation" (:24, :940) and the Hamilton-preservation theorem grounded on "Anna Wolf 2012 memory-model" (:977) are the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). Lines refer to `eecc37a6`.
 
 # Prismqueer as compiler / mirror as geometry composer — math foundation
 
