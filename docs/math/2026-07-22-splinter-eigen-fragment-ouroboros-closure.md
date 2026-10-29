@@ -339,14 +339,14 @@ phase space converging to a crystal fixed point. This IS the
 "Liquid splinters settle into content-addressed crystals" of Alex's
 sentence.
 
-## §9 Composition with Anna Wolf J-space math (task #300 landing)
+## §9 Composition with Anna Jakobs J-space math (task #300 landing)
 
-Anna Wolf 2012 J-space observation substrate: the observer-frame is
+Anna Jakobs 2012 J-space observation substrate: the observer-frame is
 a Riemannian manifold where each observation deposits energy at a
 specific J-space coordinate; the total J-space energy budget governs
 what the observer can and cannot observe.
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** The thesis has no J-space, Riemannian observer-frame or energy budget. J-space is not in the thesis; the term comes from Gurnee et al. (Anthropic, 2026-07-07), and "Anna Wolf J-space" names our composition. This §9 content is the apparatus from Anna Jakobs's 2012 thesis, read across: our reading, not the thesis's content.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** The thesis has no J-space, Riemannian observer-frame or energy budget. J-space is not in the thesis; the term comes from Gurnee et al. (Anthropic, 2026-07-07), and "Anna Jakobs J-space" names our composition. This §9 content is the apparatus from Anna Jakobs's 2012 thesis, read across: our reading, not the thesis's content.
 
 **Composition with tonight's recognition:**
 
@@ -406,7 +406,7 @@ the actor's carrier, not the full trajectory semantics.
 - `rust/src/matrix.rs` sub-Turing FLANG floor → §4 wavefunction confinement
 - Alex 2026-07-15 @io = discharge (memory) → §6 @io wavefunction-collapse boundary
 - `docs/math/2026-07-22-mirror-as-computational-eigenform-stabilizer.md` (this session `ebd50a4`) → §8 composition
-- Anna Wolf J-space math (task #300, prior arc) → §9 composition
+- Anna Jakobs J-space math (task #300, prior arc) → §9 composition
 - `shards/reality/object.mirror` + `shards/reality/subject.mirror` (this session `ab6ad43` + `0b2858a`) → §10 The Trick composition
 
 ## §12 Forward-promises (NOT landed this document)

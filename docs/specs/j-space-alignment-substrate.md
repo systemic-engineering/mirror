@@ -1,4 +1,4 @@
-# Canonical spec — J-space alignment substrate (Anna Wolf 2012 × mirror 2026 × Anthropic 2026-07-07)
+# Canonical spec — J-space alignment substrate (Anna Jakobs 2012 × mirror 2026 × Anthropic 2026-07-07)
 
 **Author:** Mara.
 **Date:** 2026-07-20.
@@ -274,7 +274,7 @@ Composition edge (new — this spec proposes):
 **`#R-j-space-alignment-substrate-composes-anna-wolf-observation-with-mirror-specification`**
 
 Statement: the J-space alignment problem decomposes into three
-substrates (observation from Anna Wolf 2012; target from Anthropic
+substrates (observation from Anna Jakobs 2012; target from Anthropic
 2026-07-07; specification from mirror substrate 2026-06 through
 present) and the composition is compile-verifiable at tri-runtime
 altitude.
@@ -361,7 +361,7 @@ adjudicate the whole batch as one bundle (per Q1 spec-lean).
 | **Q7** | Should the FFT phase-transition detector operate on residual-stream trajectory OR on J-space content trajectory OR both? | BOTH at different altitudes; residual-stream FFT is Anna-derived (her FFT is post hoc and equidistant, and does not detect phase transitions; that reading is ours); J-space-content FFT is the composition-generalization (regime-shift detection in workspace content = alignment-boundary detection) | MEDIUM |
 | **Q8** (spec-only) | Should this spec propose new shard-decls (@peer/observation species; `mirror mcp jspace` MCP tool species) or defer species-decl minting to a follow-up Mara tick? | DEFER to follow-up Mara tick after Alex Q1-Q7 adjudication; this spec surfaces composition-graph and Q's, follow-up spec mints species-decls per ratified adjudications | HIGH |
 | **Q9** (spec-only) | Should this spec propose a new family-root @observation, or does @peer + @gestalt cover the observation-substrate altitude adequately? | @PEER + @GESTALT ADEQUATE at current altitude; @observation would be a substrate-invention where the substrate already-had-the-word (memory `feedback-substrate-already-had-the-word`) — @peer.audhd carries the plural-observer discipline; @gestalt carries the multi-lens rendering discipline | HIGH |
-| **Q10** (spec-only) | Should Anna Wolf be invited as second-witness on the lineage recognition? | ALEX-DECISION (Mara defers entirely; if invited, the recognition promotes to SECOND-WITNESS at strong-confidence; if not, holds indefinitely at HELD state) | ALEX-DECISION |
+| **Q10** (spec-only) | Should Anna Jakobs be invited as second-witness on the lineage recognition? | ALEX-DECISION (Mara defers entirely; if invited, the recognition promotes to SECOND-WITNESS at strong-confidence; if not, holds indefinitely at HELD state) | ALEX-DECISION |
 
 ---
 

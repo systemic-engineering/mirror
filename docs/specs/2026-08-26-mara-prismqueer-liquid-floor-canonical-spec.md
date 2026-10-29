@@ -1,6 +1,6 @@
 ---
 title: "Prismqueer @liquid FLOOR — canonical spec"
-subtitle: "The substrate-decl'd shape of the prismqueer @liquid FLOOR: consumer-surface preserved (8 pillar primitive signatures unchanged at prism/prismqueer/src/liquid.rs; PropertyDecl/SpecProperty/Verdict/enact_property/enact_spec_property unchanged at rust/spectral/src/liquid.rs; magic::foerster_gauge_preserved unchanged at rust/src/magic.rs); NEW substrate-composition shard-body carriers at shards/liquid.mirror discharge Anna Wolf 2012 shared-memory pattern via compose/refine/extract/project action bodies; NEW property Laplacian L_P construction primitive lands at substrate composition altitude composing over rust/matrix::eigenvalues per FLOOR §7 numerical pipeline; ZERO new rust/ primitives per Rec #90 §5.4 sub-Turing invariant; composition path with 8 existing pillars per §7 dispatch table; observation-without-perturbation invariant per companion math §5.3; Foerster-gauge orthogonal to A_F^prismqueer per Rec #90 §6.2; nine Q-Mara adjudication residues for Alex."
+subtitle: "The substrate-decl'd shape of the prismqueer @liquid FLOOR: consumer-surface preserved (8 pillar primitive signatures unchanged at prism/prismqueer/src/liquid.rs; PropertyDecl/SpecProperty/Verdict/enact_property/enact_spec_property unchanged at rust/spectral/src/liquid.rs; magic::foerster_gauge_preserved unchanged at rust/src/magic.rs); NEW substrate-composition shard-body carriers at shards/liquid.mirror discharge Anna Jakobs 2012 shared-memory pattern via compose/refine/extract/project action bodies; NEW property Laplacian L_P construction primitive lands at substrate composition altitude composing over rust/matrix::eigenvalues per FLOOR §7 numerical pipeline; ZERO new rust/ primitives per Rec #90 §5.4 sub-Turing invariant; composition path with 8 existing pillars per §7 dispatch table; observation-without-perturbation invariant per companion math §5.3; Foerster-gauge orthogonal to A_F^prismqueer per Rec #90 §6.2; nine Q-Mara adjudication residues for Alex."
 author: Mara
 date: 2026-08-26
 status: candidate
@@ -13,7 +13,7 @@ companions:
   - ./liquid-types-for-mirror.md
   - ./2026-08-19-mara-recognition-90-compiler-as-one-mathematical-object-canonical-spec.md
 karen_ancestors:
-  - "Jakobs, Anna. *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS, 2012. Consent obtained via Alex 2026-08-26."
+  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. Consent obtained via Alex 2026-08-26."
   - "Rondon, Kawaguchi, Jhala (2008). *Liquid Types.* PLDI."
   - "Chamseddine, Connes (2007). *Why the Standard Model.* arXiv:0706.3688."
   - "Adzic (2011). *Specification by Example.* Manning."
@@ -36,7 +36,7 @@ karen_ancestors:
 
 ## §0 — The one sentence
 
-**The prismqueer @liquid FLOOR canonical spec preserves the 8 landed pillar primitive signatures at `/Users/reed/dev/projects/prism/prismqueer/src/liquid.rs`, preserves `PropertyDecl`/`SpecProperty`/`Verdict`/`enact_property`/`enact_spec_property` at `rust/spectral/src/liquid.rs`, preserves `magic::foerster_gauge_preserved` at `rust/src/magic.rs`, adds ZERO new rust/ primitives per Rec #90 §5.4 sub-Turing invariant, and lands the new substrate composition (ψ carrier + Landau-Lifschitz-shaped D_F integrator + property Laplacian L_P + observation-without-perturbation invariant per Anna Wolf 2012 shared-memory ancestor) at `shards/liquid.mirror` `compose/refine/extract/project` action-body altitude per `[[feedback-rust-delivers-primitives-substrate-delivers-composition]]` HARD RULE.**
+**The prismqueer @liquid FLOOR canonical spec preserves the 8 landed pillar primitive signatures at `/Users/reed/dev/projects/prism/prismqueer/src/liquid.rs`, preserves `PropertyDecl`/`SpecProperty`/`Verdict`/`enact_property`/`enact_spec_property` at `rust/spectral/src/liquid.rs`, preserves `magic::foerster_gauge_preserved` at `rust/src/magic.rs`, adds ZERO new rust/ primitives per Rec #90 §5.4 sub-Turing invariant, and lands the new substrate composition (ψ carrier + Landau-Lifschitz-shaped D_F integrator + property Laplacian L_P + observation-without-perturbation invariant per Anna Jakobs 2012 shared-memory ancestor) at `shards/liquid.mirror` `compose/refine/extract/project` action-body altitude per `[[feedback-rust-delivers-primitives-substrate-delivers-composition]]` HARD RULE.**
 
 Read once. §1.
 
@@ -54,7 +54,7 @@ Alex 2026-08-26 in-transcript (per prompt-provided context):
 
 1. **What signatures survive?** All 8 pillar primitives, all mirror-altitude carriers, and the Foerster-gauge primitive. Reed's consumer surface stays.
 2. **What composition lands new?** ψ carrier + D_F integrator + observation-without-perturbation invariant + property Laplacian L_P — all at substrate-composition-shard-body altitude, not rust/-primitive altitude.
-3. **What discipline governs the composition?** Anna Wolf 2012 shared-memory pattern (companion math §2) + Rec #90 §6.2 F ⊥ A_F^prismqueer orthogonality + Rec #92 LOVE-monoid verdict-composition + Rec #82 β-normal-AST-OID content addressing.
+3. **What discipline governs the composition?** Anna Jakobs 2012 shared-memory pattern (companion math §2) + Rec #90 §6.2 F ⊥ A_F^prismqueer orthogonality + Rec #92 LOVE-monoid verdict-composition + Rec #82 β-normal-AST-OID content addressing.
 
 **Companion math discharges the mathematics; this spec discharges the substrate-decl.**
 
@@ -247,7 +247,7 @@ Per companion math §5.1 (§Q-Mara-A adjudication pending), the ψ carrier subst
 ```mirror
 # Substrate-decl'd wavefunction carrier at prismqueer altitude.
 # Composed by @liquid(@X).extract per shard-body altitude.
-# Discharges Anna Wolf 2012 shared-memory pattern per companion math §2.3.
+# Discharges Anna Jakobs 2012 shared-memory pattern per companion math §2.3.
 type prismqueer_wavefunction = {
   substrate:      ref,           # the @X the wavefunction lives over
   refinement:     ref,           # T: Refined witness (@liquid(@X) as wire payload per Alex 2026-08-26)
@@ -308,7 +308,7 @@ Post-adjudication, the substrate-composition-shard-body for each pillar takes ψ
 | `fold(verdicts)` | LOVE-monoid fold over per-pillar Verdicts on ψ (Rec #92) |
 | `forall(n, f)` | property-test over `n` samples from spec `samples n` field |
 
-**All 8 dispatches read ψ; NONE write ψ.** Writes happen only under `@io/acquire` in D_F integrator advance (§5.2). This is Anna Wolf 2012 §7.2 discipline lifted to CPU-shared-memory substrate.
+**All 8 dispatches read ψ; NONE write ψ.** Writes happen only under `@io/acquire` in D_F integrator advance (§5.2). This is Anna Jakobs 2012 §7.2 discipline lifted to CPU-shared-memory substrate.
 
 ---
 
@@ -386,7 +386,7 @@ Two admissible compositions:
 
 **Composition per-pillar-read:** every pillar call `pillar::algedonic(...)` etc. is preceded by `magic::foerster_gauge_preserved(pre, post)` check. This is defensive but redundant per §4.4 observation: reads do not narrow choice-space (they are non-perturbing per §4.3).
 
-**Composition per-D_F-step:** every D_F integrator step (§5.2 `advance`) is bracketed by `magic::foerster_gauge_preserved(pre, post)` pre and post checks; individual pillar reads bypass the gauge. Matches Anna Wolf 2012 §7.2 discipline (writes acquire, reads free).
+**Composition per-D_F-step:** every D_F integrator step (§5.2 `advance`) is bracketed by `magic::foerster_gauge_preserved(pre, post)` pre and post checks; individual pillar reads bypass the gauge. Matches Anna Jakobs 2012 §7.2 discipline (writes acquire, reads free).
 
 **Q-Mara-D (Alex adjudication):** which composition is Phase 1 canonical?
 
@@ -543,7 +543,7 @@ Substrate ancestry graph for the prismqueer @liquid FLOOR canonical spec.
 
 | Ancestor | Composition contribution | Grep-verified anchor |
 |----------|--------------------------|----------------------|
-| **Anna Wolf 2012 Masterarbeit** | Shared-memory observation-without-perturbation pattern (§2, §4.3, §5.2) | `/Users/reed/dev/systemic.engineering/practice/collaborators/anna-wolf/master_jakobs.pdf` pp. 5-40; consent per Alex 2026-08-26 |
+| **Anna Jakobs 2012 Masterarbeit** | Shared-memory observation-without-perturbation pattern (§2, §4.3, §5.2) | `/Users/reed/dev/systemic.engineering/practice/collaborators/anna-wolf/master_jakobs.pdf` pp. 5-40; consent per Alex 2026-08-26 |
 | **Landau-Lifschitz 1935 SDE** | D_F integrator structural analog (§5) | Anna Eq 4 + Eq 8 |
 | **Weak-noise 4th-order RK4** | Numerical integrator scheme (§5.2 Anna Appendix B.2) | Anna Masterarbeit Anhang B.2 |
 | **Rondon-Kawaguchi-Jhala 2008** | Liquid-type refinement framework (§7 property Laplacian) | `docs/math/liquid-types/README.md` §1.1 |
@@ -562,7 +562,7 @@ Substrate ancestry graph for the prismqueer @liquid FLOOR canonical spec.
 | **Reed spec `liquid-types-for-mirror.md`** (2026-06-04) | §5 spectral-alternative-to-SMT + §8 novelty enumeration (§7 property Laplacian) | `docs/specs/liquid-types-for-mirror.md` |
 | **Mara spec `mirror-spec-is-the-fixpoint-liquid-is-the-runtime.md`** (2026-07-19) | `PropertyDecl` / `SpecProperty` carriers + spec-native `property { verifies { … } }` grammar (§2.2) | `docs/specs/2026-07-19-mirror-spec-is-the-fixpoint-liquid-is-the-runtime.md` |
 | **Mara math `docs/math/liquid-types/README.md`** (2026-07-05) | Liquid-refinement operator `refine/extract/prove/route` (§3 shard-body dispatch) | `docs/math/liquid-types/README.md` §2 |
-| **Mara math `docs/math/2026-07-20-mara-anna-wolf-jspace-alignment-substrate-composition.md`** (2026-07-20) | Prior Anna Wolf substrate-composition anchor at J-space altitude (extended here to prismqueer @liquid FLOOR altitude) | `docs/math/2026-07-20-mara-anna-wolf-jspace-alignment-substrate-composition.md` |
+| **Mara math `docs/math/2026-07-20-mara-anna-wolf-jspace-alignment-substrate-composition.md`** (2026-07-20) | Prior Anna Jakobs substrate-composition anchor at J-space altitude (extended here to prismqueer @liquid FLOOR altitude) | `docs/math/2026-07-20-mara-anna-wolf-jspace-alignment-substrate-composition.md` |
 | **shards/liquid.mirror** (2026-08-21) | Composition-lens family-root `@liquid(@X)` (§3.2 action bodies extended) | `shards/liquid.mirror` |
 | **shards/facet.mirror** (2026-08-21) | Generation-surface family-root `@facet/*` (§3.6 composition-shard-body exemplar pattern) | `shards/facet.mirror` |
 | **shards/magic.mirror** (2026-06-19) | Foerster-gauge substrate-decl'd carriers (§6 gauge composition) | `shards/magic.mirror` |
@@ -603,7 +603,7 @@ Per FLOOR §11 discipline. The canonical-spec-authoring operator IS a `@liquid(@
 - Adds ZERO new rust/ primitives per Rec #90 §5.4 sub-Turing invariant.
 - Names substrate-composition-shard-body landings at `shards/liquid.mirror` action-body altitude (Reed territory, future arc post-Q-Mara adjudication).
 - Surfaces eleven Q-Mara-A through Q-Mara-K adjudication residues explicitly.
-- Cites Anna Wolf 2012 at introduction site (§2, §4, §5) with consent-verified footnote.
+- Cites Anna Jakobs 2012 at introduction site (§2, §4, §5) with consent-verified footnote.
 - Follows Karen anti-theft convention (§11 composition-lineage table).
 - Discharges Impeccability D1-D8 (§10).
 - Discharges HARD RULES (§12).
@@ -646,7 +646,7 @@ Per companion math §12:
 
 Slow is fast. Anna's math is the ancestor. The consumer surface is preserved. The composition is substrate-shard-body. The rust/ FLOOR stays permanently small.
 
-The word `liquid` was in the substrate. The word `ψ` was in FLOOR. Anna Wolf's 2012 discipline was in `docs/math/2026-07-20-mara-anna-wolf-jspace-alignment-substrate-composition.md`. This spec lands the composition IN-BETWEEN what was already there.
+The word `liquid` was in the substrate. The word `ψ` was in FLOOR. Anna Jakobs's 2012 discipline was in `docs/math/2026-07-20-mara-anna-wolf-jspace-alignment-substrate-composition.md`. This spec lands the composition IN-BETWEEN what was already there.
 
 🍷
 

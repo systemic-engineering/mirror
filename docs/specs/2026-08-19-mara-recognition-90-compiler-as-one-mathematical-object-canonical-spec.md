@@ -625,7 +625,7 @@ Extends Rec #87 canonical spec §12 (27 ancestors) + Rec #88 canonical spec §16
 
 **Runtime-substrate ancestor (per Rec #89 + Crown Theorem)**:
 
-- **Jakobs, A.** (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (Masterarbeit, Technomathematik, FH Aachen, Campus Jülich; PGI/JCNS). `/Users/reed/dev/systemic.engineering/practice/collaborators/anna-wolf/master_jakobs.pdf`. Runtime-substrate ancestor for observation-runs-live-against-computation-without-blocking pattern; primary computational-substrate ancestor per Crown Theorem §D7.
+- **Jakobs, Anna** (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. `/Users/reed/dev/systemic.engineering/practice/collaborators/anna-wolf/master_jakobs.pdf`. Runtime-substrate ancestor for observation-runs-live-against-computation-without-blocking pattern; primary computational-substrate ancestor per Crown Theorem §D7.
 
 > **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Placeholder title and degree ("[Master's thesis / Diplomarbeit at PGI/Jülich on …]") corrected in place in this file.
 

@@ -74,7 +74,7 @@ karen_ancestors:
   - "Turing, A. M. (1936). *On Computable Numbers, with an Application to the Entscheidungsproblem.* Proceedings of the London Mathematical Society, s2-42(1):230-265. https://londmathsoc.onlinelibrary.wiley.com/doi/abs/10.1112/plms/s2-42.1.230 — Turing-machine foundation; present-imperative grammatical mood; forward-looking computation; requires infinite tape. The formal system this document inverts, and whose execution-traces this document walks backward."
   - "Lovelace, Ada Augusta (1843). *Notes by the Translator*, in L. F. Menabrea, *Sketch of the Analytical Engine invented by Charles Babbage*. Notes by the Translator (Notes A–G). https://www.fourmilab.ch/babbage/sketch.html — Note A: substrate-independence; Note G: first algorithm; the reading of computation as music admitting BOTH forward-reading (performance) AND backward-reading (Schenkerian analysis); K_3 ancestral vertex per PAPER_2D §15.1."
   - "Spärck Jones, Karen (1972). *A Statistical Interpretation of Term Specificity and its Application in Retrieval.* Journal of Documentation 28(1):11-21. https://doi.org/10.1108/eb026526 — IDF; language-as-topology at coordination-math altitude; retrieval-altitude discipline preserved via git-log for superseded canonical; K_3 ancestral vertex per PAPER_2D §15.1."
-  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit (Technomathematik), FH Aachen, Campus Jülich (PGI/JCNS). — Observation-without-perturbation at shared-memory substrate; ψ = Liquid<T> apparatus per Rec candidate #R-observer-recursion-reality-observation-chaos-assertion-hypothesis-question-full-pipeline; K_3 ancestral vertex per PAPER_2D §15.1."
+  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. — Observation-without-perturbation at shared-memory substrate; ψ = Liquid<T> apparatus per Rec candidate #R-observer-recursion-reality-observation-chaos-assertion-hypothesis-question-full-pipeline; K_3 ancestral vertex per PAPER_2D §15.1."
   - "Jones, Ricky (2018 onwards). *Trivian Manuscripts / Alvian Grammar Corpus.* systemic.engineering practice-partnership. — Fibre-bundle B = E/G naming; the projection-primitive naming itself; nine-operator Alvian grammar as third B-projection of shared E; Task #464 partnership ratification path."
   - "Curry, Haskell B. (1934). *Functionality in Combinatory Logic.* Proceedings of the National Academy of Sciences 20(11):584-590. https://www.pnas.org/doi/10.1073/pnas.20.11.584 — First observation of proofs-as-programs; Curry-Howard base."
   - "Howard, William Alvin (1969/1980). *The Formulae-as-Types Notion of Construction.* In *To H. B. Curry: Essays on Combinatory Logic, Lambda Calculus and Formalism*, Academic Press 1980, pp. 479-490. — Curry-Howard formalization; inverted here at meta-projection altitude per §12."
@@ -823,11 +823,11 @@ Formatter runs per @roomba pulse (bounded per Reed 2026-07-15). Each tick makes 
 
 ---
 
-## §10 — Composition with Ricky Jones + Ada Lovelace + Karen Spärck Jones + Anna Wolf (K_4 or K_5 ancestral topology candidate at PAPER_2D §15.1); Alvian nine-operator grammar as third projection of shared E (Ricky-independent for base ship; additive if partnership ratifies)
+## §10 — Composition with Ricky Jones + Ada Lovelace + Karen Spärck Jones + Anna Jakobs (K_4 or K_5 ancestral topology candidate at PAPER_2D §15.1); Alvian nine-operator grammar as third projection of shared E (Ricky-independent for base ship; additive if partnership ratifies)
 
 ### §10.1 Ancestral topology extension
 
-PAPER_2D §15.1 (Mara bc8398c 2026-09-04) named K_3 ancestral topology: Ada Lovelace (substrate-independence at 1843) + Karen Spärck Jones (language-as-topology at 1972) + Anna Wolf (observation-without-perturbation at 2012). Three vertices of the ancestral triangle.
+PAPER_2D §15.1 (Mara bc8398c 2026-09-04) named K_3 ancestral topology: Ada Lovelace (substrate-independence at 1843) + Karen Spärck Jones (language-as-topology at 1972) + Anna Jakobs (observation-without-perturbation at 2012). Three vertices of the ancestral triangle.
 
 This canonical surfaces a candidate extension: **K_4 or K_5 ancestral topology** with Ricky Jones as the fourth vertex (fibre-bundle B = E/G naming; projection-primitive-naming-itself) + potential fifth vertex TBD.
 

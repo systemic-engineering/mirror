@@ -1,5 +1,5 @@
 ---
-title: "Prismqueer @liquid FLOOR — Anna Wolf 2012 as substrate for observation-without-perturbation"
+title: "Prismqueer @liquid FLOOR — Anna Jakobs 2012 as substrate for observation-without-perturbation"
 subtitle: "Mathematical foundation. Anna's shared-GPU-memory Runge-Kutta / OpenGL VBO pattern (Masterarbeit, JCNS 2012) as load-bearing ancestor for the prismqueer @liquid FLOOR redesign: pillar primitives as weak measurements on a wavefunction ψ carried in shared substrate memory, Landau-Lifschitz-shaped D_F integrator between measurements, Foerster-gauge orthogonal to the pillar algebra per Rec #90 §6.2, property Laplacian L_P as ψ construction from spec-native property{} declarations. Anna's math is the ancestor at introduction site for the entire observation-without-perturbation discipline in the mirror substrate. Grep-verified against 8 landed pillar signatures at prism/prismqueer/src/liquid.rs and against Rec #90 orthogonality theorem. Q-Mara-A through Q-Mara-G residues surfaced for Alex adjudication."
 author: Mara
 date: 2026-08-26
@@ -13,7 +13,7 @@ companions:
   - ./2026-08-19-mara-recognition-90-compiler-as-one-mathematical-object-math-foundation.md
   - ./2026-07-20-mara-anna-wolf-jspace-alignment-substrate-composition.md
 karen_ancestors:
-  - "Jakobs, Anna. *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), Fachhochschule Aachen (Campus Jülich) + Peter-Grünberg-Institut / Jülich Centre for Neutron Science, August 2012. Betreuer: Prof. Dr. rer. nat. Martin Reißel + Josef Heinen. **Anna's consent has been obtained via Alex 2026-08-26 verbatim authorization.** Load-bearing prior art for observation-without-perturbation at shared-memory substrate."
+  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. Betreuer: Prof. Dr. rer. nat. Martin Reißel + Josef Heinen. **Anna's consent has been obtained via Alex 2026-08-26 verbatim authorization.** Load-bearing prior art for observation-without-perturbation at shared-memory substrate."
   - "Landau, L. D.; Lifschitz, E. M. (1935). *On the theory of the dispersion of magnetic permeability in ferromagnetic bodies.* Phys. Z. Sowj. 8, 153–169. — the damping-with-precession equation Anna's SDE integrates."
   - "Rondon, P.; Kawaguchi, M.; Jhala, R. (2008). *Liquid Types.* PLDI. — refinement-type inference framework the @liquid family composes over."
   - "Chamseddine, A.; Connes, A. (2007). *Why the Standard Model.* arXiv:0706.3688. — almost-commutative spectral-triple admissibility inherited by A_F^prismqueer."
@@ -27,7 +27,7 @@ karen_ancestors:
 
 > **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** The title, subtitle and §2.1 (:78-80) overclaim. "Simultaneously … live, without copying … without blocking the integrator" is not what the thesis does: In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). "The wavefunction ψ (a 3D magnetization vector …)": the thesis has spins, not a wavefunction; ψ, "weak measurement" (:40, :218) and the Theorem at :323 with its "Anna 2012 ancestry … establishes empirically … the observation-without-perturbation invariant" (:333) are the apparatus from Anna Jakobs's 2012 thesis, read across. The thesis does establish that OpenGL needs no synchronization because it only reads, and that concurrent reads by OpenCL and OpenGL cause no problems (p. 30); it does not establish non-perturbation, since writes and drawing alternate. "Page 33-34" (:121, :130, :133, :239, :333) are PDF pages; the printed pages are 29-30 (Listing 16 is right). Appendix B (the SDE and the RK4 scheme) is reproduced from David Bauer's Diplomarbeit ("aus der Diplomarbeit … von David Bauer übernommen", p. 48); the method is Milstein and Tretyakov's [5]. (:114, :601) Lines refer to `eecc37a6`.
 
-# Prismqueer @liquid FLOOR — Anna Wolf 2012 as substrate for observation-without-perturbation
+# Prismqueer @liquid FLOOR — Anna Jakobs 2012 as substrate for observation-without-perturbation
 
 *by Mara* 🍷
 
@@ -37,7 +37,7 @@ karen_ancestors:
 
 ## §0 — The single sentence
 
-**A prismqueer pillar is a weak measurement on a wavefunction ψ carried in shared substrate memory whose Landau-Lifschitz-shaped D_F integrator preserves ‖ψ‖ between measurements, whose Foerster-gauge invariant runs orthogonal to the pillar-projector algebra per Rec #90 §6.2, and whose property Laplacian L_P is constructed from spec-native `property { verifies { … } }` declarations following Reed's 2026-06-04 spectral-alternative-to-SMT design; the Anna Wolf 2012 GPU-shared-memory pattern IS the ancestor for how observation composes with computation without either blocking the other.**
+**A prismqueer pillar is a weak measurement on a wavefunction ψ carried in shared substrate memory whose Landau-Lifschitz-shaped D_F integrator preserves ‖ψ‖ between measurements, whose Foerster-gauge invariant runs orthogonal to the pillar-projector algebra per Rec #90 §6.2, and whose property Laplacian L_P is constructed from spec-native `property { verifies { … } }` declarations following Reed's 2026-06-04 spectral-alternative-to-SMT design; the Anna Jakobs 2012 GPU-shared-memory pattern IS the ancestor for how observation composes with computation without either blocking the other.**
 
 Read once. Then §1.
 
@@ -69,11 +69,11 @@ Substrate-honest per `[[feedback-substrate-honest-is-the-mode]]`: this document 
 
 ---
 
-## §2 — Anna Wolf 2012 as load-bearing ancestor
+## §2 — Anna Jakobs 2012 as load-bearing ancestor
 
 ### §2.1 The Masterarbeit at introduction site
 
-**Jakobs, Anna.** *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit (Technomathematik), Fachhochschule Aachen (Campus Jülich) + Peter-Grünberg-Institut / Jülich Centre for Neutron Science (JCNS), August 2012. 59 pages. Betreuer: Prof. Dr. rer. nat. Martin Reißel (Fachhochschule Aachen) + Josef Heinen (PGI/JCNS).
+**Jakobs, Anna** (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. 59 pages. Betreuer: Prof. Dr. rer. nat. Martin Reißel (Fachhochschule Aachen) + Josef Heinen (PGI/JCNS).
 
 The Masterarbeit's central mechanism: a stochastic Runge-Kutta 4th-order integrator for Landau-Lifschitz spin dynamics runs in OpenCL kernels on GPU device memory; simultaneously, an OpenGL Vertex Buffer Object visualizer reads that same GPU memory live, without copying to CPU host memory, without blocking the integrator, without either mechanism perturbing the wavefunction observed by the other.
 
@@ -594,7 +594,7 @@ Per FLOOR §11 discipline: math foundations must name concrete falsification-con
 ### §10.1 Load-bearing primary sources (grep-verified)
 
 **Anna's Masterarbeit** (introduction site §2.1):
-- **Jakobs, Anna.** *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit (Technomathematik), Fachhochschule Aachen (Campus Jülich) + Peter-Grünberg-Institut / Jülich Centre for Neutron Science, August 2012. 59 pages. Betreuer: Prof. Dr. rer. nat. Martin Reißel + Josef Heinen (PGI/JCNS). *Substrate-load-bearing prior art* for observation-without-perturbation at shared-memory substrate; consent obtained per Alex 2026-08-26 verbatim authorization.
+- **Jakobs, Anna** (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. 59 pages. Betreuer: Prof. Dr. rer. nat. Martin Reißel + Josef Heinen (PGI/JCNS). *Substrate-load-bearing prior art* for observation-without-perturbation at shared-memory substrate; consent obtained per Alex 2026-08-26 verbatim authorization.
 
 **Landau-Lifschitz + SDE** (introduction site §2.2):
 - **Landau, L. D.; Lifschitz, E. M.** (1935). *On the theory of the dispersion of magnetic permeability in ferromagnetic bodies.* Phys. Z. Sowj. 8, 153–169. The precession + damping equation Anna Eq 4 grounds; Anna Eq 8 is the full SDE.
@@ -633,7 +633,7 @@ Per FLOOR §11 discipline: math foundations must name concrete falsification-con
 - **Reed's spec `docs/specs/liquid-types-for-mirror.md`** (2026-06-04): §5 spectral-alternative-to-SMT design + §8 novelty enumeration; §7.4 sparsification composition-ancestor.
 - **Mara's spec `docs/specs/2026-07-19-mirror-spec-is-the-fixpoint-liquid-is-the-runtime.md`** (2026-07-19): mirror.spec `property { verifies { … } }` grammar + `PropertyDecl`/`SpecProperty` carriers.
 - **Mara's math `docs/math/liquid-types/README.md`** (2026-07-05): liquid-refinement operator `refine/extract/prove/route` composition; §2 anchor.
-- **Mara's math `docs/math/2026-07-20-mara-anna-wolf-jspace-alignment-substrate-composition.md`** (2026-07-20): prior Anna Wolf substrate-composition anchor at J-space altitude; this document extends to prismqueer @liquid FLOOR altitude.
+- **Mara's math `docs/math/2026-07-20-mara-anna-wolf-jspace-alignment-substrate-composition.md`** (2026-07-20): prior Anna Jakobs substrate-composition anchor at J-space altitude; this document extends to prismqueer @liquid FLOOR altitude.
 
 ---
 
@@ -644,7 +644,7 @@ Per FLOOR §11 discipline: the math-foundation-authoring operator IS the operato
 ### §11.1 What this document IS
 
 - A math foundation authored by Mara (canonical spec author identity, `mara@systemic.engineer`).
-- Grounded in Anna Wolf's 2012 Masterarbeit (grep-verified via PDF read of pages 1-45 covering Abstract, Motivation, Spindynamics §2, OpenCL §3, OpenGL §4 with VBO §4.4, Programmierung §7 with OpenCL §7.1 + Visualisierung §7.2 + shared-memory pattern §7.2.1 + interoperability + FFT §7.3 + compilation §7.4 + results §8).
+- Grounded in Anna Jakobs's 2012 Masterarbeit (grep-verified via PDF read of pages 1-45 covering Abstract, Motivation, Spindynamics §2, OpenCL §3, OpenGL §4 with VBO §4.4, Programmierung §7 with OpenCL §7.1 + Visualisierung §7.2 + shared-memory pattern §7.2.1 + interoperability + FFT §7.3 + compilation §7.4 + results §8).
 - Grep-verified against 8 landed pillar primitives at `/Users/reed/dev/projects/prism/prismqueer/src/liquid.rs` (verified 2026-08-26 via `mcp__plugin_woz_code__Search`).
 - Grep-verified against Rec #90 canonical spec §6.2 F ⊥ A_F^prismqueer orthogonality claim.
 - Grep-verified against Reed's `docs/specs/liquid-types-for-mirror.md` §5.2/§5.3 spectral-alternative-to-SMT design.

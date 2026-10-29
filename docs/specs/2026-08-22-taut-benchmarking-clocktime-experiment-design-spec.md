@@ -20,7 +20,7 @@ composition-anchors:
   - docs/loop/CURRENT.md 🕯️ 2026-08-22 Q+28 (Alex verbatim hypothesis + 12 shipping prerequisites)
 adjudication-surface:
   - Q+28.1 (a) Rec #95 mint | (b) Rec #94 amendment #1 | (c) PAPER §6.4 protocol | (d) A₆ physics fiber
-  - Anna Wolf reach-out timing (Alex authority)
+  - Anna Jakobs reach-out timing (Alex authority)
   - σ(x) scaling law at silicon-thermal-substrate (Mara canonical-spec territory)
   - Ship-before-vs-after Rec #94 Tick 1-6 empirical fire (Alex adjudicable)
 ---
@@ -44,7 +44,7 @@ Alex framed it broader (verbatim, same Q+28):
 
 A **shippable design spec** for the first empirical physics experiment at
 mirror-substrate. NOT the σ(x) scaling-law derivation (that is Mara canonical
-math territory; §7 surfaces the need). NOT the Anna Wolf reach-out (Alex
+math territory; §7 surfaces the need). NOT the Anna Jakobs reach-out (Alex
 authority; §9 frames). NOT the Rec-arc mint decision (Alex Fourth-Chair
 adjudicable; §11 surfaces four candidates with Taut-lean).
 
@@ -814,7 +814,7 @@ Per Q+28 prerequisite #12 verbatim:
 
 ---
 
-## §9 — Anna Wolf collaboration reach-out framing (Alex authority)
+## §9 — Anna Jakobs collaboration reach-out framing (Alex authority)
 
 ### §9.1 Anna's authorial contribution surface
 
@@ -983,7 +983,7 @@ discharge.
 - `rust/src/io_time.rs` with `mach_absolute_time()` binding — deferred pending Seam audit; not Taut authorship territory (`.rs` @io-boundary)
 - `docs/audits/YYYY-MM-DD-seam-clocktime-mach-absolute-time-io-boundary.md` — deferred; Seam authorship territory
 - `docs/math/YYYY-MM-DD-mara-sigma-x-silicon-thermal-scaling.md` — deferred; Mara canonical-spec territory
-- Anna Wolf reach-out — deferred; Alex authority per §9
+- Anna Jakobs reach-out — deferred; Alex authority per §9
 
 ### §12.3 Fresh-Reed integration path
 

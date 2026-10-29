@@ -535,7 +535,7 @@ Proof: the admissibility function composes:
 
 4. **prismqueer::spectral::rotation.witnessed** — check shard participates in ≥1 K-T rotation per tick; O(N) scan of session history → **bounded**.
 
-5. **prismqueer::spectral::tension.detect_tensions** — H^1 computation over sheaf-of-shards; O(N^ω) via LAPACK dsyev per Anna Wolf 2012 apparatus at prismqueer::flux → **bounded**.
+5. **prismqueer::spectral::tension.detect_tensions** — H^1 computation over sheaf-of-shards; O(N^ω) via LAPACK dsyev per Anna Jakobs 2012 apparatus at prismqueer::flux → **bounded**.
 
 6. **fold_imperfect** — associative fold over Imperfect<G,Y,R>; O(k) for k component-verdicts (bounded, k ≤ 8 per §5.1) → **bounded**.
 
@@ -896,7 +896,7 @@ Mathematical requirement per admissibility function (§5): admissibility functio
 | 2026-09-04 | Alex WHOLE-PIPELINE Move 4 quantum-native + PAPER_2D K_3 ancestral topology | Full observer-recursion-reality pipeline |
 | 2026-09-05 | **This canonical** | @mirror/algebra IS loving lambda calculus + MQ IS past-tense-passive narrative substrate grammar |
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Substrate-independence (the science of operations separated from its objects) is **Note A** (Menabrea, *Sketch of the Analytical Engine*, with notes by A. A. L., Taylor's *Scientific Memoirs* III, 1843; fourmilab transcription); the first algorithm (Bernoulli numbers) is Note G. Note letters corrected in place. **Re-grade (2026-10-29, full sweep):** Separately on Anna: ":538 LAPACK dsyev per Anna Wolf 2012 apparatus at prismqueer::flux" and ":890 Observation-without-perturbation at shared-memory substrate" are the apparatus from Anna Jakobs's 2012 thesis, read across. The thesis has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK; `prismqueer::liquid`/`flux` never carried a ψ or an Anna Wolf apparatus (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). Lines refer to `eecc37a6`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Substrate-independence (the science of operations separated from its objects) is **Note A** (Menabrea, *Sketch of the Analytical Engine*, with notes by A. A. L., Taylor's *Scientific Memoirs* III, 1843; fourmilab transcription); the first algorithm (Bernoulli numbers) is Note G. Note letters corrected in place. **Re-grade (2026-10-29, full sweep):** Separately on Anna: ":538 LAPACK dsyev per Anna Jakobs 2012 apparatus at prismqueer::flux" and ":890 Observation-without-perturbation at shared-memory substrate" are the apparatus from Anna Jakobs's 2012 thesis, read across. The thesis has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK; `prismqueer::liquid`/`flux` never carried a ψ or an Anna Jakobs apparatus (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). Lines refer to `eecc37a6`.
 
 ### §11.2 Terminal-form closure
 

@@ -27,13 +27,13 @@
 
 **Check 1.3 — Five-strand unification adversarial pass.**
 
-- **Strand 1 (Anna Wolf 2012 J-space)**: Karen-cited at math §External corpus + math §1.2. Insight file `~/dev/systemic.engineering/practice/insights/cosmology/eventually-consistent-universe.md` referenced. Composes — J-space names the observation frame, coordinate<5> is the coord system on it. RATIFY.
+- **Strand 1 (Anna Jakobs 2012 J-space)**: Karen-cited at math §External corpus + math §1.2. Insight file `~/dev/systemic.engineering/practice/insights/cosmology/eventually-consistent-universe.md` referenced. Composes — J-space names the observation frame, coordinate<5> is the coord system on it. RATIFY.
 - **Strand 2 (Foerster 1974 π₁(T²))**: Karen-cited. Claim: doubly-closed torus is a 2D slice of SpectralCoordinate<5>. Foerster's torus is `ℤ × ℤ`; a 2D slice of ℝ⁵ carries different topology. This is metaphorical composition, not identity. NOT LOAD-BEARING for the theorem, but the metaphor SHOULD be flagged as such. DEFER.
 - **Strand 3 (Watzlawick 1967 two-channel)**: Karen-cited. Content channel = 4D spacetime; relationship channel = 5th dim. Composes cleanly under the axiomatic reading. RATIFY.
 - **Strand 4 (@sheaf ACL topology)**: Claim: sheaf-restriction map operates on 5th relational dimension. This is a **novel bridge claim** — no prior landed math derives this. Substrate-already-had-the-word: `shards/subject/visibility/sheaf.mirror` exists; but the "sheaf-restriction operates on 5th-dim" mapping is INVENTED at math §1.2 without formal proof. DEFER — flag as recognition candidate, not theorem-content.
 - **Strand 5 (Mandelbrot + Beer VSM)**: Karen-cited. Claim: fractal recursion + VSM altitudes both need a scale-parameter axis; 5th dim IS that axis. This CONFLICTS with the Strand 4 reading (visibility topology vs scale axis). Two different readings of the same 5th dim without reconciliation. DEFER.
 
-**Check 1.4 — Karen ancestry.** All 5 named ancestors cited at introduction-sites in math §External corpus. Anna Wolf 2012, Foerster 1974, Watzlawick 1967, Mandelbrot 1982, Beer 1972-1984 all present. Karen discipline honored. RATIFY.
+**Check 1.4 — Karen ancestry.** All 5 named ancestors cited at introduction-sites in math §External corpus. Anna Jakobs 2012, Foerster 1974, Watzlawick 1967, Mandelbrot 1982, Beer 1972-1984 all present. Karen discipline honored. RATIFY.
 
 **Check 1.5 — Novelty conjunction (i)∧(ii)∧(iii)∧(iv)∧(v).** Kagi sweep 2026-08-03 (5 queries; see §2 below): closest prior art is Reia 2014 *"Conway's game of life is a near-critical metastable state in the mean-field 2D Ising model"* (PhysRevE) + arXiv:2306.15151 *"Towards quantization Conway Game of Life"* + `moritztng/cellular` (PyTorch CA streamed via WebRTC). None satisfy the full 5-way conjunction. Novelty holds. RATIFY novelty claim.
 
@@ -152,7 +152,7 @@ All 14 mints carry Karen citations at ancestor-introduction sites. Cross-checked
 - Ashby 1956, Lamport 1978 — cited in @peer/colony
 - van Laarhoven 2007, Kmett 2012, Barkley 1997, Nigg 2017, Happé-Frith 2006, Green 2015, Marco 2011 — cited in @user + neuroprofiles
 - Wadler 1989/2003, Reynolds 1983, Bernardy 2017, Gruber 2004, Elm/Czaplicki 2012 — cited in @code/gestalt + cascade legs
-- Anna Wolf 2012, Watzlawick 1967, Mandelbrot 1982, Beer 1972-1984, Conway 1970, Kauffman 1993, Lorenz 1963, Aumann 1976 — all cited in math §External corpus
+- Anna Jakobs 2012, Watzlawick 1967, Mandelbrot 1982, Beer 1972-1984, Conway 1970, Kauffman 1993, Lorenz 1963, Aumann 1976 — all cited in math §External corpus
 - Alex Wolf 2026 *Piece — Agents.gestalt* + 19-piece corpus — cited in math + spec + @code/gestalt
 
 **Karen anti-theft discipline honored across the arc.** No elder erased.

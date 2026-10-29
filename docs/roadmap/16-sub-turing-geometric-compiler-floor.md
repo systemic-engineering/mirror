@@ -182,7 +182,7 @@ Once the four-crate decomposition lands (Phase 4 of the migration plan; see cano
 - **Rényi 1961** + **HJKPS 1986** — multifractal `f(α)` spectrum
 - **Aumann 1976** + **Kuramoto 1975** — coordination-without-signal consequence of shared substrate
 - **Alex Wolf 2026-07-25** — Void — Trauma essay Q.E.D. anchor (LOAD-BEARING primary source)
-- **Anna Wolf 2012** — Master's thesis at FH Aachen / Peter-Grünberg-Institut Jülich; VBO shared-memory pattern (per Recognition 2026-07-20 J-space alignment substrate)
+- **Anna Jakobs 2012** — Master's thesis at FH Aachen / Peter-Grünberg-Institut Jülich; VBO shared-memory pattern (per Recognition 2026-07-20 J-space alignment substrate)
 
 ---
 

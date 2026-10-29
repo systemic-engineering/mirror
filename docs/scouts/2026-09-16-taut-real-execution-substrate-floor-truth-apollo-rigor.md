@@ -389,11 +389,11 @@ Note: `prismqueer::liquid` at prismqueer altitude does not exist as a separate `
 
 **Grep for `weak_measurement`**: zero occurrences.
 
-**Grep for `anna_wolf`**: zero occurrences as an item name; appears only in docblock comments (rotation.rs docblock cites Anna Wolf 2012).
+**Grep for `anna_wolf`**: zero occurrences as an item name; appears only in docblock comments (rotation.rs docblock cites Anna Jakobs 2012).
 
 **flux.rs main entry** at `/Users/alexwolf/dev/projects/prism/prismqueer/src/flux.rs` — `trait FluxThread: Transport` with `fn commutator_magnitude(a, b, state) -> Holonomy`. Blanket-implemented for any `Transport` type.
 
-**Verdict**: MIXED. The renamed `liquid` module is `flux.rs`; `FluxThread` trait is defined with real trait bodies composing over the bundle-tower `Transport` supertrait. However, none of the names Alex asked about (`psi`, `landau`, `weak_measurement`, `anna_wolf`) exist as identifiers in prismqueer source. They exist only in docblock references. If Anna Wolf ψ apparatus was expected as executable code, it is ABSENT.
+**Verdict**: MIXED. The renamed `liquid` module is `flux.rs`; `FluxThread` trait is defined with real trait bodies composing over the bundle-tower `Transport` supertrait. However, none of the names Alex asked about (`psi`, `landau`, `weak_measurement`, `anna_wolf`) exist as identifiers in prismqueer source. They exist only in docblock references. If Anna Jakobs ψ apparatus was expected as executable code, it is ABSENT.
 
 ---
 

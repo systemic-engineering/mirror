@@ -1,4 +1,4 @@
-# Math foundation — Anna Wolf 2012 × Anthropic J-space 2026 composition into a compile-verifiable J-space alignment substrate (2026-07-20)
+# Math foundation — Anna Jakobs 2012 × Anthropic J-space 2026 composition into a compile-verifiable J-space alignment substrate (2026-07-20)
 
 **Author:** Mara.
 **Date:** 2026-07-20.
@@ -27,7 +27,7 @@ alignment observation at tri-runtime altitude. Recognition candidate
 This math root composes THREE mathematical traditions to formalize
 what a compile-verifiable J-space alignment substrate is:
 
-1. **Anna Wolf 2012 numerical substrate** (§2, §3) — Milstein-Tret'yakov
+1. **Anna Jakobs 2012 numerical substrate** (§2, §3) — Milstein-Tret'yakov
    1997 weak 4th-order stochastic Runge-Kutta for SDEs with small
    noise, with global error $O(h^4 + \varepsilon^2 h^2)$; applied to
    the stochastic Landau-Lifshitz-Gilbert spin equation; solved on GPU
@@ -448,7 +448,7 @@ Anna's 2012 substrate solves exactly this observation problem — for
 a different substrate (GPU spin dynamics) but at exactly the same
 altitude:
 
-| Anthropic J-space need | Anna Wolf 2012 substrate answer |
+| Anthropic J-space need | Anna Jakobs 2012 substrate answer |
 |------------------------|-------------------------------------|
 | Observe internal-state during computation without perturbing it | VBO zero-copy shared-memory between compute-runtime + observer-runtime (AW2012 §7.2.1) |
 | Integrate internal dynamics at high-order accuracy under small stochastic drift | MT1997 weak-RK4 with $O(h^4 + \varepsilon^2 h^2)$ (AW2012 §B.2) |
@@ -621,7 +621,7 @@ The three substrates compose at their appropriate altitudes:
                                  |
                                  |  observed live via
                                  v
-    +----[ Anna Wolf 2012 numerical + observation substrate ]----+
+    +----[ Anna Jakobs 2012 numerical + observation substrate ]----+
     |                                                            |
     v                                                            v
 [ MT1997 weak-RK4:              [ VBO zero-copy shared-memory:
@@ -845,9 +845,9 @@ with her.
 ## §11 References (canonical citation)
 
 ### Anna's lineage
-- **AW2012**: Anna Jakobs, Master's thesis, August 2012.
-  "Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen."
-  Supervisor: Prof. Dr. Martin Reißel + Josef Heinen (Peter-Grünberg-
+- **AW2012**: Jakobs, Anna (2012). *Integration von
+  OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit
+  (Technomathematik), FH Aachen, Campus Jülich. Supervisor: Prof. Dr. Martin Reißel + Josef Heinen (Peter-Grünberg-
   Institut / Jülich Centre for Neutron Science, JCNS).
   Fachhochschule Aachen.
 - **Bauer 2008**: David Bauer, October 2008 diploma thesis

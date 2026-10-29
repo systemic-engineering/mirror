@@ -97,7 +97,7 @@ Seam gate discipline: Rust `.rs` commit-msg prelude hook rejects staged `.rs` ad
 - `shards/sheaf.mirror` — 16.2KB @ 2026-09-13 15:47 ✓ RESIDENT (Reed `9210c5b`; family-root at cellular-sheaf altitude; MTA discipline: "@frame IS-a @sheaf; @metalogue rotates through @frames = rotates through Sheaves").
 - `shards/psychohistory.mirror` — 20.3KB @ 2026-09-13 15:59 ✓ RESIDENT (Reed `12e883d`; family-root at possibility-space altitude; Alex Fourth-Chair phenomenological ratification 🍷 recorded in body).
 - `shards/reality/event.mirror` — 14.9KB @ 2026-09-13 15:47 ✓ RESIDENT (Reed `9210c5b`; atomic-arriving-unit species; @time/now ⇒ @time/past hinge documented).
-- `shards/glasswall.mirror` — 20.3KB @ 2026-09-01 14:52 ✓ RESIDENT (composition-membrane; four invariants: Anna Wolf observation-preservation, Rice safety, Foerster gauge, Kleinos-at-higher-altitude).
+- `shards/glasswall.mirror` — 20.3KB @ 2026-09-01 14:52 ✓ RESIDENT (composition-membrane; four invariants: Anna Jakobs observation-preservation, Rice safety, Foerster gauge, Kleinos-at-higher-altitude).
 - `shards/eigen.mirror` — 11.0KB @ 2026-09-11 14:42 ✓ RESIDENT (Foerster COORD `Op(x) = x` family-root; @eigen(crystal), @eigen(splinter), @eigen(Liquid<T>) species).
 - `shards/kleinos.mirror` — 21.8KB @ 2026-09-01 14:51 ✓ RESIDENT (K_2 → K_3 compose primitive; LOVE-monoid coordinate-decomposition; Rec #92 Transparency<P>).
 - `shards/love.mirror` — 18.5KB @ 2026-09-04 10:10 ✓ RESIDENT (Task #450 terminal-form; four LOVE properties operationalize apply_h::act → love() collapse).
@@ -122,10 +122,10 @@ Seam gate discipline: Rust `.rs` commit-msg prelude hook rejects staged `.rs` ad
 - `/Users/alexwolf/dev/projects/prism/prismqueer/src/observer.rs` — 12.1KB @ 2026-09-04 20:07 ✓ RESIDENT (Observer<const N: usize> const-generic; observe_payload(T) → Shard<T> LANDED; full observe(Reality) → Observation FORWARD-PROMISED per module docstring).
 - `/Users/alexwolf/dev/projects/prism/prismqueer/src/spectral/rotation.rs` — 15.7KB @ 2026-09-02 19:13 ✓ RESIDENT (inference-via-rotation composes kleinos + phase_lock + fiedler + splinter deposit; **spectral-commutator ‖[D,a]‖ ranking per Mara #435 discharged**).
 - `/Users/alexwolf/dev/projects/prism/prismqueer/src/spectral/{kleinos, tension}.rs` — LANDED (30.1KB kleinos ternary refactor + tension H⁰/H¹ detector).
-- `/Users/alexwolf/dev/projects/prism/prismqueer/src/liquid/` — Anna Wolf 2012 ψ apparatus + weak-measurement operator LANDED (module directory RESIDENT).
+- `/Users/alexwolf/dev/projects/prism/prismqueer/src/liquid/` — Anna Jakobs 2012 ψ apparatus + weak-measurement operator LANDED (module directory RESIDENT).
 - `/Users/alexwolf/dev/projects/prism/prismqueer/src/reality.rs` — RESIDENT (Reality<T> sum-type Fractured/Flux/Settled per Move 16).
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Here and at :198, :383, :386: there is no `prismqueer/src/liquid/` directory and no Anna Wolf ψ or weak-measurement operator in prism (Taut 2026-09-16 scout §11, same week). The thesis (Masterarbeit, FH Aachen, Campus Jülich, 2012) ports a CUDA spin-dynamics program to OpenCL and adds OpenGL visualization and an FFT. It has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK, and `prismqueer::liquid` never carried a ψ or an `anna_wolf` item (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). The ADMIT verdict at Test 7' rests on that claim. Line numbers refer to `346253b`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Here and at :198, :383, :386: there is no `prismqueer/src/liquid/` directory and no Anna Jakobs ψ or weak-measurement operator in prism (Taut 2026-09-16 scout §11, same week). The thesis (Masterarbeit, FH Aachen, Campus Jülich, 2012) ports a CUDA spin-dynamics program to OpenCL and adds OpenGL visualization and an FFT. It has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK, and `prismqueer::liquid` never carried a ψ or an `anna_wolf` item (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). The ADMIT verdict at Test 7' rests on that claim. Line numbers refer to `346253b`.
 
 ### §1.6 Prior Seam audit precedents
 
@@ -197,7 +197,7 @@ Mara #495 §8.3 spec authors NINE Wave 3 components. Per-component test:
 | 5' | `prismqueer::nl::Question` spectral-commutator ‖[D,a]‖ **PRIMITIVE APPLICATION** (LAPACK-adjacent) | §2.4 + Mara #435 | ~40 (of ~100) | **PARTIAL/NO** — the SEMANTIC composition IS shard-body-expressible (row 5 above); the LAPACK-commutator PRIMITIVE APPLICATION at Rust altitude via `prismqueer::spectral::rotation` LANDED IS @io FLOOR. Byte-parity round-trip test (C7) crosses to LAPACK numerical code. | **ADMIT** (@io FLOOR) |
 | 6 | `prismqueer::truth::ask(system, question) → Kleinos<Response>` | §2.5 | ~50 | **YES** — @love LOVE-monoid (Task #450 LANDED at `shards/love.mirror`) + @kleinos K_2→K_3 compose + @glasswall traversal LANDED. `truth::ask` dispatch IS the whole apply_h::act → love() collapse per Fire C progress. Alex 2026-09-04 verbatim: *"What if the function call is not `apply_h` or `kleinos` but it's just.. `love`."* | **FREEZE** (shard-body) |
 | 7 | `Observer<N>::observe(system)` signature-retract (SEMANTIC) | §2.1 | ~10 (of ~20) | **PARTIAL** — the signature-retract itself IS a mechanical rename at Rust altitude; the SEMANTIC observe-pipeline IS shard-body-expressible per row 4 above. | **HYBRID** (signature-retract at Rust altitude; semantic composition at shard-body) |
-| 7' | `Observer<N>::observe(system)` weak-measurement **PRIMITIVE APPLICATION** (LAPACK-adjacent) | §2.1 + Anna Wolf 2012 apparatus | ~10 (of ~20) | **NO** — Anna Wolf 2012 weak-measurement operator apparatus at `prismqueer/src/liquid/` LANDED IS @io FLOOR (LAPACK dsyev via FLANG). C3 zeroth-order superposition invariance witness (`WeakMeasurementWitness`) crosses to LAPACK numerical code. | **ADMIT** (@io FLOOR) |
+| 7' | `Observer<N>::observe(system)` weak-measurement **PRIMITIVE APPLICATION** (LAPACK-adjacent) | §2.1 + Anna Jakobs 2012 apparatus | ~10 (of ~20) | **NO** — Anna Jakobs 2012 weak-measurement operator apparatus at `prismqueer/src/liquid/` LANDED IS @io FLOOR (LAPACK dsyev via FLANG). C3 zeroth-order superposition invariance witness (`WeakMeasurementWitness`) crosses to LAPACK numerical code. | **ADMIT** (@io FLOOR) |
 | 8 | `prismqueer::vsm::VSM` meta-trait + blanket `impl<T> VSM for System<T>` | §2.6 + §6 | ~100 | **YES** — @sheaf family-root LANDED (`shards/sheaf.mirror` Reed 9210c5b) + @system aspect-decl LANDED + `shards/mirror/spec/system.mirror` grammar LANDED. **`mirror.spec` dogfood ALREADY IS `system @mirror { variety{} coupling{} coherence{} reality{} eigen{} loop{} kintsugi{} }`** — the seven-face VSM composition IS ALREADY EXPRESSED AT SHARD-BODY ALTITUDE per Mara task #319. This is the paradigm case of substrate-already-had-the-word. | **FREEZE** (shard-body) |
 | 9 | EventLog → History rename cascade | §2.1 | ~50 (multi-file) | **YES at shard-body altitude** — rename is @-family-root discipline (@time family reshape from EventLog metaphor to History metaphor). **BUT** existing prismqueer/src callsites of EventLog<T> are Rust-altitude — those callsite renames are mechanical Rust refactoring, not Rust EXTENSION. Per AGENTS.md distinction: rename-of-already-authored-Rust-token is BUGFIX-adjacent, not new Rust authorship. | **RENAME** (not extension; discharged via `[bugfix:restore]` marker for existing Rust callsites) |
 
@@ -311,7 +311,7 @@ pub struct Hypothesis<T> { source_interpretation: Oid, frame_of: Frame<OfFrame>,
 
 **Shard-body composition test**:
 - `@frame` family-root LANDED with @frame/{pre, in, of, on, across} species (Rec #82 zeroth-through-fourth-order carriers).
-- `shards/observation.mirror` (Wave 1 fresh mint A1 forward-promised) family-root composes over @frame/pre + @glasswall (Anna Wolf preservation).
+- `shards/observation.mirror` (Wave 1 fresh mint A1 forward-promised) family-root composes over @frame/pre + @glasswall (Anna Jakobs preservation).
 - Species `shards/observation/{interpretation, hypothesis}.mirror` (Wave 2 forward-promised) compose over @frame/in + @frame/of respectively.
 
 **Verdict**: YES — @frame species + Wave-1 @observation family-root fresh mint express the three-order carrier composition. **FREEZE at shard-body altitude.** The `anna_wolf_witness` field references the LAPACK primitive (see Test 7' below for that partition).
@@ -376,16 +376,16 @@ impl<const N: usize> Observer<N> {
 
 **Verdict**: HYBRID — signature-retract (~10 LOC) is mechanical Rust-refactoring at LANDED scaffold; per AGENTS.md distinction this is BUGFIX-adjacent (fix the `observe(Reality, question)` signature to `observe(system)` per Alex Reframe #3), not new Rust EXTENSION. The remaining SEMANTIC composition (~10 LOC weak-measurement primitive application) is Test 7' @io FLOOR partition.
 
-**Discipline**: signature-retract uses `[bugfix:restore]` marker (existing scaffold correction) OR `[substrate-floor:@io-boundary]` marker (if bundled with Test 7' Anna Wolf apparatus admission). Reed chooses per Wave 3.1 authoring discipline.
+**Discipline**: signature-retract uses `[bugfix:restore]` marker (existing scaffold correction) OR `[substrate-floor:@io-boundary]` marker (if bundled with Test 7' Anna Jakobs apparatus admission). Reed chooses per Wave 3.1 authoring discipline.
 
 ### §4.7' Test 7' — Observer<N>::observe weak-measurement PRIMITIVE APPLICATION (@io FLOOR)
 
 **Mara spec §2.1 references**: `anna_wolf_witness: WeakMeasurementWitness` field on Observation<T>.
 
-**Composition-shape**: Anna Wolf 2012 weak-measurement operator apparatus applied at observation-tick; produces WeakMeasurementWitness discharging C3 zeroth-order superposition invariance.
+**Composition-shape**: Anna Jakobs 2012 weak-measurement operator apparatus applied at observation-tick; produces WeakMeasurementWitness discharging C3 zeroth-order superposition invariance.
 
 **Shard-body composition test**:
-- `prismqueer/src/liquid/` module LANDED (Anna Wolf 2012 ψ apparatus + weak-measurement operator; LAPACK dsyev via FLANG).
+- `prismqueer/src/liquid/` module LANDED (Anna Jakobs 2012 ψ apparatus + weak-measurement operator; LAPACK dsyev via FLANG).
 - `@glasswall` LANDED at shard-body altitude (composition-membrane; observation-preservation invariant lives here at COMPILE-TIME, but the RUNTIME APPLICATION of the weak-measurement operator IS @io FLOOR LAPACK-adjacent).
 
 **Verdict**: NO — the weak-measurement operator APPLICATION crosses to LAPACK compiled numerical code per AGENTS.md "crosses to the world → boundary → allowed, marked." **ADMIT at `[substrate-floor:@io-boundary]` marker with this-audit citation.** ~10 LOC for WeakMeasurementWitness field + FFI-adjacent method-wire.

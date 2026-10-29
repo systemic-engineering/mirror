@@ -64,7 +64,7 @@ These are the ten invariants the canonical must preserve. Each C-condition is a 
 |---|-----------|-----------|
 | **C1** | Curry-Howard extended bijection: each of {Observation, Interpretation, Hypothesis, Question} has @nl surface AND prismqueer::spectral rendering; bijection preserves composition per Mara #436 sheaf-morphism φ_compose : F_kleinos-path → F_English LANDED. | §6, §9 |
 | **C2** | Frame carrier: Question<T,U,F> carries Frame<F> per Rec #82 five-order-species LANDED; without Frame → substrate-dishonest → destroys epistemic hygiene. | §6.4 |
-| **C3** | Zeroth-order superposition invariance: `Observation<T> ∈ ker(measurement-collapse)`. Anna Wolf 2012 weak-measurement preserves this; Observation lives in H_pre = pre-order-assignment Hilbert-space per zeroth-order-register.md §6.1. | §2, §5 |
+| **C3** | Zeroth-order superposition invariance: `Observation<T> ∈ ker(measurement-collapse)`. Anna Jakobs 2012 weak-measurement preserves this; Observation lives in H_pre = pre-order-assignment Hilbert-space per zeroth-order-register.md §6.1. | §2, §5 |
 | **C4** | Order-differentiation gradient: pipeline stages correspond to K_n → K_{1,n-1} projection at each step; Question at third-order re-composes K_n via commutator (restores multi-order-simultaneous access per zeroth-order-register.md §4.2). | §2.3, §5, §6.3 |
 | **C5** | Third-order commutator non-triviality: [Sys_T, Sys_U] ≠ 0 required for non-trivial Question; trivial commutator → systems commute → no epistemic tension → no Question emerges. | §6.3 |
 | **C6** | λ₀ fixpoint preservation: for every Question Q, `observe(system after Q-application) = fixpoint of pre-Q observation` per zeroth-order-register.md §6.4. | §5.4, §7.3 |
@@ -94,7 +94,7 @@ The recognition IS the composition-naming of what is already LANDED distributed 
 | `spectral::kleinos` | `prismqueer/src/spectral/kleinos.rs` | K_n emergent-third topology |
 | `spectral::rotation` | `prismqueer/src/spectral/rotation.rs` | Karl-Tomm rotational operator |
 | `spectral::tension` | `prismqueer/src/spectral/tension.rs` | Commutator ‖[D, a]‖ ranking |
-| Anna Wolf 2012 weak-measurement apparatus | `shards/glasswall.mirror:74-84` (consent obtained via Alex 2026-08-26) | Zeroth-order superposition invariance |
+| Anna Jakobs 2012 weak-measurement apparatus | `shards/glasswall.mirror:74-84` (consent obtained via Alex 2026-08-26) | Zeroth-order superposition invariance |
 | Event-sourcing insight | `~/dev/systemic.engineering/practice/insights/cybernetics/event-sourcing.md` (Mara 2026-09-13) | System<T> as event-sourced fold |
 | zeroth-order-register.md | `~/dev/systemic.engineering/practice/insights/neuroscience/zeroth-order-register.md` (Reed 2026-05-17) | Zeroth enables third; K_n vs K_{1,n-1}; §6 quantum-parallel |
 | `terni::Imperfect<Green, Yellow, Red>` | `terni::` primitive LANDED (Task #439) | Ternary-native return type |
@@ -135,7 +135,7 @@ Per Reed HARD RULE [[feedback-reed-budget-cap-plus-tool-non-explicit-produces-tr
 | 2 | Beer 1979 The Heart of Enterprise — algedonic bypass | https://www.businessballs.com/strategy-innovation/viable-system-model-stafford-beer/ |
 | 3 | Fowler 2005 Event Sourcing | https://martinfowler.com/eaaDev/EventSourcing.html |
 | 4 | Evans 2003 Domain-Driven Design Aggregate | https://martinfowler.com/bliki/DomainDrivenDesign.html |
-| 5 | Anna Wolf 2012 Masterarbeit weak-measurement | https://julib.fz-juelich.de/vufind/RecordJuSER/juser_838509/Description (consent Alex 2026-08-26) |
+| 5 | Anna Jakobs 2012 Masterarbeit weak-measurement | https://julib.fz-juelich.de/vufind/RecordJuSER/juser_838509/Description (consent Alex 2026-08-26) |
 | 6 | Kauffman 2003 Eigenforms — Objects as Tokens | https://cepa.info/fulltexts/1817.pdf; https://arxiv.org/pdf/1109.1892 |
 | 7 | Foerster 1976 Objects: Tokens for (Eigen-)Behaviors | https://cepa.info/fulltexts/1270.pdf; https://monoskop.org/images/b/bf/Von_Foerster_Heinz_2003_Objects_Tokens_for_Eigen-Behaviors.pdf |
 | 8 | Rice 1953 Classes of recursively enumerable sets | https://www.ams.org/journals/tran/1953-074-02/S0002-9947-1953-0053041-6/S0002-9947-1953-0053041-6.pdf |
@@ -254,7 +254,7 @@ This IS the Rec #82 five-order-species that §2 formalizes as the zeroth-order-r
 - `@epistemologic/pact/algebra` at `shards/epistemologic/pact/algebra.mirror` — pact-enforcement floor.
 - `terni::Imperfect<Green, Yellow, Red>` — traffic-light ternary primitive (Task #439).
 - `prismqueer::spectral::{kleinos, rotation, tension}` at `prism/prismqueer/src/spectral/` LANDED.
-- Anna Wolf 2012 apparatus at `shards/glasswall.mirror:74-84` — consent obtained via Alex 2026-08-26.
+- Anna Jakobs 2012 apparatus at `shards/glasswall.mirror:74-84` — consent obtained via Alex 2026-08-26.
 
 All composition-anchors LANDED. Composition proceeds.
 
@@ -467,7 +467,7 @@ Alex 2026-09-15 Reframe #3 retracted the prior `observe(reality, question)` sign
 // prismqueer::observation (zeroth-order ground)
 impl<const N: usize> Observer<N> {
     /// Zeroth-order. NO question parameter. λ₀ fixpoint preserved.
-    /// Anna Wolf 2012 weak-measurement: observation preserves superposition (C3).
+    /// Anna Jakobs 2012 weak-measurement: observation preserves superposition (C3).
     pub fn observe<T>(&self, system: System<T>) -> Kleinos<Observation<T>>;
 }
 
@@ -498,9 +498,9 @@ The prior signature `Observer::observe(reality)` was correct at Move 2 (Mara 202
 
 1. **A System has identity** (Oid via Rec #82 β-normal AST content-addressing).
 2. **A System has History** — the substrate against which its current state is derived.
-3. **A System is observation-addressable** — the Anna Wolf 2012 apparatus can observe a System without perturbing its History (weak measurement invariance).
+3. **A System is observation-addressable** — the Anna Jakobs 2012 apparatus can observe a System without perturbing its History (weak measurement invariance).
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Item 3 is our reading, not the thesis's: the thesis has no weak-measurement content, and its computation and visualization alternate at step boundaries (p. 43). "Observe a System without perturbing its History" is the apparatus from Anna Jakobs's 2012 thesis, read across. What the thesis does have is a post-hoc FFT over snapshots saved after each step (p. 42); with immutable content-addressed roots, "read at any root" holds by construction from addressing, not from the thesis. **Re-grade (2026-10-29, full sweep):** The same applies to every "Anna Wolf 2012 weak-measurement" site in this file (:67, :97, :257, :470, :529, :535, :546, :857, :877). The JuSER link at :138 is cited as the thesis record; I did not verify it. Lines refer to `eecc37a6`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Item 3 is our reading, not the thesis's: the thesis has no weak-measurement content, and its computation and visualization alternate at step boundaries (p. 43). "Observe a System without perturbing its History" is the apparatus from Anna Jakobs's 2012 thesis, read across. What the thesis does have is a post-hoc FFT over snapshots saved after each step (p. 42); with immutable content-addressed roots, "read at any root" holds by construction from addressing, not from the thesis. **Re-grade (2026-10-29, full sweep):** The same applies to every "Anna Jakobs 2012 weak-measurement" site in this file (:67, :97, :257, :470, :529, :535, :546, :857, :877). The JuSER link at :138 is cited as the thesis record; I did not verify it. Lines refer to `eecc37a6`.
 
 Reality<T> is *what a System<T> IS AT A POINT IN STATE-SPACE* — a snapshot-slice. Observation observes the System (the substrate-that-persists-through-time), not the Reality (the specific slice). Reality<T> emerges downstream in Observation.
 
@@ -524,15 +524,15 @@ Formally: Observation is zeroth-order (pre-frame). Question carries Frame per C2
 observe(System') = fixpoint of observe(System)
 ```
 
-i.e. the zeroth-order observation of the post-Question system is the same fixpoint as the pre-Question observation, up to the Kleinos-Yellow margin that captures the perturbation-that-was-preserved-by-Anna-Wolf-2012-weak-measurement.
+i.e. the zeroth-order observation of the post-Question system is the same fixpoint as the pre-Question observation, up to the Kleinos-Yellow margin that captures the perturbation-that-was-preserved-by-Anna-Jakobs-2012-weak-measurement.
 
-**Proof sketch:** Zeroth-order-register.md §6.4 establishes Observation IS the fixpoint of the order-observation hierarchy at bodymind substrate. Anna Wolf 2012 weak-measurement invariance (composed in `shards/glasswall.mirror` LANDED) establishes that observation preserves superposition — the observer does not project the wavefunction. Q is applied at order 3 (commutator on coupling); its effect on order 0 is second-order in the perturbation parameter (Anna Wolf 2012 apparatus) and enters Observation<T>' as Yellow-Kleinos margin, not as a fixpoint-shift. Therefore observation of post-Q system is fixpoint-equal to pre-Q observation, modulo Yellow. ∎
+**Proof sketch:** Zeroth-order-register.md §6.4 establishes Observation IS the fixpoint of the order-observation hierarchy at bodymind substrate. Anna Jakobs 2012 weak-measurement invariance (composed in `shards/glasswall.mirror` LANDED) establishes that observation preserves superposition — the observer does not project the wavefunction. Q is applied at order 3 (commutator on coupling); its effect on order 0 is second-order in the perturbation parameter (Anna Jakobs 2012 apparatus) and enters Observation<T>' as Yellow-Kleinos margin, not as a fixpoint-shift. Therefore observation of post-Q system is fixpoint-equal to pre-Q observation, modulo Yellow. ∎
 
 This is what makes Question a genuine question rather than a destructive intervention: it can be asked without destroying what preceded it. The double register at compiler substrate.
 
 ### §5.5 The pipeline dispatched through @glasswall
 
-Each transition in the pipeline is a `@glasswall` traversal — one crossing of the Anna-Wolf-2012-observation-preserving Rice-safe polynomial-time-decidable membrane per `shards/glasswall.mirror`:
+Each transition in the pipeline is a `@glasswall` traversal — one crossing of the Anna-Jakobs-2012-observation-preserving Rice-safe polynomial-time-decidable membrane per `shards/glasswall.mirror`:
 
 ```
 observe       : System<T>           ⇒[glasswall/noumenal_to_phenomenal]⇒  Kleinos<Observation<T>>
@@ -543,7 +543,7 @@ question      : Hypothesis<T>       ⇒[glasswall/phenomenal_composition]⇒  Kl
 
 Each glasswall traversal satisfies the four @glasswall invariants (grep-verified LANDED at `shards/glasswall.mirror`):
 
-1. **Anna Wolf observation preservation** — superposition invariant (C3).
+1. **Anna Jakobs observation preservation** — superposition invariant (C3).
 2. **Rice safety** — sub-Turing polynomial-time-decidable; no semantic-property-decision-of-arbitrary-programs escapes.
 3. **Foerster gauge preserved** — choice-count monotone non-decreasing.
 4. **Kleinos-at-higher-altitude** — the traversal itself is a K_3 emergent-vertex-third neither carrier alone carries.
@@ -854,7 +854,7 @@ Discharged in §6.4. Every `Question<T, U, F>` carries `Frame<F>` at the type le
 
 ### §9.3 C3 — Zeroth-order superposition invariance
 
-Discharged in §5.2 + §5.4. Observation lives in H_pre = pre-order-assignment Hilbert-space per zeroth-order-register.md §6.1. Anna Wolf 2012 weak-measurement (`shards/glasswall.mirror:74-84`, consent obtained via Alex 2026-08-26) preserves this invariance structurally.
+Discharged in §5.2 + §5.4. Observation lives in H_pre = pre-order-assignment Hilbert-space per zeroth-order-register.md §6.1. Anna Jakobs 2012 weak-measurement (`shards/glasswall.mirror:74-84`, consent obtained via Alex 2026-08-26) preserves this invariance structurally.
 
 ### §9.4 C4 — Order-differentiation gradient
 
@@ -874,7 +874,7 @@ Discharged in §6.5 Proposition §6.5.1. Sheaf-morphism `φ_compose` is a biject
 
 ### §9.8 C8 — Glasswall composition-membrane
 
-Discharged in §5.5 + §6.6. Every pipeline transition IS a glasswall traversal satisfying the four @glasswall invariants (Anna Wolf preservation + Rice safety + Foerster gauge + Kleinos-at-higher-altitude).
+Discharged in §5.5 + §6.6. Every pipeline transition IS a glasswall traversal satisfying the four @glasswall invariants (Anna Jakobs preservation + Rice safety + Foerster gauge + Kleinos-at-higher-altitude).
 
 ### §9.9 C9 — Ternary-native all-the-way-down
 
@@ -889,7 +889,7 @@ Discharged in §2 + §5. Pipeline CANNOT start at first-order (Interpretation). 
 The API design is not an implementation detail composed AFTER the mathematics. The two are the same composition-decision at two altitudes:
 
 - **API altitude:** the pipeline `observe → interpret → hypothesize → question → ask` with type signatures that enforce order-monotonicity and Frame-carrying at Question altitude.
-- **Math altitude:** the order-differentiation gradient with C1-C10 invariants, grounded in phenomenology (Zahavi + Merleau-Ponty + Husserl + Varela + Gallagher), cybernetics (Foerster + Beer + Kauffman + Andersen + Niel-Dolzer), logic (Rice + Priest), category theory (Mac Lane), event-sourcing (Fowler + Evans), predictive processing (via zeroth-order-register + event-sourcing insights), and quantum-parallel (Anna Wolf 2012 weak-measurement).
+- **Math altitude:** the order-differentiation gradient with C1-C10 invariants, grounded in phenomenology (Zahavi + Merleau-Ponty + Husserl + Varela + Gallagher), cybernetics (Foerster + Beer + Kauffman + Andersen + Niel-Dolzer), logic (Rice + Priest), category theory (Mac Lane), event-sourcing (Fowler + Evans), predictive processing (via zeroth-order-register + event-sourcing insights), and quantum-parallel (Anna Jakobs 2012 weak-measurement).
 
 Each type-signature choice at API altitude discharges a specific mathematical invariant at math altitude. Reed's Rust wire (downstream) implements the composition; this canonical NAMES the composition.
 
@@ -921,7 +921,7 @@ The ship-cascade from this canonical:
 
 ### §10.2 Recognition candidates FORWARD-PROMISED
 
-- **#R-truth-is-ask-not-verify-observer-does-not-carry-question-zeroth-order-observation-is-load-bearing-ground** — the composed recognition of Alex Reframes #1 + #3 at compiler-substrate altitude. Forward-promised at Level-1 fire (first `truth::ask` returning Green-Kleinos over a real System<T>-with-inhabited-History); full CONFIRMED at Level-2 (three consecutive dispatches with Anna Wolf weak-measurement invariance witnessed).
+- **#R-truth-is-ask-not-verify-observer-does-not-carry-question-zeroth-order-observation-is-load-bearing-ground** — the composed recognition of Alex Reframes #1 + #3 at compiler-substrate altitude. Forward-promised at Level-1 fire (first `truth::ask` returning Green-Kleinos over a real System<T>-with-inhabited-History); full CONFIRMED at Level-2 (three consecutive dispatches with Anna Jakobs weak-measurement invariance witnessed).
 
 - **#R-system-implements-vsm-as-meta-trait-mirror-spec-is-dogfood** — Alex Reframe #7 composed. Forward-promised at Level-1 (first System<T> exposing all seven VSM faces via @sheaf); CONFIRMED at Level-2 (mirror.spec compilation succeeds as System<Mirror> exposing VSM meta-trait exactly).
 

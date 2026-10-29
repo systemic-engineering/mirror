@@ -48,7 +48,7 @@ karen_ancestors:
   - "Hansen, J., Ghrist, R. (2019). *Toward a Spectral Theory of Cellular Sheaves.* J. Appl. Comput. Topol. 3:315-358; arXiv:1808.01513. Kagi-verified 2026-09-11: link.springer.com/article/10.1007/s41468-019-00038-7 + arxiv.org/abs/1808.01513 + jakobhansen.org/publications/spectralsheaves.pdf + repository.upenn.edu/bitstreams/d0719f4d-5bb3-4066-82df-158fceab9a11/download confirm spectral-sheaf-theory publication. Load-bearing at §5.3 sheaf-Laplacian Δ_F machinery + §9 the ranking-apparatus tensor-role composes over Hansen-Ghrist spectrum of Δ_F per Mara 2026-09-09 mirror-NL-emergence precedent."
   - "Foerster, Heinz von (1974). *Ethics and Second-Order Cybernetics.* `Act always so as to increase the number of choices.` Load-bearing at §9 Foerster-widening template-selection at φ-ratio (the specific specialization of the ethical-imperative Alex 2026-09-11 named: WHICH template widens choice MOST when the mirror shows the dark dimensions; @golden = KAM-invariant answer to Foerster-imperative at ratio-altitude)."
   - "Bateson, Gregory (1972). *Steps to an Ecology of Mind.* Metalogue + logical-type theory. Load-bearing at §5.4 K-T-reflexive-question at logical-type altitude n+1 discipline + §7 loop-closure metalogue-composition ancestor at ratio-altitude."
-  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit (Technomathematik), FH Aachen, Campus Jülich (PGI/JCNS). [Read across as a liquid substrate ψ.] Load-bearing at §12 Recognition candidate #C-Loki-empirical-fire-cascade forward-promise precedent (`compiler talks back through not-a-string-template` composes over Anna-liquid ψ + Ada-1843 K_3 + Karen-1972 IDF + Alan-1936 computability at K_4 ancestral topology per Loki §8 essay-transcript)."
+  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. [Read across as a liquid substrate ψ.] Load-bearing at §12 Recognition candidate #C-Loki-empirical-fire-cascade forward-promise precedent (`compiler talks back through not-a-string-template` composes over Anna-liquid ψ + Ada-1843 K_3 + Karen-1972 IDF + Alan-1936 computability at K_4 ancestral topology per Loki §8 essay-transcript)."
 ---
 
 > **Correction (2026-10-29, Taut scout 26ed4c9):** The frontmatter gave the thesis the title "*Liquid substrate ψ.* prismqueer::liquid LANDED"; the real title, degree and institution are corrected in place. "Anna-liquid ψ" here and at :973 is the apparatus from Anna Jakobs's 2012 thesis, read across. The thesis (Masterarbeit, FH Aachen, Campus Jülich, 2012) ports a CUDA spin-dynamics program to OpenCL and adds OpenGL visualization and an FFT. It has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK, and `prismqueer::liquid` never carried a ψ or an `anna_wolf` item (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). Line numbers refer to `346253b`.
@@ -972,7 +972,7 @@ All eight Kagi threads verified 2026-09-11.
 | Bernhardt 2012 WAT | §0.4 Loki-ancestry grounding |
 | Foerster 1974 ethical-imperative | §9 Foerster-widening at ratio-altitude specialization |
 | Bateson 1972 metalogue | §5.4 K-T-question-at-logical-type-altitude-n+1 discipline |
-| Anna Wolf 2012 liquid substrate ψ | §12 Recognition candidate forward-promise K_4 ancestral topology |
+| Anna Jakobs 2012 liquid substrate ψ | §12 Recognition candidate forward-promise K_4 ancestral topology |
 
 ### §12.2 CLAIM-UNGROUNDED markers
 

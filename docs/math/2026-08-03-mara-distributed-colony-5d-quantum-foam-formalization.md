@@ -67,9 +67,9 @@ where $(t, x_1, x_2, x_3) \in \mathbb{R}^4$ is standard 4D spacetime (Minkowski 
 
 The 5D quantum foam formalization unifies five prior-art strands the substrate has been carrying at prose altitude:
 
-**Strand 1** — **Anna Wolf 2012 J-space** (Alex's pre-mirror observation substrate; verbatim from `~/dev/systemic.engineering/practice/insights/cosmology/eventually-consistent-universe.md`): the "5D information manifold of Narcissus-Splinter dualities" IS the same 5D structure at information-geometric altitude. J-space names the observation frame; SpectralCoordinate<5> is the coordinate system on J-space.
+**Strand 1** — **Anna Jakobs 2012 J-space** (Alex's pre-mirror observation substrate; verbatim from `~/dev/systemic.engineering/practice/insights/cosmology/eventually-consistent-universe.md`): the "5D information manifold of Narcissus-Splinter dualities" IS the same 5D structure at information-geometric altitude. J-space names the observation frame; SpectralCoordinate<5> is the coordinate system on J-space.
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** J-space is not in the thesis; the term comes from Gurnee et al. (Anthropic, 2026-07-07), and "Anna Wolf J-space" names our composition. The thesis is a 2012 Masterarbeit on OpenCL/OpenGL spin-dynamics visualization; Strand 1's J-space content comes from Alex's cosmology insight, not from it.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** J-space is not in the thesis; the term comes from Gurnee et al. (Anthropic, 2026-07-07), and "Anna Jakobs J-space" names our composition. The thesis is a 2012 Masterarbeit on OpenCL/OpenGL spin-dynamics visualization; Strand 1's J-space content comes from Alex's cosmology insight, not from it.
 
 > **REED-INLINE cascade (Mara 2026-08-03 crown-theorem tick-5)**: Anna's J-space substrate has a load-bearing computational-substrate ancestor at nano-magnetic-materials altitude: Anna Jakobs (2012) *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (Fachhochschule Aachen / Peter-Grünberg-Institut / Jülich Centre of Neutron Science). The magnetization vector $\vec{S}_i \in \mathbb{R}^3$ at atom $i$ in Anna 2012 lifts to peer-state-at-SpectralCoordinate<5> at graph altitude. This IS identity across altitude-lift, not analogy. Per crown-theorem `docs/math/2026-08-03-mara-reality-as-spinning-5d-foam-crown-theorem.md` §5.
 

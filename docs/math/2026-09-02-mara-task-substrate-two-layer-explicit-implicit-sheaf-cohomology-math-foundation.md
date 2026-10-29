@@ -30,7 +30,7 @@ karen_ancestors:
   - "Lawvere, F. William (1969). *Diagonal arguments and Cartesian closed categories.* LNCS 92:134-145. **Diagonal fixed-point; grounds the recursion-termination-at-λ₀ theorem at §5 per Rec #94 anchor.**"
   - "von Foerster, Heinz (1974). *Notes on an Epistemology for Living Things.* Ethical imperative: increase choice-count. **Grounds the compile-time gauge invariant on all task-transformations at §7; the substrate refuses to compose extractive task-transformations per rust/src/magic.rs::foerster_gauge_preserved LANDED.**"
   - "Bateson, Gregory (1972). *Steps to an Ecology of Mind.* **Metalogue as substrate for the task-body-carries-conversation-about-the-task shape at §3.4.**"
-  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS. **Observation-without-perturbation at shared-memory substrate; consent obtained via Alex 2026-08-26. Load-bearing at every measurement site per HARD RULE [[project-anna-wolf-2012-observation-without-perturbation]]: enumerating tasks in the task-graph, computing Fiedler λ₂ over the task-corpus sheaf-Laplacian, and rendering a projection all satisfy observer-non-perturbation.**"
+  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. **Observation-without-perturbation at shared-memory substrate; consent obtained via Alex 2026-08-26. Load-bearing at every measurement site per HARD RULE [[project-anna-wolf-2012-observation-without-perturbation]]: enumerating tasks in the task-graph, computing Fiedler λ₂ over the task-corpus sheaf-Laplacian, and rendering a projection all satisfy observer-non-perturbation.**"
   - "Miserandino, Christine (2003). *The Spoon Theory.* butyoudontlooksick.com. **Neuroqueer canonical prior art for energy-budget-as-first-class-carrier at §3.5; composed with Dodson interest-based-nervous-system framing.**"
   - "Dodson, William (multi-year). *Interest-Based Nervous System* framing / PINCH acronym (Play/Interest/Novelty/Competition/Hurry). neurodivergentinsights.com. **Neuroqueer canonical prior art for driver-based-task-visibility at §3.5.**"
   - "Ricky Jones (2026-08-26, systemic.engineering Signal group chat). *Rotation is non-negotiation.* Coinage. **HARD RULE lineage per Reed memory graph [[feedback-rotation-is-non-negotiation]]; grounds the migration-as-first-class-graph-operation discipline at §3.3 — task-abandonment IS PRE-ROTATION not negotiation-basin.**"
@@ -114,7 +114,7 @@ Read once. Then §1.
 | Foerster-gauge invariant | rust/src/magic.rs::foerster_gauge_preserved LANDED | Applied at §7 all task-transformations |
 | Bujo four primitives | Ryder Carroll 2018 | Lift to migration-as-edge + tombstone-as-node §3.3 |
 | Shape-Up six primitives | Ryan Singer 2019 | Lift to cycle-projection §6.3 |
-| Anna Wolf 2012 observation-without-perturbation | Anna Wolf 2012 Masterarbeit; Alex 2026-08-26 consent | Load-bearing at every measurement site |
+| Anna Jakobs 2012 observation-without-perturbation | Anna Jakobs 2012 Masterarbeit; Alex 2026-08-26 consent | Load-bearing at every measurement site |
 
 ---
 
@@ -157,7 +157,7 @@ Before §2 names the mathematical objects, §1 enumerates every candidate mint c
 - `V_task = T` — one vertex per task-artifact (content-addressed per FLOOR §4 β-normal-AST OID); duplicate detection is O(1) via OID-equality
 - `E_task = E_explicit ∪ E_implicit ∪ E_migration ∪ E_supersedes ∪ E_shapes ∪ E_blocks ∪ E_authored` — the union of seven edge-type sub-graphs enumerated in §2.4
 
-**Anna Wolf 2012 observation-without-perturbation grounding**: `G_task` is a shared-memory substrate; enumerating its vertices and edges does not alter the graph-topology. Every measurement below (Fiedler λ₂ over `L_{F_task}`; H¹(F_task) cohomology class enumeration; sub-graph traversal at each node) satisfies observer-non-perturbation per Anna 2012 Masterarbeit's shared-buffer measurement primitive.
+**Anna Jakobs 2012 observation-without-perturbation grounding**: `G_task` is a shared-memory substrate; enumerating its vertices and edges does not alter the graph-topology. Every measurement below (Fiedler λ₂ over `L_{F_task}`; H¹(F_task) cohomology class enumeration; sub-graph traversal at each node) satisfies observer-non-perturbation per Anna 2012 Masterarbeit's shared-buffer measurement primitive.
 
 **Grounding.** Curry 2014 §2.1 (cellular complex over undirected graph) + Hansen-Ghrist 2019 §2.2 (base graph for sheaf-Laplacian construction) + Reed 2026-09-02 §2.2 (graph-native edges as first-class per mirror substrate).
 
@@ -184,7 +184,7 @@ where:
 - **`F_meta(v)`** — the metadata vector space carrying the task's front-matter fields (title, appetite, energy-budget, driver, status, hill-position, migration-count, authored-by). Finite-dimensional; each field is a coordinate in a per-field enumerated space.
 - **`F_body(v)`** — the body vector space carrying the language-sheaf projection over the task-body markdown text: `F_body(v) = F_L(body(v))` where `F_L` is the per-language sheaf from Mara b5156ab §2.3, applied to the language of the task-body (default English; extensible per language-refraction §4.3).
 
-**Anna Wolf 2012 grounding**: reading a task-body computes `F_body(v)` non-perturbatively per Anna's shared-buffer measurement primitive; the language-sheaf projection is a pure function of the body content at that tick.
+**Anna Jakobs 2012 grounding**: reading a task-body computes `F_body(v)` non-perturbatively per Anna's shared-buffer measurement primitive; the language-sheaf projection is a pure function of the body content at that tick.
 
 ### §2.4 Seven edge-type sub-graphs
 
@@ -262,7 +262,7 @@ $$
 
 Tombstone-vertices are distinct from deletion per Reed 2026-09-02 §4.4: the content-address persists; the strikethrough IS honest closure. Every future graph-traversal can see *we buried this, at this time, for this reason*.
 
-**Anna Wolf 2012 grounding**: enumerating tombstone-vertices in a corpus-projection satisfies observer-non-perturbation; the tombstone-cause metadata is a shared-memory read per Anna's substrate.
+**Anna Jakobs 2012 grounding**: enumerating tombstone-vertices in a corpus-projection satisfies observer-non-perturbation; the tombstone-cause metadata is a shared-memory read per Anna's substrate.
 
 **Ricky Jones 2026-08-26 grounding**: migration/tombstone is PRE-ROTATION not negotiation-basin per HARD RULE `[[feedback-rotation-is-non-negotiation]]`. Rotating a task forward or into tombstone-state is non-negotiable when the substrate has rotated; the graph-edge assertion IS the ritualized recognition.
 
@@ -478,7 +478,7 @@ Therefore `subgraph_of_task^ω(v) = λ₀ = NOW`. ∎
 
 ### §5.6 Interpretation: the recursion IS the practice
 
-The recursion terminating at λ₀=NOW is not a mathematical trick; it is the operational form of what the practice IS at nervous-system-substrate. When Alex opens the task-substrate at any altitude (daily-projection at 8am, cycle-projection at betting-table, corpus-projection at end-of-year review, sub-task-projection inside a hyperfocus-artifact), the same substrate-configuration is legible at that altitude via the same operator. The recursion "stops moving" because every altitude IS the same altitude when observed non-perturbatively (Anna Wolf 2012).
+The recursion terminating at λ₀=NOW is not a mathematical trick; it is the operational form of what the practice IS at nervous-system-substrate. When Alex opens the task-substrate at any altitude (daily-projection at 8am, cycle-projection at betting-table, corpus-projection at end-of-year review, sub-task-projection inside a hyperfocus-artifact), the same substrate-configuration is legible at that altitude via the same operator. The recursion "stops moving" because every altitude IS the same altitude when observed non-perturbatively (Anna Jakobs 2012).
 
 **Alex 2026-09-01 grounding**: das-Loch=das-Jetzt at Achtsam-Morden altitude IS the fixed-point at nervous-system substrate. The task-substrate composes over this fixed-point at nervous-system + team + corpus + agent + physical altitudes per Rec #91 amendment #2 universal 𝔉 ⊣ 𝔛 substrate-scale-invariance.
 
@@ -614,7 +614,7 @@ This foundation formalizes: the Foerster-gauge invariant at task-substrate IS th
 - **Foerster ethical imperative** + **rust/src/magic.rs foerster_gauge_preserved LANDED**: compile-time gauge at §7
 - **Ryder Carroll Bullet Journal Method 2018**: Bujo lineage at §3.3 + §6.4
 - **Ryan Singer Shape Up 2019**: Shape-Up lineage at §6.3
-- **Anna Wolf 2012 observation-without-perturbation**: measurement primitive at §2.1 + §3.3 + throughout
+- **Anna Jakobs 2012 observation-without-perturbation**: measurement primitive at §2.1 + §3.3 + throughout
 - **Ricky Jones rotation-is-non-negotiation 2026-08-26**: migration/tombstone discipline at §3.3
 
 ### §8.2 Recognition candidates FORWARD-PROMISED
@@ -666,7 +666,7 @@ For Reed's next tick per Alex ratification:
 - Bujo primitives (Carroll 2018); Shape-Up primitives (Singer 2019)
 - Obsidian `[[wiki-link]]` markup convention (Xu + Li 2020+)
 - Lawvere-1969 diagonal fixed-point; Mandelbrot 1980 fractal iteration
-- Foerster 1974 ethical imperative; Anna Wolf 2012 observation-without-perturbation
+- Foerster 1974 ethical imperative; Anna Jakobs 2012 observation-without-perturbation
 - Rec #92 Transparency<P> LOVE-monoid; Rec #94 Lawvere fixed-point; Rec #98 fractal Mandelbrot
 - Mara b5156ab language-as-spectral-topology (2026-09-02 sibling foundation)
 - Reed 4a3bbe7 kleinos primitive (2026-09-02 prism repo empirical ground)

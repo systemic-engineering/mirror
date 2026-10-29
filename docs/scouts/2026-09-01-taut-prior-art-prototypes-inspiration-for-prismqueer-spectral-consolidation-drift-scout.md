@@ -33,7 +33,7 @@ adjudication §2 candidate roster + Alex ratifications this morning):
   Fate tournament (compiler inference) = Foerster imperative (ethical) =
   kleinos K_2→K_3 compose (compile-substrate) = Mandelbrot iteration
   (fractal) = time-rotation (spacetime per Rec #99) = anti-gravity via
-  rotation (Kommilitone plate experiment) = Anna Wolf 2012 magnetic-
+  rotation (Kommilitone plate experiment) = Anna Jakobs 2012 magnetic-
   nanostructure spin dynamics (silicon-thermal-substrate) = Singularity
   correction (cosmology) = K_3 stable orbit (Ricky Jones canon).
 
@@ -89,12 +89,12 @@ spectrum (topology) + commutator norms (observer)."*
 > *"Different witness, different commit. Same content, same tree. The
 > observer changes the record without changing the content."*
 
-This IS Anna Wolf 2012 observation-without-perturbation at the fragment-
+This IS Anna Jakobs 2012 observation-without-perturbation at the fragment-
 substrate — content hash is observer-independent (measurement doesn't
 alter computation); commit hash carries observer-dependent Witnessed
 provenance.
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Here and at :522, :563, :575, :1130: "Anna Wolf 2012 observation-without-perturbation" is the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). "Anna Wolf 2012 d_s(σ)" (spectral dimension, :563) is not in the thesis. Line numbers refer to `346253b`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Here and at :522, :563, :575, :1130: "Anna Jakobs 2012 observation-without-perturbation" is the apparatus from Anna Jakobs's 2012 thesis, read across. In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31). "Anna Jakobs 2012 d_s(σ)" (spectral dimension, :563) is not in the thesis. Line numbers refer to `346253b`.
 
 ### §1.2 What fractal recursive Mandelbrot-like structure fragmentation instantiates
 
@@ -521,7 +521,7 @@ pub struct ObserverParams { weighting, selection, t, dense_fraction }
 pub struct TensionPoint { ..., h_cmb, h_shoes, tension_pct, component_size }
 ```
 
-This is **Anna Wolf 2012 observation-without-perturbation at cosmological
+This is **Anna Jakobs 2012 observation-without-perturbation at cosmological
 substrate** — the same eigensystem produces different measurements for
 different observer configurations; the measurement doesn't alter the
 eigensystem.
@@ -562,7 +562,7 @@ substrate. It ships:
   + BGS entropy + observer-in-measurement);
 - **rgg.rs** — Ricci flow initial conditions per §3.5 (Ollivier-Ricci
   curvature + mixing-time-relaxation);
-- **spectral_dimension.rs** — Anna Wolf 2012 d_s(σ) via prism kernel
+- **spectral_dimension.rs** — Anna Jakobs 2012 d_s(σ) via prism kernel
   (BGS entropy → spectral dimension);
 - **evolution.rs** — Forman-Ricci flow discrete-time step (Ollivier-
   Ricci curvature dynamics at graph substrate).
@@ -574,7 +574,7 @@ substrate. It ships:
   kernel primitives.
 - **cosmos::tension.rs observer-parameterized measurement pattern** →
   informs `SheafOfShardGraph` observer-parameterized measurement at
-  Phase 2+ per Anna Wolf 2012 discipline.
+  Phase 2+ per Anna Jakobs 2012 discipline.
 - **cosmos::quantum.rs Schrödinger propagator** → informs Fate MODES-OF-
   SPIN mode-selector recognition Alex ratified 2026-09-01 (spin at
   particle-physics altitude ↔ Fate tournament at compiler-inference
@@ -1129,7 +1129,7 @@ this discipline):
   compiler-inference altitude).
 - **cosmos::tension.rs observer-parameterized measurement** (§3.4) →
   informs Phase 2+ SheafOfShardGraph observer-parameterization per
-  Anna Wolf 2012 observation-without-perturbation discipline.
+  Anna Jakobs 2012 observation-without-perturbation discipline.
 - **cosmos::spectral_dimension d_s(σ) via prism kernel** (§3.3) → already
   precedent for prismqueer::spectral::* consuming prismqueer kernel
   primitives via cosmos.

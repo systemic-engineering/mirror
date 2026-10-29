@@ -27,7 +27,7 @@ karen_ancestors:
   - "Hansen, Jakob; Ghrist, Robert (2019). *Toward a Spectral Theory of Cellular Sheaves.* J. Appl. Comput. Topol. 3:315-358. **Sheaf Laplacian L_F — the composition operator whose Fiedler λ₂ IS the coherence signal SAGA-chain strictly rises.**"
   - "Fiedler, Miroslav (1973). *Algebraic connectivity of graphs.* Czech. Math. J. 23:298. **λ₂ the substrate's rising-coherence signal.**"
   - "Bateson, Gregory (1972). *Steps to an Ecology of Mind.* **Metalogue as K₂ → K₃; form IS argument at the substrate the Silicon Venue register carries.**"
-  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS. **Observation-without-perturbation at shared-memory substrate — the measurement primitive that lets settle() see the binary without modifying it.**"
+  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. **Observation-without-perturbation at shared-memory substrate — the measurement primitive that lets settle() see the binary without modifying it.**"
   - "Godement, Roger (1958). *Topologie algébrique et théorie des faisceaux.* Hermann. **Canonical sheaf-cohomology reference.**"
   - "IPLD Team (2018+). *IPLD: InterPlanetary Linked Data.* https://ipld.io/. **Self-describing CID format `<version><codec><multihash>` — the wire-form Singularity<T> at binary altitude self-addresses through.**"
   - "Merkle, Ralph C. (1988). *A Digital Signature Based on a Conventional Encryption Function.* CRYPTO '87 LNCS 293:369-378. **Merkle-DAG — the content-addressed provenance chain shape.**"

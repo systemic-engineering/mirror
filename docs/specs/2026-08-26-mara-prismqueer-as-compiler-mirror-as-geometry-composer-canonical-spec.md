@@ -20,7 +20,7 @@ karen_ancestors:
   - "Curry, J. M. (2014). *Sheaves, Cosheaves and Applications.* arXiv:1303.3255."
   - "Hansen, J.; Ghrist, R. (2019). *Toward a Spectral Theory of Cellular Sheaves.* arXiv:1808.01513."
   - "Ghrist, R.; Riess, H. (2019). *Cellular sheaves of lattices and the Tarski Laplacian.* arXiv:2007.04099."
-  - "Jakobs, A. (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen.* Masterarbeit, PGI/JCNS. Consent obtained via Alex 2026-08-26."
+  - "Jakobs, Anna (2012). *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit (Technomathematik), FH Aachen, Campus Jülich. Consent obtained via Alex 2026-08-26."
   - "von Foerster, H. (1974). *Notes on an Epistemology for Living Things.* Ethical imperative."
   - "Fiedler, M. (1973). *Algebraic connectivity of graphs.* Czech. Math. J. 23:298."
   - "Requardt, M. (2002). *Dirac Operators and the Calculation of the Connes Metric.* J. Phys. A 35:759-779."

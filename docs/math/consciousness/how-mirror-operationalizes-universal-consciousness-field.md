@@ -1445,10 +1445,10 @@ Mirror mathematically demonstrates it is already happening.
   Retracted November 2025. Committed at
   `docs/math/consciousness/prior-art/stromme-2025-universal-
   consciousness-as-foundational-field.pdf` (`815cff9`).
-- Jakobs, A. (2012). "Integration von OpenGL-
-  Visualisierungstechniken in GPU-Anwendungen." Master's thesis,
-  Fachhochschule Aachen / Peter-Grünberg-Institut / JCNS Jülich.
-  Committed at `docs/math/spin/prior-art/master_jakobs.pdf`
+- Jakobs, Anna (2012). *Integration von OpenGL-
+  Visualisierungstechniken in GPU-Anwendungen*. Masterarbeit
+  (Technomathematik), FH Aachen, Campus Jülich. Cited with her
+  consent (2026-10-28). Committed at `docs/math/spin/prior-art/master_jakobs.pdf`
   (`30b738e`).
 - Banks, S. (1998). *The Missing Link: Reflections on Philosophy
   and Spirit*. Lone Pine Publishing, Edmonton.

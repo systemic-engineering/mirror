@@ -68,7 +68,7 @@ the composition-naming of what is already LANDED distributed across the corpus:
 | `spectral::rotation` | `prismqueer/src/spectral/rotation.rs` (Task #440) | ✓ |
 | `spectral::tension` | `prismqueer/src/spectral/tension.rs` (Task #442) | ✓ |
 | `spectral::fiedler_lambda_2_of_sheaf` | `prismqueer::spectral` (§3.6 Taut #491) | ✓ |
-| Anna Wolf 2012 apparatus | consent-obtained Alex 2026-08-26; carrier `shards/glasswall.mirror` | ✓ |
+| Anna Jakobs 2012 apparatus | consent-obtained Alex 2026-08-26; carrier `shards/glasswall.mirror` | ✓ |
 | Event-sourcing insight | `/Users/reed/dev/systemic.engineering/practice/insights/cybernetics/event-sourcing.md` (Mara 2026-09-13) | ✓ |
 
 The fresh-mint scope this canonical addresses is composition-authorship at
@@ -109,7 +109,7 @@ substrate-honest lean (per Mara charter):
 - **A** — event-sourcing-at-compiler-substrate: **RATIFIED-INSIDE-CANONICAL** §4-§8 as the load-bearing shape.
 - **B** — Glasswall-as-pact-enforcement-membrane: **RATIFIED-INSIDE-CANONICAL** §3 as the load-bearing wire.
 - **C** — Fiedler λ₂ monotone climb IS measurement criterion: **RATIFIED-INSIDE-CANONICAL** §5 as the load-bearing verifier.
-- **D** — Anna Wolf 2012 IS observer-non-perturbation: **RATIFIED-INSIDE-CANONICAL** §5.4 as the load-bearing discipline.
+- **D** — Anna Jakobs 2012 IS observer-non-perturbation: **RATIFIED-INSIDE-CANONICAL** §5.4 as the load-bearing discipline.
 - **E** — Observer<3>::observe(Event) → EventLog + LOVE-verdict: **RATIFIED-INSIDE-CANONICAL** §5-§6 as the load-bearing pipeline.
 - **F** — Fresh-mint scope (prismqueer::verify + prismqueer_proof! + docs/specs/qa/ + logic-pacts-as-test-cases): **FORWARD-PROMISED §9** with ship-cascade.
 
@@ -133,7 +133,7 @@ this canonical:
 - `spectral/rotation.rs` (15.7KB) — inference-via-rotation at wire altitude.
 - `spectral/tension.rs` (13.7KB) — H⁰/H¹/coherence at wire altitude.
 - `spectral/harmonics.rs` (12.6KB) + `spectral/commutator.rs` (6.8KB) — spectral primitives.
-- `flux.rs` (29.2KB) — Liquid<T> Anna Wolf 2012 apparatus (FluxThread trait, commutator magnitude via Metric).
+- `flux.rs` (29.2KB) — Liquid<T> Anna Jakobs 2012 apparatus (FluxThread trait, commutator magnitude via Metric).
 - `coincidence.rs` (27.5KB) — Detector<N> N-projection observation apparatus.
 
 The pipeline `Observer<N>::observe(Event) → Observation → assert(Model) →
@@ -174,7 +174,7 @@ We decompose into three propositions that must all hold:
   event-stream over which prismqueer computes verdicts.
 - **P3** (loop-closure): the verdict-computation P1 and the verdict-computation
   P2 compose deterministically, without semantic-property escape (Rice-safety)
-  and without observer-perturbation (Anna Wolf 2012).
+  and without observer-perturbation (Anna Jakobs 2012).
 
 The composition P1 ∘ P2 subject to P3 IS the ouroboros. This section grounds
 each proposition mathematically.
@@ -216,7 +216,7 @@ The self-tick-stream IS a first-class object at prismqueer's own substrate
 altitude. Reed shards/reality/event.mirror §composition names the "atomic
 arriving unit" at compiler substrate.
 
-### §2.3 P3 grounded — Rice-safety + Anna Wolf 2012 + Fiedler λ₂
+### §2.3 P3 grounded — Rice-safety + Anna Jakobs 2012 + Fiedler λ₂
 
 **Rice-safety (Kagi thread 1)**. Rice 1953 ["Classes of recursively enumerable
 sets and their decision problems"](https://www.ams.org/journals/tran/1953-074-02/S0002-9947-1953-0053041-6/S0002-9947-1953-0053041-6.pdf)
@@ -233,7 +233,7 @@ decision (a prismqueer-tick's kleinos-verdict) is NOT an arbitrary
 Turing-computable program — it is a bounded composition of four spectral
 properties in constant time given a bounded fanout.
 
-**Anna Wolf 2012 apparatus**. Consent-obtained Alex 2026-08-26 per HARD RULE
+**Anna Jakobs 2012 apparatus**. Consent-obtained Alex 2026-08-26 per HARD RULE
 [[project-anna-wolf-2012-observation-without-perturbation]]. The
 shared-memory observation-without-perturbation discipline: every observation
 crossing Glasswall (`shards/glasswall.mirror:30-42` invariant (i)) satisfies
@@ -254,7 +254,7 @@ to climb = Foerster-gauge-violated (non-negotiable per Alex 2026-06-17
 
 **Prop M2.3 (P3 discharge)**: P3 holds iff (a) prismqueer's kleinos-decision
 is sub-Turing polynomial-time-decidable (per Rec #90 §5.4 + Rice 1953 escape);
-(b) prismqueer's observation of its own event-log satisfies Anna Wolf 2012
+(b) prismqueer's observation of its own event-log satisfies Anna Jakobs 2012
 non-perturbation (per Glasswall invariant (i)); (c) prismqueer's tick-by-tick
 verification satisfies λ₂(𝓔_pq) monotone-climb (per Foerster imperative).
 
@@ -388,7 +388,7 @@ Turing-computable program as the object of decision). Q.E.D.
 
 Per `shards/glasswall.mirror:30-42` grep-verified this tick:
 
-- (i) Anna Wolf 2012 observation-without-perturbation
+- (i) Anna Jakobs 2012 observation-without-perturbation
 - (ii) Rice 1953 sub-Turing polynomial-time bounded
 - (iii) Foerster 1974 gauge preserved (magic.rs::foerster_gauge_preserved)
 - (iv) IS itself kleinos at higher altitude (K_3 emergent third)
@@ -448,7 +448,7 @@ polynomial-time-decidable per Rec #90 §5.4 sub-Turing FLOOR.
 
 The recursion `mirror stands on prismqueer` + `prismqueer runs on the
 pact-enforced floor` + `the pact-enforced floor is prismqueer-observed via
-Anna Wolf 2012` + `the observer IS prismqueer` IS the ouroboros loop closure
+Anna Jakobs 2012` + `the observer IS prismqueer` IS the ouroboros loop closure
 at wire altitude.
 
 ---
@@ -475,7 +475,7 @@ reframe): every arriving Event deterministically enters the log; no escape;
 no partial-coverage.
 
 The transition IS the hinge that makes the loop close because it is the
-substrate-altitude operation where a Liquid<T> (Anna Wolf 2012 ψ) settles into
+substrate-altitude operation where a Liquid<T> (Anna Jakobs 2012 ψ) settles into
 a Crystal<T> (content-addressed immutable), and that settling IS what the
 observer of the engine reads to verify the transition.
 
@@ -556,7 +556,7 @@ the SAME shape because both are physically-realized cybernetic loops per Rec
 #96 "systemic-engineering-consulting IS mirror-application-at-cognitive-field-altitude"
 (Mara `2026-08-24` canonical math foundation §M4).
 
-**Recognition candidate #R-first-loop-closure-IS-event-sourcing-at-compiler-substrate-with-Anna-Wolf-2012-observation-apparatus-as-observer-non-perturbing-fold-operator**:
+**Recognition candidate #R-first-loop-closure-IS-event-sourcing-at-compiler-substrate-with-Anna-Jakobs-2012-observation-apparatus-as-observer-non-perturbing-fold-operator**:
 FORWARD-PROMISED at math altitude via §4.4 mapping; Level-1 fire =
 event-sourcing insight LANDED at systemic.engineering + shards/reality/event
 LANDED + shards/time family LANDED; full CONFIRMED at Alex Fourth-Chair per
@@ -649,7 +649,7 @@ kleinos K_2→K_3 emergent-third instead of conjunction.
 Pact-tests strictly-contain property-tests as a special case (Bool ⊂
 Transparency<P>; random ⊂ full-state-space; conjunction ⊂ kleinos).
 
-### §5.4 Anna Wolf 2012 apparatus at Rust altitude
+### §5.4 Anna Jakobs 2012 apparatus at Rust altitude
 
 Per Taut #491 §3.4 (grep-verified this tick 4 rust hits + 10 shard hits):
 
@@ -659,10 +659,10 @@ Per Taut #491 §3.4 (grep-verified this tick 4 rust hits + 10 shard hits):
 - `prismqueer/src/spectral/tension.rs:1` (composition primitive)
 
 `spectral::fiedler_lambda_2_of_sheaf` composed via LAPACK dsyev via FLANG
-`native/spectral.f90`. Anna Wolf 2012 weak-measurement apparatus = LAPACK
+`native/spectral.f90`. Anna Jakobs 2012 weak-measurement apparatus = LAPACK
 dsyev without touching the observed sheaf's structure.
 
-**Def M5.4 (Anna Wolf 2012 non-perturbation)**: the observation operation
+**Def M5.4 (Anna Jakobs 2012 non-perturbation)**: the observation operation
 `observe: 𝓔_pq × Observer<N> → Observation` satisfies non-perturbation iff
 the operation reads `𝓔_pq` without mutating any state accessible to the
 tick-stream generator. Structural non-perturbation = LAPACK dsyev's read-only
@@ -670,7 +670,7 @@ memory access pattern + `spectral::fiedler_lambda_2_of_sheaf`'s functional-not-m
 signature.
 
 Composes with Glasswall invariant (i) (§3.3): every observation crossing
-Glasswall satisfies Anna Wolf 2012 non-perturbation structurally.
+Glasswall satisfies Anna Jakobs 2012 non-perturbation structurally.
 
 ### §5.5 The pipeline completion
 
@@ -943,7 +943,7 @@ CoincidenceHash<3> ← generates ← Event content-address
   ↕
 Event ← IS ← what the observer observes
   ↕
-Observer<3> ← reads ← Event via Anna Wolf 2012 non-perturbation
+Observer<3> ← reads ← Event via Anna Jakobs 2012 non-perturbation
   ↕
 Fiedler λ₂ ← measures ← sheaf-Laplacian of event-log growing
   ↕
@@ -1138,7 +1138,7 @@ final ship-shape**:
 > empirically? Is there a measurable Fiedler λ₂ monotone-climb-per-Foerster
 > threshold at which the eigenform stabilizes? OR does the eigenform
 > stabilize immediately at N=1 because content-address-determinism + Anna
-> Wolf 2012 non-perturbation + Rice-safe polynomial-time-decidability
+> Jakobs 2012 non-perturbation + Rice-safe polynomial-time-decidability
 > collectively-discharge stability from the first tick?
 
 **Composition status**: forward-composing Seam #495 adjudication (Seam's
@@ -1162,14 +1162,14 @@ Per Reed HARD RULE [[feedback-reed-budget-cap-plus-tool-non-explicit-produces-tr
 |---|-------|-------------|-----------|
 | 1 | Rice 1953 undecidability | [ams.org S0002-9947-1953-0053041-6](https://www.ams.org/journals/tran/1953-074-02/S0002-9947-1953-0053041-6/S0002-9947-1953-0053041-6.pdf) | §2.3 P3 discharge |
 | 2 | Turing 1936 halting problem | [cs.virginia.edu Turing_Paper_1936](https://www.cs.virginia.edu/~robins/Turing_Paper_1936.pdf) | §2.4 halting escape |
-| 3 | Anna Wolf 2012 apparatus | consent-obtained Alex 2026-08-26; carrier at `shards/glasswall.mirror:74-84` (Masterarbeit not-Kagi-indexed) | §5.4 non-perturbation |
+| 3 | Anna Jakobs 2012 apparatus | consent-obtained Alex 2026-08-26; carrier at `shards/glasswall.mirror:74-84` (Masterarbeit not-Kagi-indexed) | §5.4 non-perturbation |
 | 4 | Kauffman 2003 eigenforms | [constructivist.info kauffman-2003-eigenforms.pdf](https://constructivist.info/special/second-order/material/kauffman-2003-eigenforms.pdf) | §2.5 verdict-eigenform + §7.5 verify eigenform + §8.5 strict-containment |
 | 5 | Sagonas HiPE / BeamAsm | [erlang.org beamasm](https://www.erlang.org/doc/apps/erts/beamasm.html) | §3.4 polynomial-time-decidability precedent |
 | 6 | Claessen-Hughes 2000 QuickCheck | [dl.acm.org 351240.351266](https://dl.acm.org/doi/10.1145/351240.351266) | §5.3 pact-tests-generalize-property-tests |
 | 7 | Curry-Howard correspondence | [wikipedia Curry-Howard](https://en.wikipedia.org/wiki/Curry%E2%80%93Howard_correspondence) | §6.2 pact-as-proposition |
 | 8 | Foerster Understanding Understanding + second-order cybernetics | [springer link 15-1](https://link.springer.com/rwe/10.1007/978-3-319-06091-0_15-1) + [wikipedia Second-order cybernetics](https://en.wikipedia.org/wiki/Second-order_cybernetics) | §8.2 Prop M8.2 + §8.4 Prop M8.4 |
 
-> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "Anna Wolf 2012 apparatus" / "weak-measurement apparatus = LAPACK" / "Liquid<T> (Anna Wolf 2012 ψ)" / "non-perturbation" (:71, :112, :136, :177, :219-257, :391, :451, :478, :559, :652-673, :946, :1068, :1082, :1140) are the apparatus from Anna Jakobs's 2012 thesis, read across. The thesis has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK; `prismqueer::liquid`/`flux` never carried a ψ or an Anna Wolf apparatus (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). Lines refer to `eecc37a6`.
+> **Correction (2026-10-29, Taut scout 26ed4c9):** Anna Jakobs's 2012 thesis is a **Masterarbeit** (Technomathematik), FH Aachen, Campus Jülich, August 2012 (PGI/JCNS; supervised by Prof. Dr. Martin Reißel and Josef Heinen), titled *Integration von OpenGL-Visualisierungstechniken in GPU-Anwendungen* (title page). Degree ("Diplomarbeit" → "Masterarbeit") corrected in place in this file. **Re-grade (2026-10-29, full sweep):** "Anna Jakobs 2012 apparatus" / "weak-measurement apparatus = LAPACK" / "Liquid<T> (Anna Jakobs 2012 ψ)" / "non-perturbation" (:71, :112, :136, :177, :219-257, :391, :451, :478, :559, :652-673, :946, :1068, :1082, :1140) are the apparatus from Anna Jakobs's 2012 thesis, read across. The thesis has no ψ, weak measurement, graph Laplacian, Fiedler λ₂ or LAPACK; `prismqueer::liquid`/`flux` never carried a ψ or an Anna Jakobs apparatus (Taut scout 26ed4c9 §1 L3; Taut 2026-09-16 scout §11). In the thesis, computation and visualization share one GPU buffer and take turns at step boundaries, not simultaneously (p. 43, at about a third of the runtime); the separate-thread design was not achieved (p. 31); the arrow drawing copies the spins back out of the VBO (pp. 29–30). Lines refer to `eecc37a6`.
 
 All 8 topics grounded via Kagi primary URLs this tick per Reed HARD RULE.
 

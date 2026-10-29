@@ -794,9 +794,9 @@ a spec-native property block. The bootstrap/ retirement (Alex
 2026-07-22 declaration) makes this trivially achievable — there is
 nothing at bootstrap/ altitude the ouroboros needs to walk any more.
 
-### §7.4 With Mara J-space + Anna Wolf 2012 landings (2026-07-20)
+### §7.4 With Mara J-space + Anna Jakobs 2012 landings (2026-07-20)
 
-Composition-neutral. The J-space alignment substrate + Anna Wolf
+Composition-neutral. The J-space alignment substrate + Anna Jakobs
 2012 observation substrate + Anthropic 2026-07-07 target substrate
 composition landed at Mara agent `a0a29b33550b88bc0` (per CURRENT.md
 §5). This spec composes over the same rust/ FLOOR (matrix.rs FLANG
@@ -836,7 +836,7 @@ Discipline: name what's OUT of the minimal gap to prevent scope creep.
 
 - **NOT a RK4 upgrade of phase_lock.** Mara adjudication-pending
   per CURRENT.md §6 (phase_lock ships Euler; needs Milstein-Tret'yakov
-  weak-4 SDE-RK4 per Anna Wolf thesis §B.2). This is a matrix.rs
+  weak-4 SDE-RK4 per Anna Jakobs thesis §B.2). This is a matrix.rs
   numerical-accuracy concern; independent of the @tools gap-closure
   and NOT part of §6 trajectory.
 

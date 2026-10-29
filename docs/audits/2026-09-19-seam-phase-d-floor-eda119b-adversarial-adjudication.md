@@ -85,7 +85,7 @@ Every load-bearing primary-source claim in FLOOR was submitted to `mcp__kagi-ken
 - **Verified**: 26 citations
 - **Verified with caveat (paper exists but does not establish everything claimed)**: 2 citations (Braunstein-Ghosh-Severini 2006 for 8→5 reduction; Naudts-Zhang for year-of-publication vs. year-of-dating)
 - **Verified with wrong arXiv ID**: 1 citation (Smarandache — FLOOR's `math/0501073` is likely wrong; canonical is `math/0101228`)
-- **Verified via Alex-consent not via public-Kagi**: 1 citation (Anna Wolf 2012)
+- **Verified via Alex-consent not via public-Kagi**: 1 citation (Anna Jakobs 2012)
 - **Unverified / likely fabricated**: **1 citation (Bressan-Sevenster-Vagner 2024)**
 
 **The Bressan-Sevenster-Vagner 2024 non-existence is the load-bearing citation-integrity finding of this audit.** FLOOR §11.5 anchors its network-altitude sheaf-cohomology-on-growing-graphs primitive on this citation. FLOOR's own hedge — *"Kagi-verify at author-institution-listing before ratifying primary URL — substrate-honest gate: cite the concept via the corpus insight file, not a fabricated URL"* — anticipated this failure. The failure is now confirmed at audit altitude. See §3 fabrication register + §5 math debt disclosure sufficiency.
@@ -232,7 +232,7 @@ Every citation Reed-fabricated, misrepresented, or otherwise unverifiable, named
 
 **Substrate-honest disposition**: correct the arXiv ID in iteration-3 or subsequent ratification. Verify at scirp.org and Google Scholar which arXiv posting is the canonical 1995 reference (there may be multiple postings).
 
-### §3.3 — Anna Wolf 2012 Masterarbeit (§3 runtime-observer primary)
+### §3.3 — Anna Jakobs 2012 Masterarbeit (§3 runtime-observer primary)
 
 **Status**: **VERIFIED VIA ALEX-CONSENT, NOT VIA PUBLIC KAGI**.
 
