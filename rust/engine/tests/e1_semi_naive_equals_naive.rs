@@ -179,8 +179,8 @@ fn agree(rules: &[NRule], f: &BTreeSet<G>, label: &str) {
         .unwrap_or_else(|d| panic!("{label}: safe positive program went dark: {d:?}"));
     let run = fixpoint(&program, &store);
     assert_eq!(
-        run.deposits.len(),
-        run.model.len(),
+        run.deposits().len(),
+        run.model().len(),
         "{label}: one deposit per atom of M"
     );
     let got = ticks(&run);
@@ -242,7 +242,7 @@ fn e1_fixture_helpers_agree_with_naive_types() {
         ("path-step", "path(?x, ?z) :- path(?x, ?y), edge(?y, ?z)"),
     ]);
     let run = fixpoint(&p, &facts(&["edge(a, b)", "edge(b, c)"]));
-    let got: BTreeSet<_> = run.model.values().cloned().collect();
+    let got: BTreeSet<_> = run.model().values().cloned().collect();
     let want: BTreeSet<_> = [
         "edge(a, b)",
         "edge(b, c)",

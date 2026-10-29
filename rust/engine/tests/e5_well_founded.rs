@@ -229,5 +229,5 @@ fn a_positive_program_through_w_agrees_with_the_core() {
         ("path-step", "path(?x, ?z) :- path(?x, ?y), edge(?y, ?z)"),
     ]);
     let core = fixpoint(&positive, &f);
-    assert_eq!(w(&p, &f).true_atoms, core.model);
+    assert_eq!(&w(&p, &f).true_atoms, core.model());
 }

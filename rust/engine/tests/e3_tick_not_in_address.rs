@@ -31,8 +31,8 @@ fn e3_one_atom_at_tick_1_and_at_tick_3_has_one_address() {
     let b = fixpoint(&long, &f);
     assert_eq!(ticks(&a)[&pab], 1);
     assert_eq!(ticks(&b)[&pab], 3);
-    let addr_a = a.model.iter().find(|(_, x)| **x == pab).unwrap().0;
-    let addr_b = b.model.iter().find(|(_, x)| **x == pab).unwrap().0;
+    let addr_a = a.model().iter().find(|(_, x)| **x == pab).unwrap().0;
+    let addr_b = b.model().iter().find(|(_, x)| **x == pab).unwrap().0;
     assert_eq!(addr_a, addr_b);
     assert_eq!(*addr_a, engine::addr(&alt(TEST_ALTITUDE), &pab));
 }
@@ -48,12 +48,12 @@ fn e3_rederivation_deposits_nothing_new() {
     ]);
     let run = fixpoint(&p, &facts(&["e(a, b)"]));
     let pab = engine::addr(&alt(TEST_ALTITUDE), &fact("p(a, b)"));
-    let deps: Vec<_> = run.deposits.iter().filter(|d| d.addr == pab).collect();
+    let deps: Vec<_> = run.deposits().iter().filter(|d| d.addr == pab).collect();
     assert_eq!(deps.len(), 1);
     assert_eq!(deps[0].tick, Tick(1));
-    assert_eq!(run.stop, Fixed(Tick(3)));
-    let distinct: BTreeSet<_> = run.deposits.iter().map(|d| d.addr).collect();
-    assert_eq!(distinct.len(), run.deposits.len(), "one deposit per atom");
+    assert_eq!(run.stop(), Fixed(Tick(3)));
+    let distinct: BTreeSet<_> = run.deposits().iter().map(|d| d.addr).collect();
+    assert_eq!(distinct.len(), run.deposits().len(), "one deposit per atom");
 }
 
 #[test]
@@ -151,12 +151,12 @@ fn fixtures() -> Vec<(PositiveProgram, Facts)> {
 /// The byte record E6 compares: model address, then every (addr, fact
 /// rendering) in address order, then every (tick, addr) deposit.
 fn record(run: &engine::Run<Fixed>) -> Vec<u8> {
-    let mut out = run.model_addr.as_bytes().to_vec();
-    for (a, f) in &run.model {
+    let mut out = run.model_addr().as_bytes().to_vec();
+    for (a, f) in run.model() {
         out.extend_from_slice(a.as_bytes());
         out.extend_from_slice(format!("{f:?}").as_bytes());
     }
-    for d in &run.deposits {
+    for d in run.deposits() {
         out.extend_from_slice(&d.tick.0.to_be_bytes());
         out.extend_from_slice(d.addr.as_bytes());
     }
@@ -175,7 +175,7 @@ fn e3_e6_permutations_of_rules_and_facts_change_nothing() {
                 atoms: shuffled(&f.atoms, &mut rng),
             };
             let r = fixpoint(&p2, &f2);
-            assert_eq!(r.model_addr, base.model_addr, "fixture {i} permutation {k}");
+            assert_eq!(r.model_addr(), base.model_addr(), "fixture {i} permutation {k}");
             assert_eq!(ticks(&r), ticks(&base), "fixture {i} permutation {k}");
             assert_eq!(
                 record(&r),
@@ -189,8 +189,8 @@ fn e3_e6_permutations_of_rules_and_facts_change_nothing() {
 #[test]
 fn e3_duplicate_facts_are_one_atom() {
     let run = fixpoint(&program(&[]), &facts(&["e(a, b)", "e(a, b)"]));
-    assert_eq!(run.model.len(), 1);
-    assert_eq!(run.deposits.len(), 1);
+    assert_eq!(run.model().len(), 1);
+    assert_eq!(run.deposits().len(), 1);
 }
 
 #[test]
@@ -207,8 +207,8 @@ fn e3_model_address_ignores_ticks() {
         &facts(&["e(a, b)", "q(a, b)"]),
     );
     // a: {e, p}; b: {e, q, p}. Different models, different addresses...
-    assert_ne!(a.model_addr, b.model_addr);
+    assert_ne!(a.model_addr(), b.model_addr());
     // ...and the same model reached at tick 0 instead of tick 1 has one address.
     let c = fixpoint(&program(&[]), &facts(&["e(a, b)", "p(a, b)"]));
-    assert_eq!(a.model_addr, c.model_addr);
+    assert_eq!(a.model_addr(), c.model_addr());
 }

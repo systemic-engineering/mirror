@@ -24,13 +24,13 @@ fn closure() -> engine::PositiveProgram {
 fn e2_chain_stops_fixed_at_n_plus_1() {
     for n in 1..=12u64 {
         let run = fixpoint(&closure(), &chain(n));
-        assert_eq!(run.stop, Fixed(Tick(n + 1)), "n = {n}");
+        assert_eq!(run.stop(), Fixed(Tick(n + 1)), "n = {n}");
         assert_eq!(
-            run.deposits.iter().map(|d| d.tick.0).max(),
+            run.deposits().iter().map(|d| d.tick.0).max(),
             Some(n),
             "n = {n}: last deposit tick"
         );
-        assert_eq!(run.model.len() as u64, n + n * (n + 1) / 2, "n = {n}: |M|");
+        assert_eq!(run.model().len() as u64, n + n * (n + 1) / 2, "n = {n}: |M|");
     }
 }
 
@@ -38,18 +38,18 @@ fn e2_chain_stops_fixed_at_n_plus_1() {
 fn e2_no_rules_gives_m_equals_f_fixed_at_1() {
     let f = facts(&["e(a, b)", "e(b, c)", "q"]);
     let run = fixpoint(&program(&[]), &f);
-    assert_eq!(run.stop, Fixed(Tick(1)));
-    let m: std::collections::BTreeSet<_> = run.model.values().cloned().collect();
+    assert_eq!(run.stop(), Fixed(Tick(1)));
+    let m: std::collections::BTreeSet<_> = run.model().values().cloned().collect();
     let want: std::collections::BTreeSet<_> = f.atoms.iter().cloned().collect();
     assert_eq!(m, want);
-    assert!(run.deposits.iter().all(|d| d.tick == Tick(0)));
+    assert!(run.deposits().iter().all(|d| d.tick == Tick(0)));
 }
 
 #[test]
 fn e2_budget_is_reported_when_round_k_max_still_derives() {
     // n = 5 needs round 6 to see the empty delta.
     let run = bounded(&closure(), &chain(5), 5);
-    assert_eq!(run.stop, Bounded::Budget(Budget::new(5).unwrap()));
+    assert_eq!(run.stop(), Bounded::Budget(Budget::new(5).unwrap()));
     let run = bounded(&closure(), &chain(5), 6);
-    assert_eq!(run.stop, Bounded::Fixed(Tick(6)));
+    assert_eq!(run.stop(), Bounded::Fixed(Tick(6)));
 }

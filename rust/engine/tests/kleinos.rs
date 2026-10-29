@@ -43,7 +43,7 @@ fn union(a: &Side, b: &Side) -> Side {
 }
 
 fn keys(run: &engine::Run<Fixed>) -> BTreeSet<Addr> {
-    run.model.keys().copied().collect()
+    run.model().keys().copied().collect()
 }
 
 /// `(L₁, L₂, L, E₃)`.
@@ -276,7 +276,7 @@ fn k_e4_composing_a_program_with_itself_changes_nothing() {
         let once = lfp(&a.0, &a.1);
         let (p, f) = union(&a, &a);
         let twice = lfp(&p, &f);
-        assert_eq!(twice.model_addr, once.model_addr, "fixture {i}");
+        assert_eq!(twice.model_addr(), once.model_addr(), "fixture {i}");
         let (_, _, _, e3) = compose(&a, &a);
         assert!(e3.is_empty(), "fixture {i}");
     }

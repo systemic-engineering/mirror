@@ -232,8 +232,8 @@ pub fn shuffled<T: Clone>(v: &[T], rng: &mut Lcg) -> Vec<T> {
 /// `fact → tick` for a run, joining the model with the deposits by address.
 pub fn ticks<S>(run: &engine::Run<S>) -> std::collections::BTreeMap<Fact, u64> {
     let by_addr: std::collections::BTreeMap<_, _> =
-        run.deposits.iter().map(|d| (d.addr, d.tick.0)).collect();
-    run.model
+        run.deposits().iter().map(|d| (d.addr, d.tick.0)).collect();
+    run.model()
         .iter()
         .map(|(a, f)| {
             (

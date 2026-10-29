@@ -159,7 +159,7 @@ fn model_address_is_the_sorted_model_fragment() {
     for k in &kids {
         b.extend_from_slice(k);
     }
-    assert_eq!(run.model_addr.as_bytes(), blake3::hash(&b).as_bytes());
+    assert_eq!(run.model_addr().as_bytes(), blake3::hash(&b).as_bytes());
 }
 
 #[test]
@@ -191,12 +191,12 @@ fn a_retraction_is_deposited_as_a_status_splinter() {
 fn a_rule_with_no_body_and_no_facts_stops_fixed_at_2() {
     // |B| = 1, F = ∅: the old `k_max ≥ |B|` was one short.
     let p = program(&[("a", "a")]);
-    assert_eq!(fixpoint(&p, &facts(&[])).stop, Fixed(Tick(2)));
+    assert_eq!(fixpoint(&p, &facts(&[])).stop(), Fixed(Tick(2)));
     assert_eq!(
-        bounded(&p, &facts(&[]), 1).stop,
+        bounded(&p, &facts(&[]), 1).stop(),
         Bounded::Budget(Budget::new(1).unwrap())
     );
-    assert_eq!(bounded(&p, &facts(&[]), 2).stop, Bounded::Fixed(Tick(2)));
+    assert_eq!(bounded(&p, &facts(&[]), 2).stop(), Bounded::Fixed(Tick(2)));
     assert_eq!(
         Instance::new(&p, facts(&[]))
             .unwrap()
@@ -227,7 +227,7 @@ fn the_chain_meets_the_bound_with_the_sufficient_budget() {
             "n = {n}"
         );
         let run = bounded(&p, &f, sufficient);
-        let Bounded::Fixed(Tick(t)) = run.stop else {
+        let Bounded::Fixed(Tick(t)) = run.stop() else {
             panic!("n = {n}: budget at the sufficient bound")
         };
         assert!(t <= sufficient, "n = {n}");

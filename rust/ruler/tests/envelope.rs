@@ -104,7 +104,7 @@ fn a_budget_that_cuts_the_run_records_truncated_at_its_tick() {
     let inst = Instance::new(&p, f).unwrap();
     let budget = ruler(5, Unit::Ticks);
     let shaped = ruler::run_bounded(&inst, &budget).expect("Ticks");
-    assert!(matches!(shaped.value().stop, Bounded::Budget(_)));
+    assert!(matches!(shaped.value().stop(), Bounded::Budget(_)));
     assert_eq!(shaped.erasure(), Some(&Truncated { at: Tick(5) }));
     assert_eq!(shaped.shaped_by().len(), 1);
     assert_eq!(*shaped.shaped_by().first(), budget.addr());
@@ -118,7 +118,7 @@ fn a_budget_that_suffices_erases_nothing() {
     let inst = Instance::new(&p, f).unwrap();
     let budget = ruler(6, Unit::Ticks);
     let shaped = ruler::run_bounded(&inst, &budget).expect("Ticks");
-    assert_eq!(shaped.value().stop, Bounded::Fixed(Tick(6)));
+    assert_eq!(shaped.value().stop(), Bounded::Fixed(Tick(6)));
     assert_eq!(shaped.erasure(), None);
     assert_eq!(*shaped.shaped_by().first(), budget.addr());
     assert_eq!(shaped.approval(), Approval::Unsigned);

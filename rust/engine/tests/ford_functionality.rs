@@ -115,13 +115,13 @@ fn without_decls(p: &PositiveProgram) -> PositiveProgram {
 }
 
 fn has(run: &Run, s: &str) -> bool {
-    run.model.values().any(|f| *f == fact(s))
+    run.model().values().any(|f| *f == fact(s))
 }
 
 /// Has `(e, i)` neither an `m` nor an `f`?
 fn undefined(run: &Run, e: &str, i: u64) -> bool {
     let e = sym(e);
-    !run.model.values().any(|f| {
+    !run.model().values().any(|f| {
         (f.pred.as_str() == "m" || f.pred.as_str() == "f")
             && f.args.len() >= 2
             && f.args[0] == e
@@ -143,11 +143,11 @@ fn seams_example_s_choice_a_l_on_a_parses_and_l_is_undefined() {
         nonterminal("L", "Lb"),
     ]);
     let run = bounded(&p, &edb("a", &["a", "b"]), 1 << 16);
-    assert!(matches!(run.stop, Bounded::Fixed(_)));
+    assert!(matches!(run.stop(), Bounded::Fixed(_)));
     assert!(has(&run, "m(S, 0, 1)"));
     assert!(undefined(&run, "L", 0));
     assert!(undefined(&run, "L", 1));
-    assert_eq!(run.findings, vec![], "Ford: functional");
+    assert_eq!(run.findings(), vec![], "Ford: functional");
 }
 
 #[test]
@@ -166,7 +166,7 @@ fn right_recursion_s_a_s_or_a_on_aaa() {
         "ordered choice: the first alternative wins"
     );
     assert!(has(&run, "f(S, 3)"));
-    assert_eq!(run.findings, vec![]);
+    assert_eq!(run.findings(), vec![]);
 }
 
 #[test]
@@ -179,9 +179,9 @@ fn left_recursion_a_a_a_or_a_on_aa_is_undefined_not_a_hang() {
         nonterminal("A", "Abody"),
     ]);
     let run = bounded(&p, &edb("aa", &["a"]), 1 << 16);
-    assert!(matches!(run.stop, Bounded::Fixed(_)));
+    assert!(matches!(run.stop(), Bounded::Fixed(_)));
     assert!(undefined(&run, "A", 0));
-    assert_eq!(run.findings, vec![]);
+    assert_eq!(run.findings(), vec![]);
 }
 
 // ── A deliberately non-functional clause set: a finding, not a panic ─────
@@ -215,7 +215,7 @@ fn non_functional_clauses_are_reported_never_a_panic() {
     // (x, 0) → {1, 2, 3}; (x, 1) → {2, 3}; (x, 2) → {3}. Every extra value
     // is paired with the least one, in key then value order.
     assert_eq!(
-        run.findings,
+        run.findings(),
         vec![
             violation(&[x.clone(), nat(0)], 1, 2),
             violation(&[x.clone(), nat(0)], 1, 3),
@@ -247,7 +247,7 @@ fn findings_do_not_depend_on_order() {
             altitude: f.altitude.clone(),
             atoms: shuffled(&f.atoms, &mut rng),
         };
-        assert_eq!(bounded(&p2, &f2, 1 << 16).findings, base.findings);
+        assert_eq!(bounded(&p2, &f2, 1 << 16).findings(), base.findings());
     }
 }
 
@@ -258,7 +258,7 @@ fn a_declaration_never_changes_m_or_the_ticks() {
     let with = bounded(&p, &f, 1 << 16);
     let without = bounded(&without_decls(&p), &f, 1 << 16);
     assert_eq!(ticks(&with), ticks(&without));
-    assert_eq!(without.findings, vec![]);
+    assert_eq!(without.findings(), vec![]);
 
     let g = grammar(vec![
         terminal("ta", "a"),
@@ -351,6 +351,6 @@ fn a_declaration_on_a_fact_only_predicate_is_checked_against_the_facts() {
 fn findings_are_a_set_of_distinct_records() {
     let (p, f) = non_functional();
     let run = bounded(&p, &f, 1 << 16);
-    let set: BTreeSet<_> = run.findings.iter().collect();
-    assert_eq!(set.len(), run.findings.len());
+    let set: BTreeSet<_> = run.findings().iter().collect();
+    assert_eq!(set.len(), run.findings().len());
 }

@@ -81,7 +81,7 @@ fn commutes(p: &PositiveProgram, f: &Facts, rn: &Renaming) {
         .map(|(k, t)| (rn.fact(k), *t))
         .collect();
     assert_eq!(ticks(&after), renamed);
-    assert_eq!(after.stop, before.stop);
+    assert_eq!(after.stop(), before.stop());
 }
 
 fn admin_program() -> (PositiveProgram, Facts) {
